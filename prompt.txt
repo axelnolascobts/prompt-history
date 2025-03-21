@@ -1,0 +1,15 @@
+-que la palabra tumblr no este con hover que sea como un titulo
+-organiza y limpia el css y elimina todo lo que no importe
+-elimina reglas duplicadas del css
+-quiero que en el media query para celular el menu izquiero se esconda a la izquierda sin usar JS
+-como puedo hacer sin JS para que dar click al svg me muestre el menu izquierdo?
+-en el modo movil que no aparezca la barra de arriba por que sucede eso?
+-a los menus tanto de monitor como de movil quitales el fondo y que solo tenga fondo cuando pase el cursor
+-las variables podrias unirlas por elementos sin que el diseño no se vea afectado?
+-la pantalla movil el grid en vez de 3 columnas que sean 2.
+-por que el texto que debe estar abajo de la imagen no aparece? 
+-como puedo acomodar las imagenes para que su marco sea de la pantalla completa sin contar el top-bar y el menu izquierdo.
+-que cada imagen tenga un margen de 24px entre ellas.
+-si hice un clon de un repositorio en github con https y quiero hacer push con mis cambios en local con ssh que debo insertar en mi cmd? 
+-explica cada uno de estas propiedades de css: transition-property, transition-duration, transition-timing-function, and transition-delay.
+
