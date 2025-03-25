@@ -1,0 +1,19 @@
+21 - marzo - 2025
+
+Prompt 1:
+[Después de haber cargado la serie de comandos/propiedades a investigar]
+Según las instrucciones dadas anteriormente, investiga los conceptos que indiquen 'investiga' o 'aprende'. También incluye los conceptos adjuntos en este mismo prompt y crea una tabla con las siguientes columnas: concepto/comando, descripción y función. Además, si existe algún otro concepto de animación y dinamismo con CSS que sea importante y no esté mencionado, adjúntalo también a la tabla resultante.
+
+Prompt 2:
+Ahora retorna la misma tabla, pero completa, agregando un apartado de 'Ejemplo de uso', por favor.
+
+Prompt 3:
+¿Cuál o cuáles son las diferencias entre las propiedades animation y transition?
+
+22 - marzo - 2025
+
+Prompt 1:
+Necesito aprender sobre Grid en CSS. Dame un temario con todo lo que es importante e indispensable para pasar de 0 a excelente usando Grid CSS.
+
+prompt 2:
+Ahora desarrolla los temas generados en el temario de manera que sea fácil de entender. Puedes usar tablas si lo crees conveniente.
