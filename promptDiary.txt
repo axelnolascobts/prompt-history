@@ -17,3 +17,12 @@ Necesito aprender sobre Grid en CSS. Dame un temario con todo lo que es importan
 
 prompt 2:
 Ahora desarrolla los temas generados en el temario de manera que sea fácil de entender. Puedes usar tablas si lo crees conveniente.
+
+02 - Abril - 2025
+
+Prompt 1:
+Investiga y explícame qué es JavaScript, cómo instalarlo y ejecutarlo. Además, explícome qué son los algoritmos, expresiones y sentencias en JavaScript.
+Una vez investigado, devuelve el resultado de la explicación como un concepto simple pero entendible. Presenta la instalación y ejecución en un manual paso a paso y, finalmente, muestra las sentencias, expresiones y algoritmos de JavaScript en una tabla que incluya su definición, diferencias y ejemplos.
+
+Prompt 2:
+A continuación se muestra una lista de algoritmos comúnmente utilizados en JavaScript, junto con una tabla resumen que incluye su nombre, función y ejemplos breves en código.
