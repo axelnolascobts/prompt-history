@@ -26,3 +26,38 @@ Una vez investigado, devuelve el resultado de la explicación como un concepto s
 
 Prompt 2:
 A continuación se muestra una lista de algoritmos comúnmente utilizados en JavaScript, junto con una tabla resumen que incluye su nombre, función y ejemplos breves en código.
+
+03 - Abril - 2025
+
+Prompt 1:
+Entra en el enlace: [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Introduction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Introduction), rescata la información más importante y enumérala.
+
+Prompt 2:
+Basado en esa información, explícame la relación entre Java y JavaScript, así como sus diferencias clave. Procura ser conciso y claro.
+
+Prompt 3:
+Qué es el tipado estático y tipado dinámico?
+
+Prompt 4:
+De qué trata el paradígma de programación basado en prototipos?
+
+Prompt 5:
+Diferencias entre paradigma prototípico y el paradigma basado en clases
+
+Prompt 6:
+Genera una tabla comparativa de las diferencias entre paradigma basado en clases y paradigma basado en prototipos
+
+Prompt 7:
+Explícame de forma concisa, simple y entendible la especificación ECMAScript que sigue javascript
+
+Prompt 8:
+Ahora explícame como es ese estándar y cuales son las reglas y características que se deben seguir para la implementación de js
+
+Prompt 9:
+Qué es V8 de chrome y como funciona?
+
+Prompt 10:
+Cuales son el conjunto de reglas y directrices que aseguran que JavaScript funcione de manera coherente en diferentes entornos ECMAScript?
+
+Prompt 11:
+Cuales son las bases y normas que proporciona ECMAScript?
