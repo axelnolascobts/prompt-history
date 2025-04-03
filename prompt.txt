@@ -94,8 +94,42 @@ como es su instalacion y ejecucion en todos los dispositivos?
 
 dime sus: Algorithms, expressions and statements con ejemplos.
 
+que version de ecmascript estamos?
 
+Diferencias entre java y js
 
+ como puedo verificar que este bien instalado y funcionando 
+ 
+ como ejecuto en navegadores JS?
+ 
+ como ejecuto un archivo JS 
 
+muestrame ejemplos 
 
+Dime sus diferencias de cada uno.
 
+que es hoisting y scope?
+
+diferencias entre var let y const 
+
+en una lista dime los tipos de data en JS 
+
+diferencias de estos 2 tipos 
+
+que podrias preguntarme de este tema 
+
+que es un valor falsy?
+
+dame una lista de los operadores, tipos y como funcionan
+
+que preguntas podrias hacerme de los operadores de js 
+
+dame ejemplos de como se utilizan los operadores
+
+Que son las condicionales y loops en JS?
+
+dame un ejemplo para cada uno.
+
+cuando se utiliza breack y continue?
+
+hazme preguntas sobre el tema
