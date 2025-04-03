@@ -13,3 +13,89 @@
 -si hice un clon de un repositorio en github con https y quiero hacer push con mis cambios en local con ssh que debo insertar en mi cmd? 
 -explica cada uno de estas propiedades de css: transition-property, transition-duration, transition-timing-function, and transition-delay.
 
+si quisiera hacer identico el layout de spotify web con dimension de 1280x720 y 375x667 como lo deberia planear?
+
+como puedo insertar un circulo alrededor de un svg?
+
+Como centrar el contenido dentro de un container en css?
+
+Como puedo evitar que se desfase el layout?
+
+Como poner iluminacion dentro de un hover?
+
+que es overflow x scroll y overflow y scroll?
+
+Como ocultar elementos en un html con css?
+
+como dejar un pequeño margen en cada fila en un grid area?
+
+si uso background image como puedo hacerlo en forma de circulo?
+
+diferencias entre gap y padding
+
+si quisiera que mi main tuviera un scroll bar y que el contenido no pase de la medida que yo diga que debo utilizar
+
+como hago que un elemento este verticalmente alineado
+
+como utilizar fontawesome
+
+What is The AI Code Editor?
+
+como hacer reset de un css en navegador
+
+y como puedo hacer los elementos mas pequeños para la version movil sin usar pxs?
+
+si inserto un important en una clase pero solo en la vista movil no afectara a la clase de pc?
+
+En vista movil como puedo hacer un menu lateral con checkbox y svg?
+
+Por que tengo este error?: git branch writters
+fatal: not a valid object name: 'writters'
+
+Que es un conflicto en git?
+
+Como puedo resolver estos conflictos? 
+
+Diferencia entre merge y rebase
+
+
+Que es re re re en git?
+
+Que es squashme en git?
+
+que hace el comando grep?
+
+que es git bisect?
+
+que es git reset y sus tipos?
+
+
+para que se utiliza el comando git worktree
+
+para que sirve el comando git log --oneline?
+
+que es y para que utilizar un pull request?
+
+Como borrar una rama de un repositorio en git?
+
+Como creo una rama dentro de otra rama?
+
+Como puedo crear un archivo y modificarlo en una rama de git?
+
+Como hacer un merge del pull request?
+
+Como hacer una tag en git hub?
+
+Como hacer merge en varias ramas?
+
+que es javascript como utilizarlo y en que se puede utilizar?
+
+como es su instalacion y ejecucion en todos los dispositivos?
+
+dime sus: Algorithms, expressions and statements con ejemplos.
+
+
+
+
+
+
