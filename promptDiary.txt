@@ -61,3 +61,37 @@ Cuales son el conjunto de reglas y directrices que aseguran que JavaScript funci
 
 Prompt 11:
 Cuales son las bases y normas que proporciona ECMAScript?
+
+05 - Abril - 2025
+
+Prompt 1:
+Necesito aprender sobre JavaScript. Más específicamente, necesito que me hables sobre las variables y los tipos de datos en JS, los operadores, las condicionales y los bucles. Explica los conceptos de forma sencilla y que sea fácil de entender. Adicional a ello, dime qué cosas necesito saber para dominar esos temas y genera una lista para mí.
+
+Prompt 2:
+Explica para qué sirven los operadores en JS.
+
+Prompt 3:
+Revisa estos enlaces:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types
+
+Basado en su contenido, ayúdame generando un formulario con los conceptos indispensables que debo entender. Además, crea una práctica de codificación que abarque los temas mencionados en esos enlaces.
+
+Prompt 4:
+Define cada uno de los tipos de datos primitivos y ejemplifica cada uno, así como los datos de tipo objeto y tipo array.
+
+Prompt 5:
+Genera una tabla comparativa de los operadores y expresiones (aritméticos, lógicos, de comparación y de asignación).
+
+Prompt 6:
+Explica lo siguiente de manera detallada:
+
+Bloques try, catch y finally.
+La instrucción throw para lanzar excepciones.
+
+Prompt 7:
+Define, compara y señala las diferencias entre:
+for...of, para recorrer iterables (como arrays o strings).
+for...in, para iterar sobre las propiedades enumerables de un objeto.
+El método forEach en arrays.
