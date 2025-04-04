@@ -133,3 +133,33 @@ dame un ejemplo para cada uno.
 cuando se utiliza breack y continue?
 
 hazme preguntas sobre el tema
+
+que es un bug historico?
+
+que otros puntos interesantes deberia ver sobres tipos de datos en JS
+
+Explicame las desigualdades. 
+
+Que significaba el operador %?
+
+como se usa instanceof?
+
+¿Qué es la desestructuración?
+
+explicame las conversiones en JS
+
+que es yield?
+
+¿Qué son los objetos en JavaScript?
+
+¿Cómo crear un objeto?
+ 
+Accer y modificar propiedades de objetos
+
+Eliminar propiedades de un objeto
+
+Desestructuración de objetos
+
+Objetos anidados en JS
+
+que preguntas podrias hacerme sobre objetos de JS?
