@@ -95,3 +95,54 @@ Define, compara y señala las diferencias entre:
 for...of, para recorrer iterables (como arrays o strings).
 for...in, para iterar sobre las propiedades enumerables de un objeto.
 El método forEach en arrays.
+
+7 - Abril - 2025
+
+Prompt 1:
+Consulta los siguientes enlaces:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects
+
+Dame una explicación detallada, clara y sencilla de todo lo que debería entender de esos temas.
+
+Prompt 2:
+return n < 2 ? 1 : n * fac(n - 1);
+Explícame cada elemento de esta línea.
+
+Prompt 3:
+Explica de manera sencilla qué son las Expresiones de Funciones Inmediatamente Invocadas (IIFE).
+
+Prompt 4:
+¿Para qué sirven las funciones flecha?
+
+Prompt 5:
+¿Qué diferencia hay al usar un "let" o un "const" para la creación de un objeto en JavaScript?
+
+Prompt 6:
+¿Qué usos tiene reasignar un objeto JS?
+
+Prompt 7:
+¿Cuál es la diferencia entre crear una función let o una función const?
+
+Prompt 8:
+Cuéntame todo sobre los objetos en JavaScript: cómo crearlos, cómo eliminar propiedades, cómo agregar y usar métodos.
+Explícame qué son las funciones en JavaScript, la diferencia con las funciones de flecha (arrow functions) y la diferencia entre métodos y funciones.
+Dame un ejercicio que implique crear un objeto y modificar sus propiedades.
+Dame un ejercicio que implique funciones que incluyan parámetros por defecto.
+
+Prompt 9:
+Ejemplo de función con parámetros default en JS.
+
+Prompt 10:
+¿Cuál tipo de "for" usar para recorrer objetos?
+
+Respuesta:
+for...in: Recorre todas las propiedades del objeto, incluidas las heredadas (usa hasOwnProperty() si solo quieres las propiedades directas).
+Object.keys(): Devuelve un array de las claves (propiedades) del objeto.
+Object.values(): Devuelve un array de los valores del objeto.
+Object.entries(): Devuelve un array de pares clave-valor, útil cuando necesitas ambos.
+
+Prompt 11:
+Funciones dentro de objetos
+
+
