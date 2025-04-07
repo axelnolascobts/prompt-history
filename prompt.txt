@@ -163,3 +163,9 @@ Desestructuración de objetos
 Objetos anidados en JS
 
 que preguntas podrias hacerme sobre objetos de JS?
+
+explicame esto: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_objects sin ejemplos, solo los puntos importantes a considerar.
+
+ejercicios basicos de objetos
+
+hazme un examen sencillo de lo basico de objetos en JS
