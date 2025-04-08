@@ -169,3 +169,10 @@ explicame esto: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Wo
 ejercicios basicos de objetos
 
 hazme un examen sencillo de lo basico de objetos en JS
+
+ejemplos de .toUpperCase
+
+Explicame arrays en js sus funciones propiedades y ejemplos
+
+como son los metodos en objetos
+
