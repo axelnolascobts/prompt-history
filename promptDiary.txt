@@ -145,4 +145,39 @@ Object.entries(): Devuelve un array de pares clave-valor, útil cuando necesitas
 Prompt 11:
 Funciones dentro de objetos
 
+8 - Abril - 2025
+
+Prompt 1:
+consulta los enlaces:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Numbers_and_strings
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Representing_dates_times
+
+Una vez revisados sintetiza y explíca lo más importante e indispensable que necesito saber de ambos enlaces
+
+Propmt 2:
+Qué hacen las siguinetes funciones?
+(Math.pow(2, 53) - 1)
+Math.pow(2, 53)
+
+Prompt 3:
+Dame ejemplos de uso de: toExponential(), toFixed(), toPrecision()
+
+Prompt 4:
+Dame ejemplos de uso de: toLowerCase(), toUpperCase(), toLocaleLowerCase(), toLocaleUpperCase(), normalize(), y toWellFormed().
+
+Prompt 5:
+Dame ejemplos de uso de: at(), charAt(), charCodeAt(), y codePointAt().
+
+Prompt 6:
+Ejemplos de uso: indexOf(), lastIndexOf(), startsWith(), endsWith(), includes(), match(), matchAll(), y search().
+
+Prompt 7:
+Ejemplos de uso: split(), slice(), substring(), substr(), trim(), trimStart(), y trimEnd(). 
+
+Prompt 8:
+Ejemplos de uso: padStart(), padEnd(), concat(), y repeat().
+
+
+
+
 
