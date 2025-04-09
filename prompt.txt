@@ -176,3 +176,10 @@ Explicame arrays en js sus funciones propiedades y ejemplos
 
 como son los metodos en objetos
 
+como hago correctamente un default en un switch en js
+
+hazme pregunta sobre mi codigo y practicas que añada o modifica algo
+
+como utilizo las etiquetas utc en dates en js
+
+
