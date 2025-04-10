@@ -177,6 +177,32 @@ Ejemplos de uso: split(), slice(), substring(), substr(), trim(), trimStart(), y
 Prompt 8:
 Ejemplos de uso: padStart(), padEnd(), concat(), y repeat().
 
+10 - Abril - 2025
+
+Prompt 1:
+consulta el enlace:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+una vez consultado el enlace, recopila los métodos que hay en la página relacionados con los arrays y organiza la informacion en una tabla con lolumnas "método", "sintaxis", "uso"
+
+Prompt 2:
+Qué es un async en javascript?
+
+Prompt 3:
+basado en las tablas que generaste anteriormente ahora genera un ejemplo sencillo de uso de cada método, con una breve explicación
+
+Prompt 4:
+que parametros entran al método copyWithin();?
+
+Prompt 5:
+const arr = ['a', 'b'];
+for (let [index, value] of arr.entries()) {
+  console.log(index, value);
+}
+// 0 'a'
+// 1 'b'
+
+dame ejemplos diferentes con metodo entries
 
 
 
