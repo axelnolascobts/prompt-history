@@ -182,4 +182,10 @@ hazme pregunta sobre mi codigo y practicas que añada o modifica algo
 
 como utilizo las etiquetas utc en dates en js
 
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#instance_methods entra a la pagina y dame una lista de todos los metodos y propiedades de los arrays con ejemplo por cada uno
 
+como correr solo una parte del codigo en VSC
+
+como puedo generar numeros random en JS
+
+dame ejemplos de Math.random
