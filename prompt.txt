@@ -199,4 +199,19 @@ con que metodo de array puedo organizar varios arrays en uno solo?
 
 que funciones de array me ayudarian para insertar elementos en un array en diferentes posiciones.
 
+que es un error silencioso en JS?
 
+como es el modo estricto en modulos de js?
+
+explicame esto: Setting properties on primitive values
+Strict mode forbids setting properties on primitive values. Accessing a property on a primitive implicitly creates a wrapper object that's unobservable, so in sloppy mode, setting properties is ignored (no-op). In strict mode, a TypeError is thrown.
+
+js
+Copy to Clipboard
+"use strict";
+
+false.true = ""; // TypeError
+(14).sailing = "home"; // TypeError
+"with".you = "far away"; // TypeError
+
+revisa este link y explicame punto por punto de forma rapida pero sin omitir detalles importantes: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
