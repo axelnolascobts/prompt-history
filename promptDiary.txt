@@ -204,6 +204,25 @@ for (let [index, value] of arr.entries()) {
 
 dame ejemplos diferentes con metodo entries
 
+14 - Abril - 2025
+
+Prompt 1:
+Consulta el enlace:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+
+y explícame de manera simple y sencilla que necesito entender a la perfección de ese artículo.
+
+Prompt 2:
+Ahora profundiza más y explicame los cambios en modo estricto
+
+Prompt 3:
+Qué es eval en javascript?
+
+Prompt 4:
+Cúando usar el modo estricto de javascript?
+
+Prompt 5:
+Función callback en javascript
 
 
 
