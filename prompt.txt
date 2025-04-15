@@ -215,3 +215,13 @@ false.true = ""; // TypeError
 "with".you = "far away"; // TypeError
 
 revisa este link y explicame punto por punto de forma rapida pero sin omitir detalles importantes: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+
+What are the different ways to include JavaScript in a HTML page?
+
+What are DOM, BOM, and their differences?
+
+Give me an exercise where I have to manipulate the DOM using JavaScript
+
+Puntos clave de esta pagina: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/DOM_scripting
+
+Puntos claves y resumen de esta pagina: https://developer.mozilla.org/es/docs/Web/API/Document_Object_Model/Introduction
