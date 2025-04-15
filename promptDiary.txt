@@ -224,5 +224,22 @@ Cúando usar el modo estricto de javascript?
 Prompt 5:
 Función callback en javascript
 
+15 - Abril - 2025
+
+Prompt 1:
+Consulta los enlaces:
+https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Manipulating_documents
+https://developer.mozilla.org/es/docs/Web/API/Document_Object_Model/Introduction
+https://www.aulascript.com/dhtml/el_bom.htm
+https://www.w3schools.com/js/js_whereto.asp
+
+Y expícame todo lo que necesito saber sobre ellos.
+
+Prompt 2:
+Diferencias entre DOM y BOM en JavaScript
+
+Prompt 3:
+
+
 
 
