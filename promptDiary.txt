@@ -239,6 +239,7 @@ Prompt 2:
 Diferencias entre DOM y BOM en JavaScript
 
 Prompt 3:
+Diferentes formas de incluir JavaScript en una página HTML
 
 
 
