@@ -238,9 +238,48 @@ Y expícame todo lo que necesito saber sobre ellos.
 Prompt 2:
 Diferencias entre DOM y BOM en JavaScript
 
+16 - Abril - 2025:
+
+Prompt 1:
+Explícame las diferentes formas de incluir un JavaScript en una página HTML e incluye ejemplos.
+
+Prompt 2:
+Explícame de manera detallada que es el DOM y dame ejemplos.
+
 Prompt 3:
-Diferentes formas de incluir JavaScript en una página HTML
+Dame una explicación detallada sobre el BOM y dame un ejemplo.
 
+Prompt 4: 
+Explícame y enlista los objetos y métodos del DOM.
 
+Prompt 5:
+Explícame y enlista los objetos y métodos del DOM.
+
+17 - Abril - 2025:
+
+Prompt 1:
+Consulta los enlaces:
+
+https://developer.mozilla.org/en-US/docs/Web/API
+http://latentflip.com/loupe/
+https://www.youtube.com/watch?v=8aGhZQkoFbQ
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop
+
+revísalos y explícame de manera detallada todo lo que necesito entender de esos recuros.
+
+Prompt 2:
+Qué es un event loop en JS y por qué es importante?
+
+Prompt 3:
+Cuáles son las diferencias entre scope global, función y bloque?
+
+Prompt 4:
+Cuáles son los errores más comunes cuando se trata con tareas asíncronas en JS?
+
+Prompt 5:
+Cómo puedo evitar esos errores al programar?
+
+Prompt 6:
+Ayudame a generar un ejercicio en el que pueda practiar con el uso de DOM, BOM y de ser posible también practicar el uso de los Event Loop.
 
 
