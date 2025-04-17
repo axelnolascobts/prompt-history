@@ -225,3 +225,34 @@ Give me an exercise where I have to manipulate the DOM using JavaScript
 Puntos clave de esta pagina: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/DOM_scripting
 
 Puntos claves y resumen de esta pagina: https://developer.mozilla.org/es/docs/Web/API/Document_Object_Model/Introduction
+
+¿Qué es el BOM y en qué se diferencia del DOM en JavaScript?
+¿Cuáles son los objetos principales que forman parte del BOM?
+¿Cómo se usa el objeto window y qué propiedades o métodos relevantes tiene?
+¿Qué hace el objeto navigator y qué tipo de información puedes obtener de él?
+¿Cómo puedes abrir, cerrar o redirigir ventanas o pestañas del navegador usando métodos del BOM?
+¿Cómo puedes utilizar screen para obtener información sobre la resolución y dimensiones de la pantalla del usuario?
+
+¿Qué es el DOM y por qué es importante en el desarrollo web con JavaScript?
+¿Cómo puedes acceder a un elemento HTML usando su ID desde JavaScript?
+¿Cuál es la diferencia entre getElementById, getElementsByClassName y querySelector?
+¿Cómo puedes cambiar el estilo de un elemento desde JavaScript usando el DOM?
+¿Cómo se puede crear y agregar un nuevo elemento HTML al DOM usando JavaScript?
+¿Cómo puedes eliminar un elemento del DOM desde JavaScript?
+
+¿Qué es el Event Loop en JavaScript y por qué es importante para la ejecución del código?
+¿Cuál es la diferencia entre la Call Stack y la Task Queue en el Event Loop?
+¿Cómo maneja el Event Loop el código asíncrono como setTimeout?
+¿Qué es el Job Queue (o Microtask Queue) y cómo se diferencia de la Task Queue?
+¿Cómo afecta el Event Loop al rendimiento y la fluidez de una aplicación web?
+¿Qué pasa si bloqueas el Call Stack con una operación muy pesada?
+
+¿Qué es un scope en JavaScript y cuántos tipos existen?
+¿Cuál es la diferencia entre scope global, de función y de bloque?
+¿Cómo afecta var, let y const al scope de una variable?
+¿Qué es el hoisting y cómo se relaciona con el scope?
+Qué errores comunes pueden surgir por no entender bien los scopes?
+¿Cómo se comportan las funciones anidadas respecto al scope?
+¿Qué ventajas tiene entender bien los scopes para escribir código limpio y sin bugs?
+
+
