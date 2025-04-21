@@ -282,4 +282,26 @@ Cómo puedo evitar esos errores al programar?
 Prompt 6:
 Ayudame a generar un ejercicio en el que pueda practiar con el uso de DOM, BOM y de ser posible también practicar el uso de los Event Loop.
 
+21 - Abril - 2025
+
+Prompt 1:
+Consulta los siguientes enlaces:
+
+https://developer.mozilla.org/es/docs/Web/JavaScript/Closures
+https://developer.mozilla.org/es/docs/Glossary/IIFE
+
+luego de revisarlos sintetiza los artículos de las páginas y dame un resumen claro, detallado y simple de entender sobre los temas de IIFE y Closures.
+
+Prompt 2:
+Dame un ejemplo de un IIFE y explica como trabaja.
+
+Prompt 3:
+ahora genera ejemplos más coplejos y con casos de usos aplicados por favor.
+
+Prompt 4:
+que es un Closure en javascript y como trabaja?
+
+Prompt 5:
+muestrame  closure that keeps track of how many times a function is called
+
 
