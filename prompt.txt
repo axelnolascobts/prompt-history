@@ -255,4 +255,16 @@ Qué errores comunes pueden surgir por no entender bien los scopes?
 ¿Cómo se comportan las funciones anidadas respecto al scope?
 ¿Qué ventajas tiene entender bien los scopes para escribir código limpio y sin bugs?
 
+¿Qué es un IIFE?
+¿Por qué se usa?
+¿Como es su sintaxis?
+¿Cuales son sus usos?
+¿Dame ejemplos comentados? 
 
+¿Que es un closures en JS?
+¿Cómo funciona un closure en JavaScript a nivel de memoria y contexto léxico?
+¿Cual es su funcionalidad?
+¿Qué diferencia hay entre un closure y una función normal?
+¿Por qué los closures pueden acceder a variables fuera de su propio cuerpo?
+¿Se puede usar un closure dentro de un IIFE?
+¿Cómo afectan los closures al manejo de eventos en DOM?
