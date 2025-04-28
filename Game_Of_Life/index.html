@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>Game_Of_Life</title>
+</head>
+<body>
+    <section id="cont-game">
+        <header id="header-container">
+            <article id="titulo">
+                <!--Aquí poner título-->
+                <h1>THE_GAME_OF_LIFE</h1>
+                <p>By Isaac Gallo</p>
+            </article>
+            <section id="propiedades">
+                <article id="configuracion">
+                    <!--Aquí poner las opciones tamaño y velocidad-->
+                    <form action="">
+                        <p>Número de Filas X Columnas</p>
+                        <input type="text" placeholder="Número de filas y columnas" maxlength="3" min="1">
+                        <p>Velocidad de la simulación</p>
+                        <input type="text" placeholder="Velocidad de la simulación" maxlength="4" minlength="1">
+                        <button>Actualizar Configuración</button>
+                    </form>
+                </article>
+                <article id="opciones-juego">
+                    <!--Aquí van los botones de iniciar, pausar y resetear-->
+                    <button id="iniciar">Iniciar</button>
+                    <button id="pausar">Pausar</button>
+                    <button id="reiniciar">Reiniciar</button>
+
+                </article>
+
+            </section>
+        </header><!--Fin del header-container-->
+        <section id="game-cells">
+            <article id="grid-cont">
+
+            </article>
+
+        </section>
+
+    </section><!--Fin cont-game-->
+</body>
+</html>
