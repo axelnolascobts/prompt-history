@@ -1,29 +1,32 @@
-function createGrid(nRows) {
+function createGrid(nRows, evMat) {
   if (isNaN(nRows)) {
     return 'error';
   }
 
   let aux = nRows + 2;
-  let mat = [];
+  //let mat = [];
 
-  //let matriz = Array.from({ length: aux }, () => Array(aux).fill(random(aux)));
-  for (let i = 0; i < aux; i++) {
+  let matriz = Array.from({ length: aux }, () => Array(aux).fill("X"));
+  for (let i = 1; i < aux-1; i++) {
     //l//et x = Math.floor(Math.random() * nRows-2);
-    mat[i] = [];
+    //mat[i] = [];
 
-    for (let j = 0; j < aux; j++) {
-      if (i === 0 || i === aux - 1 || j === 0 || j === aux - 1) {
+    for (let j = 1; j < aux-1; j++) {
+      /*if (i === 0 || i === aux - 1 || j === 0 || j === aux - 1) {
         mat[i][j] = 'X';
       } else {
         //l//et ix = Math.floor(Math.random() * nRows-2);
 
-        mat[i][j] = random(aux);
+        mat[i][j] = random(aux);*/
+        if(evMat[i-1][j-1]==="rgb(139, 139, 139)"){
+          matriz[i][j]="X";
+        }else if(evMat[i-1][j-1]==="rgb(235, 192, 0)"){
+          matriz[i][j]="O";
+        };
       }
     }
-  }
-
-  //console.log(matriz);
-  return mat; //liveCells(aux, matriz);
+  console.log(matriz);
+  return matriz; //liveCells(aux, matriz);
 };
 
 function random(nRows) {
@@ -197,10 +200,10 @@ function hola() {
 //setInterval(hola, 1000);
 
 //createGrid(100);
-let m = createGrid(20);
+//let m = createGrid(20);
 //console.log(m.length);
 
-showGrid(m.length, m);
+//showGrid(m.length, m);
 //gameOfLife(m);
 
 function main() {
@@ -211,7 +214,7 @@ function main() {
   showGrid(m.length, m);
 }
 
-const intervalo = setInterval(main, 100);
+//const intervalo = setInterval(main, 100);
 
 const configGame = (function(){
   let medida = 20;
@@ -232,3 +235,70 @@ const configGame = (function(){
     }
   };
 })();
+
+const inputFil = document.getElementById("numFil");
+const inputVel = document.getElementById("numVel");
+
+inputFil.value = configGame.getSize();
+inputVel.value = configGame.getSpeed();
+
+const updateButton = document.getElementById("updateButton");
+
+updateButton.onclick = () => {
+  configGame.setSize(inputFil.value);
+  configGame.setSpeed(inputVel.value);
+};
+
+const grid = document.getElementById("grid-cont");
+
+let tam = configGame.getSize();
+let vel = configGame.getSpeed();
+
+grid.style.gridTemplateColumns = "repeat(20, 30px)";
+
+
+for(let c = 0; c < tam*tam; c++){
+
+  const cell= document.createElement("div");
+  cell.classList.add("cell")
+  grid.appendChild(cell);
+
+};
+
+const celdas = document.getElementsByClassName("cell");
+const colores= [];
+
+//Esto es para cambiar el color de celdas (aun no funciona xd)
+for(let i=0; i < celdas.length; i++){
+  let col=getComputedStyle(celdas[i]).backgroundColor;
+  colores.push(col);
+  //console.log(col);
+
+  /*celdas[i].onclick = () => {
+    if(celdas[i].style.backgroundColor === "rgb(139, 139, 139)"){
+      celdas[i].style.backgroundColor = "rgb(235, 192, 0)";
+    }else{
+      celdas[i].style.backgroundColor = "rgb(139, 139, 139)";
+    };
+  };*/
+};
+
+console.log(colores);
+
+let h = 0;
+let matGrid = [];
+while(h < colores.length){
+  let aux = colores.slice(h, h+tam);
+  matGrid.push(aux);
+
+  h+=tam;
+};
+
+console.log(matGrid);
+
+createGrid(tam, matGrid);
+
+
+
+
+

@@ -17,12 +17,12 @@
             <section id="propiedades">
                 <article id="configuracion">
                     <!--Aquí poner las opciones tamaño y velocidad-->
-                    <form action="">
+                    <form>
                         <p>Número de Filas X Columnas</p>
-                        <input type="text" placeholder="Número de filas y columnas" maxlength="3" min="1">
+                        <input id="numFil" type="text" placeholder="Número de filas y columnas" maxlength="3" min="1">
                         <p>Velocidad de la simulación</p>
-                        <input type="text" placeholder="Velocidad de la simulación" maxlength="4" minlength="1">
-                        <button class="boton">Actualizar Configuración</button>
+                        <input id="numVel" type="text" placeholder="Velocidad de la simulación" maxlength="4" minlength="1">
+                        <button id="updateButton" class="boton">Actualizar Configuración</button>
                     </form>
                 </article>
                 <article id="opciones-juego">
@@ -44,5 +44,7 @@
         </section>
 
     </section><!--Fin cont-game-->
+
+    <script src="prueba.js"></script>
 </body>
 </html>
