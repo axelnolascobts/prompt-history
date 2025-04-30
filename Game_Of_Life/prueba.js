@@ -222,10 +222,19 @@ const configGame = (function(){
 
   return{
     setSize(newMedida){
-      medida=newMedida;
+      if(newMedida>=5 && newMedida<=300){
+        medida=newMedida;
+      }else{
+        medida=20;
+      };
+      
     },
     setSpeed(newSpeed){
-      speed=newSpeed;
+      if(newSpeed>=25 && newSpeed <=10000){
+        speed=newSpeed;
+      }else{
+        speed=500;
+      };
     },
     getSpeed(){
       return speed;
@@ -245,8 +254,11 @@ inputVel.value = configGame.getSpeed();
 const updateButton = document.getElementById("updateButton");
 
 updateButton.onclick = () => {
+  main2();
   configGame.setSize(inputFil.value);
   configGame.setSpeed(inputVel.value);
+  inputFil.value = configGame.getSize();
+  inputVel.value = configGame.getSpeed();
   reiniciar();
   gridVisual();
 };
@@ -418,7 +430,9 @@ function pausar(){
 
 function reiniciar(){
 
-  pausar();
+  //pausar();
+  clearInterval(intervalo2);
+  intervalo2=null;
 
   for(let i=0; i < celdas.length; i++){
 
