@@ -7,21 +7,24 @@
 <title>Game of Life</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rozha+One&family=Tiny5&display=swap" rel="stylesheet">
 </head>
 <header>
 <div class="container_header">
 <h2 class="titulo">Game of life in HTML</h2>
 <form action="tamaño del grid">
-<label for="size">tamaño de las casillas</label>
+<label class="text_label" for="size">Tamaño de las casillas(minimo 5 maximo 150)</label>
 <!--Agregar limitador al formulario, mayor a 20 y menor a 150 (✅)-->
-<input type="number" min="20" max="150" id="size" class="formulario"> <br> <br>
-<label for="speed">velocidad de modificacion en MS</label>
-<input type="number" min="0" max="1000" id="speed" class="formulario"> <br> <br>
+<input type="number" min="5" max="150" id="size" class="formulario"> <br> <br>
+<label class="text_label" for="speed">Velocidad de modificacion en MS, minimo 100MS maximo 1500MS</label>
+<input type="number" min="100" max="1000" id="speed" class="formulario"> <br> <br>
 </form>
-<div>
-<button class="start_button" id="start">Iniciar simulacion</button>
+<div class="container_button">
+<!--Botones de inicio, pausar, finalizar (✅)-->
+<button class="start_button" id="start">Iniciar o continuar simulacion</button>
 <button class="stop_button" id="stop">Detener simulacion</button>
+<button class="pause_button" id="pause">Pausar simulacion</button>
 </div>
 </div>
 </header>
@@ -30,7 +33,7 @@
 
 <script src="script.js"></script>
 <!---Usar Divs para la tabla usar formulario para que el usuario decida en tamaño de grids, generar 
-las diferencias del grid dentro del DOM-->
+las diferencias del grid dentro del DOM (✅)-->
 
 </body>
 </html>

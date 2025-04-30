@@ -3,11 +3,7 @@
     padding: 0;
     box-sizing: border-box;
 }
-/* acomodar mejor el header y poner mejores colores */
-
-
-
-
+/* acomodar mejor el header y poner mejores colores (✅)*/
 .titulo {
     font-family: "Tiny5", sans-serif;
     font-weight: 400;
@@ -30,10 +26,10 @@ cursor: pointer;
 font-size: 0.9rem;
 height: max-content;
 width: auto;
-background-color: rgb(25, 136, 10);
-margin-right: 70%;
+background-color: rgb(10, 88, 0);
 padding: 5px;
 font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+border: none;
 }
 
 .stop_button{
@@ -46,11 +42,25 @@ font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     background-color: rgb(141, 25, 10);
     padding: 5px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    border: none;
+    }
+
+    .pause_button{
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 0.9rem;
+        height: max-content;
+        width: auto;
+        background-color: rgb(6, 9, 175);
+        padding: 5px;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        border: none;
     }
 
 .formulario {
 font-size: larger;
-width: 50px;
+width: 80px;
 font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
@@ -72,5 +82,13 @@ margin: 0px 20px 20px 20px;
 }
 
 .cell.alive {
-    background-color: yellow;
+    background-color: rgb(204, 129, 15);
+}
+
+.grid_section {
+    justify-content: center;
+}
+
+.container_button{
+align-content: center;
 }

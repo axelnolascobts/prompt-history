@@ -1,6 +1,6 @@
 let gridArray = [];
 let intervalId = null;
-
+// crea el grid con celulas muertas
 function Grid_vacio(size) {
   gridArray = [];
   const gridSection = document.querySelector(".grid_section");
@@ -14,7 +14,7 @@ function Grid_vacio(size) {
       const cell = document.createElement('div');
       cell.className = 'cell';
       cell.classList.add(`row-${i}`, `col-${j}`);
-
+      //al dar click transformar viva a muerta y viceversa
       cell.addEventListener('click', () => {
         if (gridArray[i][j] === "X") {
           gridArray[i][j] = "O";
@@ -30,7 +30,7 @@ function Grid_vacio(size) {
     gridArray.push(row);
   }
 }
-
+// busca y encuentra vecinos vivos
 function neighborsO(grid, x, y) {
   let count = 0;
   const dirs = [
@@ -46,7 +46,7 @@ function neighborsO(grid, x, y) {
   }
   return count;
 }
-
+//activa o desactica la clase de vida en la celda
 function cellestado() {
   const celdas = document.querySelectorAll('.cell');
   let fila = 0, col = 0;
@@ -64,8 +64,9 @@ function cellestado() {
     }
   }
 }
-
+//revisa las reglas por cada posicion en el grid y lo actualiza
 function updateGrid() {
+  let cont = 0;
   let nueva = [];
   let vivos = 0;
 
@@ -83,16 +84,35 @@ function updateGrid() {
       if (nueva[i][j] === "O") vivos++;
     }
   }
+  /* pasa por las posiciones de la matriz y contea las x, si todas son x limpia el intervalo
+  nuevaalcuadrado es para sacar todo el tamaño de la matriz */
+  const nuevaalcuadrado = nueva.length*nueva.length;
+  for (let i = 0; i < gridArray.length; i++) {
+    for (let j = 0; j < gridArray[i].length; j++) {
+      if(nueva[i][j] === "X"){
+        cont+=1;
+      }
+      }
+    }console.log(cont);
+    console.log(nuevaalcuadrado);
+    if(cont===nuevaalcuadrado){
+      clearInterval(intervalId);
+    }
 
+  
   gridArray = nueva;
   cellestado();
-}
 
+}
+//DOM 
+//Funciones de velocidad, iniciar, detener, pausar y tamaño del grid;
 const speedinput = document.getElementById("speed");
 const startbutton = document.getElementById("start");
 const sizeinput = document.getElementById("size");
 const stopbutton = document.getElementById("stop");
+const pausebutton = document.getElementById("pause");
 
+//boton de detener
 stopbutton.onclick = () => {
   clearInterval(intervalId);
   gridArray = gridArray.map(row => row.map(() => "X"));
@@ -102,15 +122,34 @@ stopbutton.onclick = () => {
   });
 };
 
+// boton de inicio o continuar 
 startbutton.onclick = () => {
   clearInterval(intervalId);
   const velocidad = parseInt(speedinput.value);
-  intervalId = setInterval(updateGrid, velocidad);
-};
+  if (velocidad >= 100 && velocidad <= 1500){
+    intervalId = setInterval(updateGrid, velocidad);
 
-sizeinput.onchange = () => {
-  const tamaño = parseInt(sizeinput.value);
-  if (tamaño >= 20 && tamaño <= 150) {
-    Grid_vacio(tamaño);
+  }else {
+    window.alert("ingrese un valor valido")
   }
 };
+
+//valor del tamaño del grid
+sizeinput.onchange = () => {
+  const tamaño = parseInt(sizeinput.value);
+  if (tamaño >= 5 && tamaño <= 150) {
+    Grid_vacio(tamaño);
+  }
+  else {
+    window.alert("ingrese un valor valido")
+  }
+};
+
+//boton de pausar 
+pausebutton.onclick = () => {
+if(intervalId != null){
+clearInterval(intervalId);
+}else{
+updateGrid();
+}
+}
