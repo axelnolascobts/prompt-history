@@ -153,7 +153,7 @@ function gameOfLife(matriz) {
   }
 
   if (compareMatriz(matriz, nMatriz) === false) {
-    clearInterval(intervalo);
+    clearInterval(intervalo2);
   }
 
   return nMatriz;
@@ -163,7 +163,7 @@ function findVecinos(matriz, row, col) {
   let conteo = 0;
   for (i = row - 1; i <= row + 1; i++) {
     for (j = col - 1; j <= col + 1; j++) {
-      if (j !== i) {
+      if(i !==row || j !==col){
         conteo += contVecinos(matriz[i][j]);
       }
     }
@@ -247,14 +247,52 @@ const updateButton = document.getElementById("updateButton");
 updateButton.onclick = () => {
   configGame.setSize(inputFil.value);
   configGame.setSpeed(inputVel.value);
+  reiniciar();
+  gridVisual();
 };
 
 const grid = document.getElementById("grid-cont");
 
-let tam = configGame.getSize();
+function gridVisual(){
+  
+  grid.innerHTML = "";
+
+  let tam = parseInt(configGame.getSize());
+
+  grid.style.gridTemplateColumns = `repeat(${tam}, 30px)`;
+
+  for(let c = 0; c < tam*tam; c++){
+
+    const cell= document.createElement("div");
+    cell.classList.add("cell")
+    grid.appendChild(cell);
+  
+  };
+
+  for(let i=0; i < celdas.length; i++){
+
+    let col2=getComputedStyle(celdas[i]).backgroundColor;
+    
+    celdas[i].onclick = () => {
+  
+      let col=getComputedStyle(celdas[i]).backgroundColor;
+      //console.log(col);
+    
+      if(col === "rgb(139, 139, 139)"){
+        celdas[i].style.backgroundColor = "rgb(235, 192, 0)";
+      }else{
+        celdas[i].style.backgroundColor = "rgb(139, 139, 139)";
+      };
+    };
+    colores.push(col2);
+  };
+
+};
+
+/*let tam = configGame.getSize();
 let vel = configGame.getSpeed();
 
-grid.style.gridTemplateColumns = "repeat(20, 30px)";
+grid.style.gridTemplateColumns = `repeat(${tam}, 30px)`;
 
 
 for(let c = 0; c < tam*tam; c++){
@@ -263,24 +301,28 @@ for(let c = 0; c < tam*tam; c++){
   cell.classList.add("cell")
   grid.appendChild(cell);
 
-};
+};*/
 
 const celdas = document.getElementsByClassName("cell");
 const colores= [];
-
-//Esto es para cambiar el color de celdas (aun no funciona xd)
+/*
+//Esto es para cambiar el color de celdas (YA FUNCIONA ALV)
 for(let i=0; i < celdas.length; i++){
-  let col=getComputedStyle(celdas[i]).backgroundColor;
-  colores.push(col);
-  //console.log(col);
 
-  /*celdas[i].onclick = () => {
-    if(celdas[i].style.backgroundColor === "rgb(139, 139, 139)"){
+  let col2=getComputedStyle(celdas[i]).backgroundColor;
+  
+  celdas[i].onclick = () => {
+
+    let col=getComputedStyle(celdas[i]).backgroundColor;
+    //console.log(col);
+  
+    if(col === "rgb(139, 139, 139)"){
       celdas[i].style.backgroundColor = "rgb(235, 192, 0)";
     }else{
       celdas[i].style.backgroundColor = "rgb(139, 139, 139)";
     };
-  };*/
+  };
+  colores.push(col2);
 };
 
 console.log(colores);
@@ -294,11 +336,102 @@ while(h < colores.length){
   h+=tam;
 };
 
-console.log(matGrid);
+//console.log("matgrid: "+matGrid);
 
-createGrid(tam, matGrid);
+createGrid(tam, matGrid);*/
+
+const botIni = document.getElementById("iniciar");
+const botPausa = document.getElementById("pausar");
+const botReini = document.getElementById("reiniciar");
+
+let intervalo2 = null;
+
+function main2(){
+
+  if(intervalo2 !==null){
+    clearInterval(intervalo2);
+  };
+
+  let tam = parseInt(configGame.getSize());
+  let vel = parseInt(configGame.getSpeed());
+
+  const coloresAct= [];
+
+  for(let i=0; i < celdas.length; i++){
+
+    let colact=getComputedStyle(celdas[i]).backgroundColor;
+    coloresAct.push(colact);
+  };
+
+  let h = 0;
+  let matGrid = [];
+  while(h < coloresAct.length){
+    let aux = coloresAct.slice(h, h+tam);
+    matGrid.push(aux);
+
+    h+=tam;
+  };
+
+  //console.log(coloresAct);
+  
+  let matIter = createGrid(tam, matGrid);
+
+  intervalo2 = setInterval(() => {
+    matIter= gameOfLife(matIter);
+    actualizarGrid(matIter);
+  }, vel);
+};
+
+function actualizarGrid(matriz){
+
+  //console.log(matriz);
+
+  let arrAux=[];
+
+  for(let i=1; i < matriz.length-1; i++){
+    for(let j=1; j < matriz.length-1; j++){
+      if(matriz[i][j]==="X"){
+        arrAux.push("rgb(139, 139, 139)");
+      }else if(matriz[i][j]==="O"){
+        arrAux.push("rgb(235, 192, 0)");
+      };
+
+    };
+  };
+
+  for(let x=0; x< celdas.length; x++){
+    celdas[x].style.backgroundColor = arrAux[x];
+  };
+  
+};
+
+function pausar(){
+
+  if(intervalo2 !==null){
+    clearInterval(intervalo2);
+    intervalo2=null;
+  }else{
+    main2();
+  };
+  
+};
+
+function reiniciar(){
+
+  pausar();
+
+  for(let i=0; i < celdas.length; i++){
+
+    celdas[i].style.backgroundColor = "rgb(139, 139, 139)";
+  };
+};
+
+botIni.addEventListener("click", main2);
+botPausa.addEventListener("click", pausar);
+botReini.addEventListener("click", reiniciar);
 
 
+gridVisual();
 
 
 
