@@ -257,6 +257,7 @@ updateButton.onclick = () => {
   main2();
   configGame.setSize(inputFil.value);
   configGame.setSpeed(inputVel.value);
+  
   inputFil.value = configGame.getSize();
   inputVel.value = configGame.getSpeed();
   reiniciar();
@@ -375,7 +376,7 @@ function main2(){
     coloresAct.push(colact);
   };
 
-  let h = 0;
+  let h = 0;  
   let matGrid = [];
   while(h < coloresAct.length){
     let aux = coloresAct.slice(h, h+tam);

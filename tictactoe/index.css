@@ -1,0 +1,79 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: rgb(29, 29, 29);
+}
+
+#header{
+    /*display: flex;*/
+    justify-content: center;
+    background-color: #004eb4;
+    color: white;
+    padding: 10px;
+}
+
+#titulo{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+#counters{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.counter{
+    margin: 0 10px;
+}
+
+#boton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#boton button{
+    border: none;
+    background-color: rgb(12, 247, 255);
+    font-size: large;
+    padding: 5px;
+    border-radius: 25px;
+}
+
+#cont-game{
+    display: flex;
+    justify-content: center;
+}
+
+#grid-cont{
+    display: grid;
+    gap: 0;
+    width: max-content;
+    grid-template-columns: repeat(3, 150px);
+}
+
+.cell{
+    display: flex;
+    background-color: rgb(139, 139, 139);
+    width: 100%;
+    height: 150px;
+    border: 1px solid black;
+    font-size: 7rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell:hover{
+    background-color: rgb(102, 102, 102);
+    cursor: pointer;
+}
+
+#turnos{
+    display: flex;
+    justify-content: center;
+}
