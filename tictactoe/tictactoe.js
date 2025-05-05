@@ -1,90 +1,107 @@
 "use strict";
 
-const contWins = (function(){
-    let contX = 0;
-    let contO = 0;
+const winsCounter = (function(){
+    let countWinsX = 0;
+    let countWinsO = 0;
   
-    return{
-      incremetX(){
-        contX++;
+    return {
+      incrementWinX(){
+        countWinsX++;
       },
-      incremetO(){
-        contO++;
+      incrementWinO(){
+        countWinsO++;
       },
-      getX(){
-        return contX;
+      getWinsX(){
+        return countWinsX;
       },
-      getO(){
-        return contO;
+      getWinsO(){
+        return countWinsO;
       }
-    };
+    }
   })();
 
-const vicX = document.getElementById("victoriesX");
-const vicO = document.getElementById("victoriesO");
+const VICTORIESX = document.getElementById("victoriesX");
+const VICTORIESO = document.getElementById("victoriesO");
 
-vicX.textContent = `${contWins.getX()}`;
-vicO.textContent = `${contWins.getO()}`;
+VICTORIESX.textContent = `${winsCounter.getWinsX()}`;
+VICTORIESO.textContent = `${winsCounter.getWinsO()}`;
 
 let turn = 0;
-const cells = document.getElementsByClassName("cell");
-let colores=[];
+const CELLS = document.getElementsByClassName("cell");
+//let colores=[];
 
-const bot = document.getElementById("restartBot");
-let turno = document.getElementById("turnoA");
+const RESTARTBUTTON = document.getElementById("restartBot");
+let showTurnLabel = document.getElementById("turnoA");
 
-function turnoDe(){
-    if(turn%2 ===0){
-        turno.textContent="Turno de X";
-    }else if(turn%2 !==0){
-        turno.textContent="Turno de O"
-    };
-    
+function printTurnOf() {
+    if (turn % 2 === 0) {
+        showTurnLabel.textContent="Turno de X";
+    } else if (turn % 2 !== 0) {
+        showTurnLabel.textContent="Turno de O";
+    }
 }
-turnoDe();
 
-function setEvento(){
+printTurnOf();
+
+function setEventToClickCells() {
     
-    for(let i =0; i<cells.length; i++){
-        cells[i].onclick = () => {
-            //let col =  getComputedStyle(cells[i]).backgroundColor;
+    for (let i = 0; i < CELLS.length; i++) {
+        CELLS[i].onclick = () => {
+            //let col =  getComputedStyle(CELLS[i]).backgroundColor;
             
-            if(cells[i].textContent === "" && turn%2 ===0){ //Hay que validar si es X/O también
-                //cells[i].style.backgroundColor = "rgb(209, 5, 5)";
-                cells[i].textContent = "X";
+            if (CELLS[i].textContent === "" && turn % 2 === 0) { //Hay que validar si es X/O también
+                //CELLS[i].style.backgroundColor = "rgb(209, 5, 5)";
+                CELLS[i].textContent = "X";
                 turn++;
-                turnoDe();
+                printTurnOf();
                 winLose();
-            }else if(cells[i].textContent === "" && turn%2 !==0){
-                //cells[i].style.backgroundColor = "rgb(0, 46, 199)";
-                cells[i].textContent = "O";
+            } else if (CELLS[i].textContent === "" && turn % 2 !== 0) {
+                //CELLS[i].style.backgroundColor = "rgb(0, 46, 199)";
+                CELLS[i].textContent = "O";
                 turn++;
-                turnoDe();
+                printTurnOf();
                 winLose();
-            };
+            }
+        }
+    }
+}
 
-        };
+setEventToClickCells();
 
-    };
+function createMatriz() { //Esta función aún no se usa, seguir desglozando winLose()
     
-};
+    let auxiliarArray = [];
 
-setEvento();
+    for (let x = 0; x < CELLS.length; x++) {
 
-function winLose(){
-    let narr = [];
-    for(let x = 0; x < cells.length; x++){
-
-        narr.push(cells[x].textContent);
-    };
+        auxiliarArray.push(CELLS[x].textContent);
+    }
     
-    let h = 0;  
+    let cutter = 0;  
     let matriz= [];
-    while(h < narr.length){
-      let aux = narr.slice(h, h+3);
-      matriz.push(aux);
+
+    while (cutter < auxiliarArray.length) {
+      let auxiliarElement = auxiliarArray.slice(cutter, cutter+3);
+      matriz.push(auxiliarElement);
   
-      h+=3;
+      cutter+=3;
+    }
+}
+
+function winLose() {
+    let auxiliarArray = [];
+    for(let x = 0; x < CELLS.length; x++){
+
+        auxiliarArray.push(CELLS[x].textContent);
+    };
+    
+    let cutter = 0;  
+    let matriz= [];
+    while(cutter < auxiliarArray.length){
+      let auxiliarElement = auxiliarArray.slice(cutter, cutter+3);
+      matriz.push(auxiliarElement);
+  
+      cutter+=3;
     };
 
     console.log(turn);
@@ -98,19 +115,20 @@ function winLose(){
                 for(let ax=fil*3; ax<fil*3+3; ax++){
                     //console.log(ax);
 
-                    cells[ax].style.color = "rgb(40, 172, 0)";
+                    CELLS[ax].style.color = "rgb(40, 172, 0)";
+                    //CELLS[ax].style.border = "3px solid rgb(40, 172, 0)"
                 }
         
                 if(turn%2 ===0){
-                    contWins.incremetO();
-                    vicO.textContent = `${contWins.getO()}`;
-                    turno.textContent="GANA O !!!"
+                    winsCounter.incrementWinO();
+                    VICTORIESO.textContent = `${winsCounter.getWinsO()}`;
+                    showTurnLabel.textContent="GANA O !!!"
                 }else if(turn%2 !==0){
-                    contWins.incremetX();
-                    vicX.textContent = `${contWins.getX()}`;
-                    turno.textContent="GANA X !!!"
+                    winsCounter.incrementWinX();
+                    VICTORIESX.textContent = `${winsCounter.getWinsX()}`;
+                    showTurnLabel.textContent="GANA X !!!"
                 };
-                terminarJuego(narr);
+                terminarJuego(auxiliarArray);
                 return;
         };
         
@@ -122,20 +140,20 @@ function winLose(){
 
                 for(let ax=colu; ax<9; ax+=3){
                     //console.log(ax);
-                    cells[ax].style.color = "rgb(40, 172, 0)";
+                    CELLS[ax].style.color = "rgb(40, 172, 0)";
                 
                 }
                 
                 if(turn%2 ===0){
-                    contWins.incremetO();
-                    vicO.textContent = `${contWins.getO()}`;
-                    turno.textContent="GANA O !!!"
+                    winsCounter.incrementWinO();
+                    VICTORIESO.textContent = `${winsCounter.getWinsO()}`;
+                    showTurnLabel.textContent="GANA O !!!"
                 }else if(turn%2 !==0){
-                    contWins.incremetX();
-                    vicX.textContent = `${contWins.getX()}`;
-                    turno.textContent="GANA X !!!"
+                    winsCounter.incrementWinX();
+                    VICTORIESX.textContent = `${winsCounter.getWinsX()}`;
+                    showTurnLabel.textContent="GANA X !!!"
                 };
-                terminarJuego(narr);
+                terminarJuego(auxiliarArray);
                 return;
         };
         
@@ -147,32 +165,32 @@ function winLose(){
         matriz [1][1] === matriz[0][2] && matriz[0][2]!=="" ){
 
             if(matriz[0][0]=== matriz[1][1]){
-                cells[0].style.color = "rgb(40, 172, 0)";
-                cells[4].style.color = "rgb(40, 172, 0)";
-                cells[8].style.color = "rgb(40, 172, 0)";
+                CELLS[0].style.color = "rgb(40, 172, 0)";
+                CELLS[4].style.color = "rgb(40, 172, 0)";
+                CELLS[8].style.color = "rgb(40, 172, 0)";
             }else{
-                cells[2].style.color = "rgb(40, 172, 0)";
-                cells[4].style.color = "rgb(40, 172, 0)";
-                cells[6].style.color = "rgb(40, 172, 0)";
+                CELLS[2].style.color = "rgb(40, 172, 0)";
+                CELLS[4].style.color = "rgb(40, 172, 0)";
+                CELLS[6].style.color = "rgb(40, 172, 0)";
             };
 
             if(turn%2 ===0){
-                contWins.incremetO();
-                vicO.textContent = `${contWins.getO()}`;
-                turno.textContent="GANA O !!!"
+                winsCounter.incrementWinO();
+                VICTORIESO.textContent = `${winsCounter.getWinsO()}`;
+                showTurnLabel.textContent="GANA O !!!"
             }else if(turn%2 !==0){
-                contWins.incremetX();
-                vicX.textContent = `${contWins.getX()}`;
-                turno.textContent="GANA X !!!"
+                winsCounter.incrementWinX();
+                VICTORIESX.textContent = `${winsCounter.getWinsX()}`;
+                showTurnLabel.textContent="GANA X !!!"
             };
-            terminarJuego(narr);
+            terminarJuego(auxiliarArray);
             return;
         }
     
 
-    if(evaluarEmpate(narr)){
+    if(evaluarEmpate(auxiliarArray)){
             
-        turno.textContent="EMPATE !!!";
+        showTurnLabel.textContent="EMPATE !!!";
     };
     
     
@@ -188,21 +206,21 @@ function evaluarEmpate(array){
 };
 
 function terminarJuego(array){
-    for(let i=0; i<cells.length; i++){
+    for(let i=0; i<CELLS.length; i++){
         if(array[i] === ""){
-            cells[i].textContent = " ";
+            CELLS[i].textContent = " ";
         }
 
     };
 
 }
 
-bot.onclick = () => {
-    for(let i=0; i<cells.length; i++){
-        cells[i].textContent = "";
-        cells[i].style.color = "black";
+RESTARTBUTTON.onclick = () => {
+    for(let i=0; i<CELLS.length; i++){
+        CELLS[i].textContent = "";
+        CELLS[i].style.color = "black";
     };
     turn = 0;
-    turnoDe();
-    setEvento();
+    printTurnOf();
+    setEventToClickCells();
 };
