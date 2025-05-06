@@ -1,0 +1,16 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: rgb(0, 0, 0);
+}
+
+.center-pokedex{
+    display: flex;
+    justify-content: center;
+}
+
+.pokedex-container{
+    width: 500px;
+    height: 1000px;
+    background-color: rgb(196, 0, 0);
+}
