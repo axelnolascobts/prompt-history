@@ -1,4 +1,4 @@
-.container {
+ .container {
     display: grid; 
     grid-template-columns: repeat(3, 150px);
     justify-content: center;
