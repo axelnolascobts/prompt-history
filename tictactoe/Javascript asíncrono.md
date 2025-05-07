@@ -51,7 +51,7 @@ el método Promise.all() toma una serie de promesas y devuelve una sola.
 devuelve then() cuando todas las promesas se cumplieron.
 devuelve catch() cuando alguna promeza se rechazó.
 
-aveces solo es necesario que se cumpla una sola promeza de una cadena, aunque no importa cual, para esos casos se utiliza el método Promise.any() aquí se cumple en cuanto se cumple una de las promesas, a menos que todas sean rechazadas.
+aveces solo es necesario que se cumpla una sola promesa de una cadena, aunque no importa cual, para esos casos se utiliza el método Promise.any() aquí se cumple en cuanto se cumple una de las promesas, a menos que todas sean rechazadas.
 
 ASYNC And AWAIT
 

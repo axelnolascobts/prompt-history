@@ -317,6 +317,8 @@ for(let c = 0; c < tam*tam; c++){
 };*/
 
 const celdas = document.getElementsByClassName("cell");
+console.log(celdas);
+
 const colores= [];
 /*
 //Esto es para cambiar el color de celdas (YA FUNCIONA ALV)
