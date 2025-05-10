@@ -9,7 +9,7 @@
 <body>
     <section id="center-pokedex" class="center-pokedex">
         <section id="pokedex-container" class="pokedex-container">
-            <section id="screen-container" class="screen-container">
+            <!--<section id="screen-container" class="screen-container">
                 <article id="screen" class="screen">
                     <p id="pokemon-name" class="pokemon-text"></p>
                     <img alt="pokemonImage" id="pokemon-image" class="pokemon-image">
@@ -17,15 +17,24 @@
                     <p id="pokemon-types" class="pokemon-text"></p>
                 </article>
     
-            </section>
+            </section>-->
 
             <section id="form-container" class="form-container">
-                <section id="button-container" class="button-container">
-                    <button id="search-button" class="search-button"></button>
-                </section>
                 <form id="pokemon-form" class="pokemon-form">
                     <input type="text" name="pokemon" id="pokemon" class="pokemon">
                 </form>
+                <section id="button-container" class="button-container">
+                    <button id="search-button" class="search-button"></button>
+                </section>
+                <form id="pokedex-settings" class="pokedex-settings">
+                    <select name="Type" id="type-selector" required>
+                        <option value="" disabled selected>Filter with type</option>
+                    </select>
+                </form>
+                <section id="filter-button-container" class="button-container">
+                    <button id="filter-button" class="search-button"></button>
+                </section>
+                
             </section>
  
         </section>
