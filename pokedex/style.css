@@ -119,13 +119,11 @@ h2{
 }
 
 .bordes{
-    width: 272px;
-    height: 230px;
+    width: 90%;
+    height: 90%;
     background-color: rgb(10, 2, 2);
-    position: absolute;
-    top: 10%;
-    left: 15%;
     border-radius: 20px;
+    justify-self: center;
 }
 
 .bordes_1 {
@@ -137,7 +135,9 @@ h2{
     /* left: 10%; */
     border-radius: 20px;
 }
-
+.a {
+    justify-content: center;
+}
 a{
    
     align-self: center;
@@ -153,10 +153,16 @@ a{
     padding: 5px;
     max-width: 100%;
     overflow-y: auto;
+    margin: auto;
   }
   
+  #pokemonGrid.solo {
+    max-width: 100%;
+    grid-template-columns: 1fr;
+  }
+
   .card {
-    background-color: rgb(102, 0, 0);
+    background-color: rgb(128, 0, 0);
     border-radius: 10px;
     text-align: center;
     font-size: 12px;
@@ -166,4 +172,16 @@ a{
   .card img {
     width: 60px;
     height: 60px;
+  }
+
+  .details-sprites img {
+    margin: 5px;
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+}
+
+.dark-mode {
+    background-color: rgb(75, 17, 17);
+    color: white;
   }

@@ -10,18 +10,30 @@
     <div class="pokedex_carcasa">
 
         <div class="a">
-        <input class="input_field" type="text" id="name"> </input>
-        <button class="search" id="search"></button>
-            <!-- parte 2 lista  --> 
-    <section class="list_container">
-                    <div id="pokemonGrid" class="pokemonGrid"></div>
-</div>
-                </div>
-            </div>
+            <input class="input_field" type="text" id="name">
+            <button class="search" id="search"></button>
+            <button id="darkModeButton">Modo Oscuro</button>
+            <select id="typeFilter">
+            <option value="">-- Todos los tipos --</option>
+            </select>
+            <select id="pokemonCountSelect">
+                <option value="20">20 Pokémon</option>
+                <option value="50">50 Pokémon</option>
+                <option value="100">100 Pokémon</option>
+            </select>
+            
+              
+                    <!-- Parte 2: Lista -->
+            <section class="list_container">
+                <div id="pokemonGrid" class="pokemonGrid"></div>
+            </section>
+            
         </div>
-    </section>
     </div>
-    </div>
-<script src="script.js"></script>
+        </div>
+
+
+
+    <script src="script.js"></script>
 </body>
 </html>
