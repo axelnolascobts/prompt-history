@@ -1,5 +1,4 @@
 const XHR = new XMLHttpRequest();
-
 const POKEDEXINPUT = document.getElementById("pokemon");
 const SEARCHBUTTON = document.getElementById("search-button");
 const POKEMONNAME = document.getElementById("pokemon-name");
@@ -8,6 +7,37 @@ const POKEMONTYPES = document.getElementById("pokemon-types");
 const POKEMONID = document.getElementById("pokemon-id");
 const POKEMONUL = document.getElementById("pokemon-list");
 const TYPESELECTOR = document.getElementById("type-selector");
+const PAGINATIONNUMBER = document.getElementById("pagination-selector");
+const FILTERBUTTON = document.getElementById("filter-button");
+const TOGGLE = document.getElementById('dark-mode-toggle');
+const POKEDEXCONTAINER = document.getElementById("pokedex-container");
+const POKEDEXSCREEN = document.getElementById("list-container");
+const POKEMONSEARCH = document.getElementById("pokemon");
+
+TOGGLE.onchange = () => {
+
+    if (TOGGLE.checked) {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
+        POKEDEXCONTAINER.classList.remove('light-mode');
+        POKEDEXCONTAINER.classList.add('dark-mode');
+        POKEDEXSCREEN.classList.remove('light-mode');
+        POKEDEXSCREEN.classList.add('dark-mode');
+        POKEMONSEARCH.classList.remove('light-mode');
+        POKEMONSEARCH.classList.add('dark-mode');
+        
+    } else {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        POKEDEXCONTAINER.classList.remove('dark-mode');
+        POKEDEXCONTAINER.classList.add('light-mode');
+        POKEDEXSCREEN.classList.remove('dark-mode');
+        POKEDEXSCREEN.classList.add('light-mode');
+        POKEMONSEARCH.classList.remove('dark-mode');
+        POKEMONSEARCH.classList.add('light-mode');
+    }
+
+}
 
 
 // SEARCHBUTTON.onclick = () => {
@@ -80,9 +110,12 @@ SEARCHBUTTON.onclick = () => {
     let inputValue = POKEDEXINPUT.value.toLocaleLowerCase();
     let auxiliarUrl = `https://pokeapi.co/api/v2/pokemon/${inputValue}`;
 
-    window.location.href=`details.html?searchValue=${inputValue}`;
+    /*window.location.href=`details.html?searchValue=${inputValue}`;*/
 
+    //createPokemonList(auxiliarUrl, NAMES, SPRITE, TYPES);
+    POKEMONUL.innerHTML = "";
     getPokemon(auxiliarUrl);
+    //toLoadPage(auxiliarUrl);
 
 }
 
@@ -165,6 +198,8 @@ async function toLoadPage(url) {
     try {
 
         const RESPONSE = await fetch(url);
+        //console.log(RESPONSE);
+        
         
         if (!RESPONSE.ok) {
 
@@ -208,11 +243,11 @@ async function toLoadPage(url) {
             POKEMONLIST[i].onclick = () => {
                     
                 let pokemonName = POKEMONNAMELIST[i].textContent;
-                let auxiliarUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
+                //let auxiliarUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
 
                 window.location.href=`details.html?searchValue=${pokemonName}`;
 
-                getPokemon(auxiliarUrl);
+                //getPokemon(auxiliarUrl);
             
             }
                 
@@ -234,6 +269,8 @@ async function getPokemon(url) {
 
     try {
         const RESPONSE = await fetch(url);
+        console.log(RESPONSE);
+        
 
         if (!RESPONSE.ok) {
 
@@ -244,25 +281,32 @@ async function getPokemon(url) {
         const DATA = await RESPONSE.json();
 
         //console.log(DATA.name);
-        POKEMONNAME.textContent = DATA.name;
+        //POKEMONNAME.textContent = DATA.name;
             
         //console.log(DATA.sprites.front_default);
-        POKEMONIMAGE.src = DATA.sprites.front_default;
+        //POKEMONIMAGE.src = DATA.sprites.front_default;
 
         //console.log(data.id);
-        POKEMONID.textContent = DATA.id;
+        //POKEMONID.textContent = DATA.id;
 
         //console.log(data.types);
-        let typesArray= [];
+        //let typesArray= [];
     
-        for (let types of DATA.types) {
+        //for (let types of DATA.types) {
     
             //console.log(TYPE.type.name);
-            typesArray.push(types.type.name);
+            //typesArray.push(types.type.name);
                 
-        }
+        //}
 
-        POKEMONTYPES.textContent = typesArray;
+        //POKEMONTYPES.textContent = typesArray;
+
+        let limit = 1;
+        let offset = DATA.id-1;
+        let consultPage = `https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`;
+        POKEMONUL.innerHTML = "";
+        POKEMONUL.style.gridTemplateColumns = "repeat(1, 1fr)";
+        toLoadPage(consultPage);
         
 
     } catch (error) {
@@ -399,13 +443,15 @@ async function consultTypes() {
         }
     
         const DATA = await RESPONSE.json();
+        let count = 1;
 
         for (let type of DATA.results) {
 
             const TYPEOPTION = document.createElement("option");
             TYPEOPTION.classList.add("pokemon-type-option");
             TYPEOPTION.textContent = type.name;
-            TYPEOPTION.value = type.name;
+            TYPEOPTION.value = count;           
+            count++;
 
             TYPESELECTOR.appendChild(TYPEOPTION);
             
@@ -417,13 +463,86 @@ async function consultTypes() {
         
     }
     
+}
 
-
+PAGINATIONNUMBER.onchange = () => {
+    let limit = PAGINATIONNUMBER.value;
+    let offset = 0;
+    let consultPage = `https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`;
+    POKEMONUL.innerHTML = "";
+    POKEMONUL.style.gridTemplateColumns = "repeat(5, 1fr)";
+    toLoadPage(consultPage);
     
 }
 
+FILTERBUTTON.onclick = () => {
+    let limit = parseInt(PAGINATIONNUMBER.value);
+    let filterValue = parseInt(TYPESELECTOR.value);
+    let consultPage = `https://pokeapi.co/api/v2/type/${filterValue}/`;
 
+    getPokemonByType(consultPage, limit);
+}
 
+async function getPokemonByType(url, limit) {
+    try {
+        const RESPONSE = await fetch(url);
+
+        if (!RESPONSE.ok) {
+            throw new Error("POKEMON NOT FOUND");
+        }
+
+        const DATA = await RESPONSE.json();
+
+        const firstPokemons = DATA.pokemon.slice(0, limit);
+
+        console.log(firstPokemons);
+
+        renderPokemonList(firstPokemons);
+
+    } catch (error) {
+        POKEMONNAME.textContent = "POKEMON NOT FOUND";
+        POKEMONIMAGE.src = "";
+        POKEMONTYPES.textContent = "";
+        POKEMONID.textContent = "";
+    }
+}
+
+async function renderPokemonList(pokemonList) {
+    POKEMONUL.innerHTML = "";
+    POKEMONUL.style.gridTemplateColumns = "repeat(5, 1fr)";
+
+    for (let i = 0; i < pokemonList.length; i++) {
+        let url = pokemonList[i].pokemon.url;
+
+        const LI = document.createElement("div");
+        LI.classList.add("pokemon-list-item");
+        POKEMONUL.appendChild(LI);
+
+        const NAMES = document.createElement("p");
+        NAMES.classList.add("pokemon-names");
+        LI.appendChild(NAMES);
+
+        const SPRITE = document.createElement("img");
+        SPRITE.classList.add("pokemon-sprite");
+        LI.appendChild(SPRITE);
+
+        const TYPES = document.createElement("p");
+        TYPES.classList.add("pokemon-types");
+        LI.appendChild(TYPES);
+
+        await createPokemonList(url, NAMES, SPRITE, TYPES);
+    }
+
+    const POKEMONLIST = document.getElementsByClassName("pokemon-list-item");
+    const POKEMONNAMELIST = document.getElementsByClassName("pokemon-names");
+
+    for (let i = 0; i < pokemonList.length; i++) {
+        POKEMONLIST[i].onclick = () => {
+            let pokemonName = POKEMONNAMELIST[i].textContent;
+            window.location.href = `details.html?searchValue=${pokemonName}`;
+        }
+    }
+}
 
 
 

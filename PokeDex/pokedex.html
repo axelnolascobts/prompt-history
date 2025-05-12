@@ -30,12 +30,22 @@
                     <select name="Type" id="type-selector" required>
                         <option value="" disabled selected>Filter with type</option>
                     </select>
+                    <select name="pagination" id="pagination-selector" required>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
                 </form>
                 <section id="filter-button-container" class="button-container">
                     <button id="filter-button" class="search-button"></button>
                 </section>
-                
             </section>
+            <label class="switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider"></span>
+            </label>
  
         </section>
         <section id="list-container" class="list-container">
