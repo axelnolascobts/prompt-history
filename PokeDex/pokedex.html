@@ -29,6 +29,7 @@
                 <form id="pokedex-settings" class="pokedex-settings">
                     <select name="Type" id="type-selector" required>
                         <option value="" disabled selected>Filter with type</option>
+                        <option value="">None</option>
                     </select>
                     <select name="pagination" id="pagination-selector" required>
                         <option value="5">5</option>
@@ -46,6 +47,15 @@
                 <input type="checkbox" id="dark-mode-toggle">
                 <span class="slider"></span>
             </label>
+            <section class="pagination-container">
+                <button id="button-previous" class="pagination-button"> <- </button>
+                <article id="pages">
+
+                </article>
+
+                <button id="button-next" class="pagination-button"> -> </button>
+
+            </section>
  
         </section>
         <section id="list-container" class="list-container">

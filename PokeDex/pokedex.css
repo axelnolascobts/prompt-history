@@ -106,6 +106,16 @@ input:checked + .slider:before{
     transform: translateX(26px);
 }
 
+.pagination-container{
+    display: flex;
+    margin-top: 25px;
+}
+
+.pagination-button{
+    width: 30px;
+    height: 30px;
+}
+
 .screen-container{
     display: flex;
     justify-content: center;
