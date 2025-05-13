@@ -1,191 +1,210 @@
 const XHR = new XMLHttpRequest();
-
 let namepoke = document.getElementById("name");
 const BUTTON = document.getElementById("search");
-const POKETYPES = document.getElementById("types");
 const POKEIMG = document.getElementById("pokemonimage");
 const POKENAME = document.getElementById("pokename");
-const POKENAMELIST = document.getElementById("pokenamelist");
 const GRID = document.getElementById("pokemonGrid");
 const SELECT_COUNT = document.getElementById("pokemonCountSelect");
+const SELECT_TYPE = document.getElementById("typeFilter");
+const NEXT_BTN = document.getElementById("nextBtn");
+const PREV_BTN = document.getElementById("prevBtn");
 
-/**
- * Función para mostrar los datos de un Pokémon
- */
-async function Mostrar_un_Pokemon(input) {
+const PAGE_INDICATOR = document.getElementById("pagination");
+
+let pagina_actual = 1;
+let listaPokemonTipo = []; // Lista cacheada de Pokémon por tipo
+let totalPokemon = 0; // Total de Pokémon disponibles
+
+// Lista de Pokémon con paginación y tipo opcional
+async function Lista_de_pokemon(cantidad = 20, tipo = "", pagina = 1) {
     try {
-        const RESPONSE = await fetch("https://pokeapi.co/api/v2/pokemon/" + input.toLowerCase());
-        
-        if (!RESPONSE.ok) {
-            throw new Error("No se encontró el Pokémon o error de conexión");
+        GRID.innerHTML = ""; // Limpiar el grid
+        const offset = (pagina - 1) * cantidad;
+
+        if (tipo && tipo !== "") {
+            // Si es la primera vez o se cambió de tipo, recarga la lista
+            if (listaPokemonTipo.length === 0 || tipo !== listaPokemonTipo.tipoActual) {
+                const res = await fetch(`https://pokeapi.co/api/v2/type/${tipo}`);
+                if (!res.ok) throw new Error("No se pudo obtener el tipo");
+                const data = await res.json();
+                listaPokemonTipo = data.pokemon.map(p => p.pokemon);
+                totalPokemon = listaPokemonTipo.length; // Actualiza el total de Pokémon por tipo
+                listaPokemonTipo.tipoActual = tipo; // Etiqueta para saber si cambió
+            }
+
+            const subset = listaPokemonTipo.slice(offset, offset + cantidad);
+            const requests = subset.map(p => fetch(p.url));
+            const responses = await Promise.all(requests);
+            const pokemons = await Promise.all(responses.map(r => r.json()));
+            pokemons.forEach(crearTarjetaPokemon);
+        } else {
+            // Reset cache si no hay tipo
+            listaPokemonTipo = [];
+            totalPokemon = 0;
+
+            const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${cantidad}&offset=${offset}`);
+            if (!res.ok) throw new Error("No se pudieron obtener Pokémon");
+            const data = await res.json();
+            totalPokemon = data.count; // Total de Pokémon disponible sin filtro
+            const requests = data.results.map(poke => fetch(poke.url));
+            const responses = await Promise.all(requests);
+            const pokemons = await Promise.all(responses.map(r => r.json()));
+            pokemons.forEach(crearTarjetaPokemon);
         }
 
-        const DATA = await RESPONSE.json();
-
-        // Obtener los tipos
-        let tipos = DATA.types.map(t => t.type.name).join(", ");
-
-        // Crear contenedor de Pokémon
-        const CARD = document.createElement("a");
-        CARD.className = "card";
-        CARD.href = `detalles.html?name=${DATA.name}`;
-
-        CARD.innerHTML = `
-            <img src="${DATA.sprites.front_default}" alt="${DATA.name}">
-            <h3>${DATA.name}</h3>
-            <p>Tipo: ${tipos}</p>
-        `;
-
-        GRID.appendChild(CARD);
-
-    } catch (error) {
-        const ERROR_MSG = document.createElement("div");
-        ERROR_MSG.className = "card";
-        ERROR_MSG.textContent = "No se encontró el Pokémon";
-        GRID.appendChild(ERROR_MSG);
-    }
-}
-
-/**
- * Función para cargar una lista de Pokémon según el número seleccionado
- */
-async function Lista_de_pokemon(cantidad = 20) {
-    let url = `https://pokeapi.co/api/v2/pokemon?limit=${cantidad}&offset=0`;
-
-    try {
-        const RESPONSE = await fetch(url);
-
-        if (!RESPONSE.ok) {
-            throw new Error("No se encontraron Pokémon o error de conexión");
-        }
-
-        const DATA = await RESPONSE.json();
-        const requests = DATA.results.map(poke => fetch(poke.url));
-        const responses = await Promise.all(requests);
-        const pokemons = await Promise.all(responses.map(res => res.json()));
-
-        // Obtener el contenedor donde se mostrarán los Pokémon
-        const container = document.getElementById("pokemonGrid");
-        container.innerHTML = ""; // Limpiar el grid
-
-        // Insertar los Pokémon en el contenedor
-        pokemons.forEach(poke => {
-            const link = document.createElement("a");
-            link.href = `detalles.html?name=${poke.name}`;
-            link.className = "card";
-
-            let tipos = "";
-            poke.types.forEach((type, index) => {
-                tipos += type.type.name;
-                if (index < poke.types.length - 1) tipos += ", ";
-            });
-
-            link.innerHTML = `
-                <img src="${poke.sprites.front_default}" alt="${poke.name} image">
-                <p>${poke.name}</p>
-                <p>Tipos: ${tipos}</p>
-            `;
-
-            container.appendChild(link);
-        });
-
-        // Ajustar el grid para siempre tener 4 columnas
         adjustGridLayout();
-
     } catch (error) {
         console.error("Error cargando Pokémon:", error);
     }
 }
 
-/**
- * Función para ajustar el grid a 4 columnas siempre
- */
+// Crea la tarjeta Pokémon con loader de sprite
+function crearTarjetaPokemon(poke) {
+    const link = document.createElement("a");
+    link.href = `detalles.html?name=${poke.name}`;
+    link.className = "card";
+
+    const tipos = poke.types.map(t => t.type.name).join(", ");
+
+    link.innerHTML = `
+        <div class="img-container">
+            <span class="loader">Cargando...</span>
+            <img src="${poke.sprites.front_default}" alt="${poke.name} image" class="poke-img hidden">
+        </div>
+        <p>${poke.name}</p>
+        <p>Tipos: ${tipos}</p>
+    `;
+
+    const img = link.querySelector("img");
+    const loader = link.querySelector(".loader");
+
+    img.onload = () => {
+        loader.classList.add("hidden");
+        img.classList.remove("hidden");
+    };
+
+    img.onerror = () => {
+        loader.textContent = "Error al cargar imagen";
+    };
+
+    GRID.appendChild(link);
+}
+
+// Ajusta el grid a 4 columnas siempre
 function adjustGridLayout() {
-    // Establecer siempre 4 columnas
     GRID.style.gridTemplateColumns = "repeat(4, 1fr)";
 }
 
-/**
- * Función para cargar los tipos disponibles
- */
+// Cargar los tipos disponibles
 async function Cargar_tipos() {
-    const SELECT = document.getElementById("typeFilter");
-
     try {
-        const RESPONSE = await fetch("https://pokeapi.co/api/v2/type");
-        const DATA = await RESPONSE.json();
-
-        DATA.results.forEach(tipo => {
-            const OPTION = document.createElement("option");
-            OPTION.value = tipo.name;
-            OPTION.textContent = tipo.name.charAt(0).toUpperCase() + tipo.name.slice(1);
-            SELECT.appendChild(OPTION);
+        const res = await fetch("https://pokeapi.co/api/v2/type");
+        const data = await res.json();
+        
+        // Verifica si tienes datos
+        console.log(data);
+        
+        data.results.forEach(tipo => {
+            const option = document.createElement("option");
+            option.value = tipo.name;
+            option.textContent = tipo.name.charAt(0).toUpperCase() + tipo.name.slice(1);
+            SELECT_TYPE.appendChild(option);
         });
     } catch (error) {
         console.error("Error cargando tipos de Pokémon:", error);
     }
 }
 
-/**
- * Función para activar/desactivar el modo oscuro
- */
+
+// Botón para alternar modo oscuro
 function modes() {
     const carcasa = document.querySelector(".pokedex_carcasa");
     carcasa.classList.toggle("dark-mode");
   
+ const dark_body = document.querySelector("body");
+    dark_body.classList.toggle("dark-mode");
+
     const gridDark = document.querySelector(".pokemonGrid");
-    if (gridDark) {
-        gridDark.classList.toggle("dark-mode");
-    }
+    if (gridDark) gridDark.classList.toggle("dark-mode");
 
     const cards = document.querySelectorAll(".card");
-    cards.forEach(card => {
-        card.classList.toggle("dark-mode");
-    });
+    cards.forEach(card => card.classList.toggle("dark-mode"));
 }
 
-/**
- * Asignar el evento de cambio al filtro de tipo
- */
-document.getElementById("typeFilter").addEventListener("change", (event) => {
-    const tipoSeleccionado = event.target.value;  // Obtener el tipo seleccionado
-    Lista_de_pokemon(20, tipoSeleccionado);  // Volver a cargar los Pokémon con el tipo seleccionado
-});
-
-/**
- * Asignar el evento de cambio al select para elegir la cantidad de Pokémon
- */
-SELECT_COUNT.addEventListener("change", (event) => {
-    const cantidadSeleccionada = event.target.value; // Obtener la cantidad seleccionada
-    Lista_de_pokemon(cantidadSeleccionada); // Volver a cargar los Pokémon con la cantidad seleccionada
-});
-
-/**
- * Asignar el evento de click al botón para mostrar el Pokémon
- */
+// Buscar Pokémon individual
 BUTTON.onclick = () => {
-    const input = namepoke.value;  // Obtener el valor del input y eliminar espacios
-    GRID.innerHTML = ""; // Limpiar el grid
-    GRID.style.gridTemplateColumns = "repeat(1, 1fr)"; // Ajustar el diseño de la cuadrícula
-    GRID.classList.add("solo"); // Activar estilo más pequeño
-    
-    // Solo hacer la búsqueda si se ingresó un nombre
+    const input = namepoke.value.trim();
+    GRID.innerHTML = "";
+    GRID.style.gridTemplateColumns = "repeat(1, 1fr)";
+    GRID.classList.add("solo");
+
     if (input) {
         Mostrar_un_Pokemon(input);
     } else {
-        // Si no se ingresó nombre, cargar los Pokémon según la selección
         const cantidad = SELECT_COUNT.value;
-        Lista_de_pokemon(cantidad);
+        const tipo = SELECT_TYPE.value;
+        Lista_de_pokemon(cantidad, tipo, pagina_actual);
     }
 };
 
-// Cargar los primeros 20 Pokémon y tipos al cargar la página
+// Mostrar un solo Pokémon
+async function Mostrar_un_Pokemon(nombre) {
+    try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre.toLowerCase()}`);
+        if (!res.ok) throw new Error("No se encontró el Pokémon");
+        const poke = await res.json();
+        crearTarjetaPokemon(poke);
+    } catch (error) {
+        GRID.innerHTML = `<p style="grid-column: 1 / -1; color: red;">No se encontró el Pokémon "${nombre}"</p>`;
+        console.error("Error buscando Pokémon:", error);
+    }
+}
+
+// Cambio de tipo
+SELECT_TYPE.addEventListener("change", () => {
+    pagina_actual = 1;
+    Lista_de_pokemon(SELECT_COUNT.value, SELECT_TYPE.value, pagina_actual);
+});
+
+// Cambio de cantidad
+SELECT_COUNT.addEventListener("change", () => {
+    pagina_actual = 1;
+    Lista_de_pokemon(SELECT_COUNT.value, SELECT_TYPE.value, pagina_actual);
+});
+
+// Botón de modo oscuro
+document.getElementById("darkModeButton").addEventListener("click", modes);
+
+NEXT_BTN.addEventListener("click", () => {
+    pagina_actual++;
+    actualizarLista();
+});
+
+PREV_BTN.addEventListener("click", () => {
+    if (pagina_actual > 1) {
+        pagina_actual--;
+        actualizarLista();
+    }
+});
+
+// Función para actualizar la lista según la página actual y filtros
+async function actualizarLista() {
+    const cantidad = Number(SELECT_COUNT.value);
+    const tipo = SELECT_TYPE.value;
+
+    await Lista_de_pokemon(cantidad, tipo, pagina_actual);
+
+    PAGE_INDICATOR.textContent = `Página ${pagina_actual}`;
+    PREV_BTN.disabled = pagina_actual === 1;
+    NEXT_BTN.disabled = (pagina_actual * cantidad) >= totalPokemon;
+}
+
+
+
+// Inicializar todo
 window.onload = () => {
-    Lista_de_pokemon();  // Cargar los primeros 20 Pokémon
-    Cargar_tipos();      // Cargar los tipos disponibles para filtrar
-    
-    const darkModeButton = document.getElementById("darkModeButton");
-    darkModeButton.addEventListener("click", modes);  // Botón para activar/desactivar modo oscuro
+    actualizarLista(); // Para que se actualice el número de página también
+    Cargar_tipos();
 };
 
 

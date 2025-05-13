@@ -8,32 +8,31 @@
 </head>
 <body>
     <div class="pokedex_carcasa">
-
         <div class="a">
             <input class="input_field" type="text" id="name">
             <button class="search" id="search"></button>
             <button id="darkModeButton">Modo Oscuro</button>
             <select id="typeFilter">
-            <option value="">-- Todos los tipos --</option>
+                <option value="">-- Todos los tipos --</option>
             </select>
             <select id="pokemonCountSelect">
+                <option value="5">5 Pokémon</option>
+                <option value="10">10 Pokémon</option>
                 <option value="20">20 Pokémon</option>
                 <option value="50">50 Pokémon</option>
                 <option value="100">100 Pokémon</option>
             </select>
-            
-              
-                    <!-- Parte 2: Lista -->
+            <div id="paginationContainer" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+                <button id="prevBtn">Anterior</button>
+                <span id="pagination">1</span>
+                <button id="nextBtn">Siguiente</button>
+            </div>
             <section class="list_container">
+                <div id="loaderMessage" class="loader-message hidden">Cargando...</div>
                 <div id="pokemonGrid" class="pokemonGrid"></div>
             </section>
-            
         </div>
     </div>
-        </div>
-
-
-
     <script src="script.js"></script>
 </body>
 </html>
