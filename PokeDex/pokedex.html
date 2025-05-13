@@ -47,6 +47,7 @@
                 <input type="checkbox" id="dark-mode-toggle">
                 <span class="slider"></span>
             </label>
+
             <section class="pagination-container">
                 <button id="button-previous" class="pagination-button"> <- </button>
                 <article id="pages">
@@ -56,12 +57,17 @@
                 <button id="button-next" class="pagination-button"> -> </button>
 
             </section>
+            <label>
+                <p id="current-page">Current page: 1</p>
+            </label>
  
         </section>
         <section id="list-container" class="list-container">
             <section id="list-screen" class="list-screen">
                 <article id="right-screen" class="right-screen">
+                    <p id="loading-message" class="loading-message">Cargando...</p>
                     <div id="pokemon-list" class="pokemon-list">
+                        
 
 
                     </div>

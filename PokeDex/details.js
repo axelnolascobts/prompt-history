@@ -7,6 +7,7 @@ const POKEMONWEIGHT = document.getElementById("pokemon-weight");
 const POKEMONTYPES = document.getElementById("pokemon-types");
 const BACKPAGE = document.getElementById("back-button");
 const SPRITEGRID = document.getElementById("sprites-grid");
+const LOADINGMESSAGE = document.getElementById("loading-message");
 
 BACKPAGE.onclick = () => {
     window.location.href="pokedex.html";
@@ -71,6 +72,8 @@ window.onload = () => {
 
 async function findDetails(url) {
 
+    LOADINGMESSAGE.style.display = "flex";
+
     try {
         const RESPONSE = await fetch(url);
 
@@ -115,6 +118,9 @@ async function findDetails(url) {
 
         POKEMONTITLE.textContent = "POKEMON NOT FOUND";
 
+    } finally {
+
+        LOADINGMESSAGE.style.display = "none";
     }
     
 }

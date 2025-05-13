@@ -1,4 +1,4 @@
-const XHR = new XMLHttpRequest();
+//const XHR = new XMLHttpRequest();
 const POKEDEXINPUT = document.getElementById("pokemon");
 const SEARCHBUTTON = document.getElementById("search-button");
 const POKEMONNAME = document.getElementById("pokemon-name");
@@ -15,6 +15,8 @@ const POKEDEXSCREEN = document.getElementById("list-container");
 const POKEMONSEARCH = document.getElementById("pokemon");
 const BUTTONPREVIOUS = document.getElementById("button-previous");
 const BUTTONNEXT = document.getElementById("button-next");
+const LOADINGMESSAGE = document.getElementById("loading-message");
+const SHOWCURRENTPAGE = document.getElementById("current-page");
 
 let limit = parseInt(PAGINATIONNUMBER.value);
 let offset = 0;
@@ -202,12 +204,14 @@ window.onload = () => {
 
 async function toLoadPage(url) {
 
+    LOADINGMESSAGE.style.display = "flex";
+
     try {
 
         const RESPONSE = await fetch(url);
         
         
-        if (!RESPONSE.ok && !SECONDRESPONSE.ok) {
+        if (!RESPONSE.ok) {
 
             throw new Error("POKEMON NOT FOUND");
 
@@ -268,11 +272,16 @@ async function toLoadPage(url) {
         POKEMONTYPES.textContent = "";
         POKEMONID.textContent = "";
 
+    } finally {
+
+        LOADINGMESSAGE.style.display = "none";
     }
     
 }
 
 async function getPokemon(url) {
+
+    LOADINGMESSAGE.style.display = "flex";
 
     try {
         const RESPONSE = await fetch(url);
@@ -323,6 +332,9 @@ async function getPokemon(url) {
         POKEMONTYPES.textContent = "";
         POKEMONID.textContent = "";
         
+    } finally {
+
+        LOADINGMESSAGE.style.display = "none";
     }
     
     /*fetch(url)
@@ -369,6 +381,8 @@ async function getPokemon(url) {
 
 async function createPokemonList(url, NAMES, SPRITE, TYPES) {
 
+    LOADINGMESSAGE.style.display = "flex";
+
     try {
 
         const RESPONSE = await fetch(url);
@@ -400,6 +414,9 @@ async function createPokemonList(url, NAMES, SPRITE, TYPES) {
         POKEMONTYPES.textContent = "";
         POKEMONID.textContent = "";
 
+    } finally {
+        
+        LOADINGMESSAGE.style.display = "none";
     }
     /*fetch(url)
     .then ((response) => {
@@ -476,12 +493,19 @@ async function consultTypes() {
 }
 
 PAGINATIONNUMBER.onchange = () => {
-    limit = PAGINATIONNUMBER.value;
-    let consultPage = `https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`;
-    POKEMONUL.innerHTML = "";
-    POKEMONUL.style.gridTemplateColumns = "repeat(5, 1fr)";
+    limit = parseInt(PAGINATIONNUMBER.value);
+    offset = 0;
     pageNumbers(totalPokemons, limit);
-    toLoadPage(consultPage);
+
+    if (TYPESELECTOR.value === "") {
+
+        paginationWithoutFilter();
+
+    } else {
+
+        paginationWithTypeFilter();
+
+    }
     
 }
 
@@ -492,6 +516,7 @@ FILTERBUTTON.onclick = () => {
     if (isNaN(filterValue)) {
 
         offset = 0;
+        totalPokemons = 1025;
         let consultPage = `https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`;
         POKEMONUL.innerHTML = "";
         POKEMONUL.style.gridTemplateColumns = "repeat(5, 1fr)";
@@ -499,6 +524,7 @@ FILTERBUTTON.onclick = () => {
         toLoadPage(consultPage);
 
     } else {
+        offset = 0;
     
         let consultPage = `https://pokeapi.co/api/v2/type/${filterValue}/`;
 
@@ -509,6 +535,8 @@ FILTERBUTTON.onclick = () => {
 }
 
 async function getPokemonByType(url) {
+    //console.log(offset);
+    
     try {
         const RESPONSE = await fetch(url);
 
@@ -520,11 +548,16 @@ async function getPokemonByType(url) {
 
         console.log(DATA.pokemon);        
         
+        let sum = 0;
+        sum = parseInt(limit)+parseInt(offset);
         let firstPokemons = [];
-        firstPokemons = DATA.pokemon.slice(offset, limit+offset);
-
+        firstPokemons = DATA.pokemon.slice(offset, sum);
+        console.log(sum);
+        
+        
         //console.log(firstPokemons);
-        pageNumbers(DATA.pokemon.length, limit);
+        totalPokemons = DATA.pokemon.length;
+        pageNumbers(totalPokemons, limit);
 
         renderPokemonList(firstPokemons);
 
@@ -542,6 +575,8 @@ async function renderPokemonList(pokemonList) {
 
     for (let i = 0; i < pokemonList.length; i++) {
         let url = pokemonList[i].pokemon.url;
+        console.log(url);
+        
 
         const LI = document.createElement("div");
         LI.classList.add("pokemon-list-item");
@@ -581,12 +616,19 @@ async function pageNumbers(pokemonsNumber, pokemonLimit) {
 
     let pagesNumber = Math.ceil(pokemonsNumber/pokemonLimit);
 
-    for (let i = 0; i < pagesNumber; i++) {
+     const PAGE = document.createElement("button");
+     PAGE.classList.add("pagination-button");
+     PAGE.textContent = pagesNumber;
+     NUMPAGES.appendChild(PAGE);
+
+
+    /*for (let i = 0; i < pagesNumber; i++) {
 
         if (i <= 2) {
 
             const PAGE = document.createElement("button");
             PAGE.classList.add("pagination-button");
+            PAGE.classList.add("pagination-button-number");
             PAGE.textContent = i+1;
 
             NUMPAGES.appendChild(PAGE);
@@ -595,47 +637,91 @@ async function pageNumbers(pokemonsNumber, pokemonLimit) {
 
             const PAGE = document.createElement("button");
             PAGE.classList.add("pagination-button");
+            PAGE.classList.add("pagination-button-number");
             PAGE.textContent = pagesNumber;
 
             NUMPAGES.appendChild(PAGE);
 
         }
         
-        
     }
+
+    const TOTALPAGES = document.getElementsByClassName("pagination-button-number");
+
+        for (let i = 0; i < TOTALPAGES.length; i++) {
+        TOTALPAGES[i].onclick = () => {
+            let indexNumber = parseInt(TOTALPAGES[i].textContent);
+            console.log(indexNumber);
+            
+            offset = (indexNumber-1)*limit;
+
+            if (TYPESELECTOR.value === "") {
+
+                paginationWithoutFilter();
+                
+            } else {
+
+                paginationWithTypeFilter();
+            }
+        }
+    }*/
 
 }
 
+
+
 BUTTONPREVIOUS.onclick = () => {
+    
 
-    offset -= limit;
+    if (offset > 0) {
 
-    if (TYPESELECTOR.value === "") {
-        paginationWithoutFilter();
-        
-    } else {
-        
-        paginationWithTypeFilter();
+        offset -= limit;
+
+        if (TYPESELECTOR.value === "") {
+            paginationWithoutFilter();
+            
+        } else {
+            
+            paginationWithTypeFilter();
+        }
+
+        let currentPage = Math.floor(offset / limit) + 1;
+        console.log(currentPage);
+        SHOWCURRENTPAGE.textContent = `Current page: ${currentPage}`;
+
     }
-    
-    
+ 
 }
 
 BUTTONNEXT.onclick = () => {
 
-    offset += limit;
+    
+    if (offset + limit < totalPokemons) {
 
-    if (TYPESELECTOR.value === ""){
-        paginationWithoutFilter();
+        if (offset <= totalPokemons) {
+        offset += parseInt(limit);
+        
+        
+            if (TYPESELECTOR.value === ""){
+                paginationWithoutFilter();
 
-    } else {
+            } else {
 
-        paginationWithTypeFilter();
+                paginationWithTypeFilter();
+
+            }
+
+        } else {
+            offset = 0;
+        }
+
+        let currentPage = Math.floor(offset / limit) + 1;
+        console.log(currentPage);
+        SHOWCURRENTPAGE.textContent = `Current page: ${currentPage}`;
 
     }
-    
-    
-    
+
+
 }
 
 async function paginationWithoutFilter() {
@@ -648,7 +734,7 @@ async function paginationWithoutFilter() {
 }
 
 async function paginationWithTypeFilter() {
-
+    
     let filterValue = parseInt(TYPESELECTOR.value);
     POKEMONUL.innerHTML = "";
     POKEMONUL.style.gridTemplateColumns = "repeat(5, 1fr)";

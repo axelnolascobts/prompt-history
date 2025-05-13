@@ -72,3 +72,13 @@ body{
     color: black;
     cursor: pointer;
 }
+
+.loading-message{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 2rem;
+    color: white;
+}
