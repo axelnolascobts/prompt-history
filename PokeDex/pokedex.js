@@ -496,6 +496,9 @@ PAGINATIONNUMBER.onchange = () => {
     limit = parseInt(PAGINATIONNUMBER.value);
     offset = 0;
     pageNumbers(totalPokemons, limit);
+    let currentPage = Math.floor(offset / limit) + 1;
+    console.log(currentPage);
+    SHOWCURRENTPAGE.textContent = `Current page: ${currentPage}`;
 
     if (TYPESELECTOR.value === "") {
 

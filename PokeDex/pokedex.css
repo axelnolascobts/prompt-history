@@ -66,6 +66,7 @@ body.dark-mode{
     width: 60px;
     height: 34px;
     margin-top: 20px;
+    padding: 8px;
 }
 
 .switch input{
@@ -108,7 +109,7 @@ input:checked + .slider:before{
 
 .pagination-container{
     display: flex;
-    margin-top: 25px;
+    margin-top: 10px;
 }
 
 .pagination-button{
@@ -116,6 +117,10 @@ input:checked + .slider:before{
     height: 30px;
     margin-right: 5px;
     margin-left: 5px;
+}
+
+#current-page{
+    color: white;
 }
 
 .loading-message{
