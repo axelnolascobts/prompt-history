@@ -204,6 +204,7 @@ window.onload = () => {
 
 async function toLoadPage(url) {
 
+    POKEMONUL.style.display = "none";
     LOADINGMESSAGE.style.display = "flex";
 
     try {
@@ -275,12 +276,14 @@ async function toLoadPage(url) {
     } finally {
 
         LOADINGMESSAGE.style.display = "none";
+        POKEMONUL.style.display = "grid";
     }
     
 }
 
 async function getPokemon(url) {
 
+    POKEMONUL.style.display = "none";
     LOADINGMESSAGE.style.display = "flex";
 
     try {
@@ -335,6 +338,7 @@ async function getPokemon(url) {
     } finally {
 
         LOADINGMESSAGE.style.display = "none";
+        POKEMONUL.style.display = "grid";
     }
     
     /*fetch(url)
@@ -381,6 +385,7 @@ async function getPokemon(url) {
 
 async function createPokemonList(url, NAMES, SPRITE, TYPES) {
 
+    POKEMONUL.style.display = "none";
     LOADINGMESSAGE.style.display = "flex";
 
     try {
@@ -417,6 +422,7 @@ async function createPokemonList(url, NAMES, SPRITE, TYPES) {
     } finally {
         
         LOADINGMESSAGE.style.display = "none";
+        POKEMONUL.style.display = "grid";
     }
     /*fetch(url)
     .then ((response) => {
@@ -745,5 +751,3 @@ async function paginationWithTypeFilter() {
     getPokemonByType(consultPage);
     
 }
-
-
