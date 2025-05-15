@@ -38,3 +38,21 @@ console.log(Car.compareYears(car1, car2));
 
 const tesla = new ElectricCar('Tesla', 'Model S', 2022, 24);
 console.log(tesla.getCarInfo());
+
+const user = {
+  name: "Alice",
+  greet: function () {
+    console.log(`Hello, my name is ${this.name}`);
+  },
+};
+
+
+const greetFn = user.greet;
+// fix it with .bind, .call and .apply
+user.greet.bind(user);
+user.greet.call(user);
+user.greet.apply(user);
+greetFn(); // :x: Why doesn't this work?
+
+  // it doesnt work because the .this lose the context and dont longer refers to user
+
