@@ -1,7 +1,12 @@
 [
    {
-      "id": "b7e5d57c-3e82-45f6-8ca9-6053b7d68ef5",
-      "title": "Mi primera nota",
-      "content": "Esta es una nota guardada en un JSON "
+      "id": "1f6f0f56-2528-4e4b-b207-666b106b90ca",
+      "title": "Mi segunda nota",
+      "content": "Esta es una nota guardada de prueba"
+   },
+   {
+      "id": "1f6f0f32-2528-4e4b-b207-666b106b90ca",
+      "title": "Prueba",
+      "content": "Esta es una nota guardada de prueba"
    }
 ]
