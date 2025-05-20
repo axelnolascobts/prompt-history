@@ -1,1 +1,24 @@
-{"notes": []}
+{
+  "notes": [
+    {
+      "id": "40d910cc-8e64-4c8f-90bc-40df9a8e7f91",
+      "title": "important",
+      "content": "drink water"
+    },
+    {
+      "id": "0ca02b96-068c-4fd5-9560-3775944625b6",
+      "title": "secound note",
+      "content": "go to the market"
+    },
+    {
+      "id": "eb5c3835-a6dc-4425-8a85-49c162ac2e5d",
+      "title": "anotherNote",
+      "content": "visit the dentist"
+    },
+    {
+      "id": "f0c39d7e-8c9d-49aa-9588-b5cea2bfdfbc",
+      "title": "test",
+      "content": "test the API"
+    }
+  ]
+}
