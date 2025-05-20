@@ -20,6 +20,7 @@ fs.readFile(NOTES_FILE, 'utf8', function(err, data) {
         fs.appendFile(NOTES_FILE, '{"notes": []}', function (err) {
 
             if (err) {
+                //console.error("Error creating to file");
                 //throw err;
             }
 
@@ -61,6 +62,7 @@ app.get('/notes/:title', (req, res) => {
 });
 
 app.post("/notes", (req, res) => {
+
     const newNote = {
         id: uuidv4(),
         title: req.body.title,
@@ -69,10 +71,41 @@ app.post("/notes", (req, res) => {
 
     notes.push(newNote);
 
-    fs.writeFile(NOTES_FILE);
+    fs.writeFile(NOTES_FILE, JSON.stringify({ notes: notes }, null, 2), (err) => {
 
-    res.status(201).json(newNote);
+        if (err) {
+            //console.error("Error writing to file");
+            return res.status(500).json({ message: "Failed to save note" });
+        }
+
+        res.status(201).json(newNote);
+    });
+
 });
+
+
+app.delete("/notes/:id", (req, res) => {
+    const ID = req.params.id;
+
+    const index = notes.findIndex(n => n.id === ID);
+
+    if (index !== -1) {
+        const deletedNote = notes.splice(index, 1)[0];
+
+        fs.writeFile(NOTES_FILE, JSON.stringify({ notes: notes }, null, 2), (err) => {
+
+            if (err) {
+                //console.error("Error writing to file");
+                return res.status(500).json({ message: "Failed to delete note" });
+            }
+
+            res.json({ message: "Note deleted", note: deletedNote });
+        });
+    } else {
+        res.status(404).json({ message: "Note not found" });
+    }
+});
+
 
 
 app.listen(port, () => {
