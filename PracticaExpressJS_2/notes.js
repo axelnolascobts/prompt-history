@@ -65,6 +65,7 @@ app.get('/notes/:value', (req, res) => {
 
 });
 
+
 /*app.get('/notes/title', (req, res) => {
     const TITLE = req.query;
     console.log(TITLE);
@@ -117,8 +118,10 @@ app.delete("/notes/:value", (req, res) => {
             }
 
             res.json({ message: "Note deleted", note: DeletedNote });
+
         });
     } else {
+
         res.status(404).json({ message: "Note not found" });
     }
 });
@@ -126,5 +129,7 @@ app.delete("/notes/:value", (req, res) => {
 
 
 app.listen(port, () => {
+
     console.log(`Server listening in http://localhost:${port}`);
+
 });
