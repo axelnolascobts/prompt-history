@@ -21,6 +21,7 @@ fs.readFile(NotesFiles, 'utf8', function(err, data) {
 
             if (err) {
                 //console.error("Error creating to file");
+                return res.status(500).json({ message: "Failed to delete note" });
                 //throw err;
             }
 
