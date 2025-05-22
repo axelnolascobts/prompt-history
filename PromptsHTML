@@ -1,0 +1,51 @@
+
+Prompt 1:  
+Explica qué es un lenguaje de marcado y cómo se diferencia de un lenguaje de programación.
+
+Prompt 2:  
+En el contexto de HTML, ¿qué quiere decir "stands for"? ¿Qué significan las siglas HTML?
+
+Prompt 3:  
+Describe cuál es la función principal del lenguaje HTML dentro del desarrollo web moderno.
+
+Prompt 4:  
+Proporciona una visión general de las principales versiones de HTML: HTML4, XHTML y HTML5. Indica sus diferencias principales.
+
+Prompt 5:  
+¿Tienes ejemplos sencillos del uso de cada versión de HTML (HTML4, XHTML y HTML5)?
+
+Prompt 6:  
+Identifica las nuevas características introducidas en HTML5. Menciona mejoras respecto a versiones anteriores como soporte para multimedia y etiquetas semánticas.
+
+Prompt 7:  
+Define qué es un elemento HTML y muestra un ejemplo simple con sus partes (etiqueta de apertura, contenido, etiqueta de cierre).
+
+Prompt 8:  
+Dame un ejemplo de un elemento HTML que también incluya atributos dentro de la etiqueta.
+
+Prompt 9:  
+Explica qué son los atributos en HTML y proporciona ejemplos usando atributos comunes como `class`, `id` y `href`.
+
+Prompt 10:  
+Define qué es una etiqueta HTML, cómo se utiliza para encerrar contenido, y cuál es la diferencia entre etiquetas de apertura, cierre y autocierre. Incluye ejemplos en código.
+
+Prompt 11:  
+Describe qué es el DOM (Document Object Model), cuál es su relación con HTML y cómo lo utilizan los navegadores para renderizar páginas web.
+
+Prompt 12:  
+Muéstrame la estructura básica de un documento HTML completo con etiquetas comunes como `<!DOCTYPE>`, `<html>`, `<head>`, `<title>` y `<body>`.
+
+Prompt 13:  
+¿Cuando es ideal usar la etiqueta `<article>` en HTML? Explica con ejemplos.
+
+Prompt 14:  
+¿Cómo hacer que quede correctamente mencionado el texto de las etiquetas como parte del párrafo?  
+Por ejemplo, en este texto:  
+`<p>When building web pages with HTML, it's important to structure your content in a meaningful and organized way. Tags like <div>, <section>, and <article> are commonly used for this purpose. While they may look similar at first glance, each has a specific role in giving your content structure and semantic meaning. In this article, we'll explore the characteristics of these three elements and highlight their key differences to help you understand when and how to use them effectively.</p>`  
+Explica cómo mostrar correctamente las etiquetas dentro del párrafo para que no se interpreten como código HTML.
+
+Prompt 15:  
+Introducción a GitHub. ¿Qué es GitHub y cómo se usa para gestionar proyectos?
+
+Prompt 16:  
+Explica el proceso para descargar Git y cómo configurarlo para comenzar a trabajar con repositorios locales y remotos.
