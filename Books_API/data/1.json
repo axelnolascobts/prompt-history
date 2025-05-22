@@ -1,4 +1,5 @@
 {
-    "title": "IT",
-    "autor": "Stephen King"
+  "id": 1,
+  "title": "El Extranjero",
+  "autor": "Albert Camus"
 }
