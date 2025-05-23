@@ -47,11 +47,16 @@ router.get('/:id', (req, res) => {
 router.post('/', async (req, res) => {
     const newId = await getnextID();
     const filePath = path.join(DATA_DIR, `${newId}.json`);
-    const book = { id: newId, ...req.body };
+    const { title, author } = req.body;
 
+    if (!title || !author) {
+        return res.status(400).json({ error: 'Faltan campos obligatorios (title, author)' });
+    }
+    const book = { id: newId, title, author };
     fs.writeFileSync(filePath, JSON.stringify(book, null, 2));
     res.status(201).json(book);
 });
+
 // eliminar libro
 router.delete('/:id', (req, res) => {
 const filePath = path.join(DATA_DIR, `${req.params.id}.json`);
