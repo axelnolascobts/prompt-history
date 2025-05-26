@@ -474,11 +474,14 @@ async function consultTypes() {
     
         const DATA = await RESPONSE.json();
         let count = 1;
+        console.log(DATA);
+        
 
         for (let type of DATA.results) {
 
-            if (count < 19){
+            //if (count < 19){
 
+                //variable
                 const TYPEOPTION = document.createElement("option");
                 TYPEOPTION.classList.add("pokemon-type-option");
                 TYPEOPTION.textContent = type.name;
@@ -487,7 +490,7 @@ async function consultTypes() {
 
                 TYPESELECTOR.appendChild(TYPEOPTION);
 
-            }
+           // }
 
         }
         

@@ -7,7 +7,7 @@ const fs = require('fs');
 
 app.use(express.json());
 
-const NotesFiles = "notes.json"
+const NotesFiles = "notes.json";
 
 let notes = [];
 
@@ -88,7 +88,7 @@ app.post("/notes", (req, res) => {
     };
 
     notes.push(NewNotes);
-
+ 
     fs.writeFile(NotesFiles, JSON.stringify({ notes: notes }, null, 2), (err) => {
 
         if (err) {
@@ -108,7 +108,7 @@ app.delete("/notes/:value", (req, res) => {
     const Index = notes.findIndex(n => n.id ===Id);
 
     if (Index !== -1) {
-        const DeletedNote = notes.splice(index, 1)[0];
+        const DeletedNote = notes.splice(Index, 1)[0];
 
         fs.writeFile(NotesFiles, JSON.stringify({ notes: notes }, null, 2), (err) => {
 
