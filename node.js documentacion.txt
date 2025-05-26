@@ -1,0 +1,175 @@
+Stability context:
+se analizan las apis y dependiendo de su resultado dara algunos de las siguientes tipos en su funcionamiento:
+Estabilidad: 0 - Obsoleta. Esta función puede generar advertencias. No se garantiza la retrocompatibilidad.
+Estabilidad: 1 - Experimental. Esta función no está sujeta a reglas de control de versiones semántico . Podrían producirse cambios o eliminaciones no compatibles con versiones anteriores en futuras versiones. No se recomienda su uso en entornos de producción.
+se divide en: 
+1.0 - Desarrollo inicial. Las funciones experimentales en esta etapa están inconclusas y sujetas a cambios sustanciales.
+1.1 - Desarrollo activo. En esta etapa, las características experimentales se acercan a su viabilidad mínima.
+1.2 - Candidato a versión. Esperamos que las funciones experimentales en esta etapa estén listas para ser estables. 
+
+Estabilidad: 2 - Estable. La compatibilidad con el ecosistema npm es una prioridad.
+Estabilidad: 3 - Legacy. Aunque es improbable que esta función se elimine y aún está cubierta por las garantías de control de versiones semántico, ya no se mantiene activamente y existen otras alternativas.
+
+Assert 2-stable: 
+este modulo proporciona un conjunto de funciones de afirmación para verificar invariantes.
+
+Strict assertion mode:
+este modo convierte los metodos no escritos se comportan como su version de metodos estrictos
+
+Para utilizar el modo de aserción estricta:
+const assert = require('node:assert').strict;
+const assert = require('node:assert').strict;
+
+Legacy assertion mode:
+l modo de afirmación heredado (Legacy assertion mode) en Node.js es una versión antigua del módulo assert que usa el operador == en vez de === o Object.is() para ciertas comparaciones.
+
+se activa con: const assert = require('node:assert'); // o solo 'assert'
+
+¿Qué funciones usan == en este modo?
+
+assert.deepEqual()
+assert.equal()
+assert.notDeepEqual()
+assert.notEqual()
+
+Class: assert.AssertionError 
+indica error en un assertion 
+Todos los errores generados por el módulo node:assert serán instancias de la clase AssertionError.
+
+new assert.AssertionError(options):
+te permite crear tu error de tipo AssertionError Esto te permite:Personalizar el mensaje, ,Definir qué valores esperabas vs. qué obtuviste, Elegir el operador, Controlar desde dónde empieza el stack trace
+
+assert.CallTracker- 0 obsoleto.
+
+new assert.CallTracker()
+Crea un nuevo CallTrackerobjeto que permite rastrear si las funciones se llamaron un número específico de veces. tracker.verify()Debe llamarse para que se realice la verificación. El patrón habitual sería llamarlo en un process.on('exit')controlador.
+
+assert.deepStrictEqual(actual, expected[, message]) stability 2.
+s un método del módulo assert de Node.js que se utiliza para comparar recursivamente (en profundidad) si dos valores son estrictamente iguales, es decir, que tienen:
+el mismo tipo (===)
+los mismos valores o estructuras internas (en objetos, arrays, maps, sets, etc.)
+y que no usan coerción de tipos
+actual: el valor que se obtuvo
+expected: el valor esperado
+message (opcional): mensaje de error personalizado si la aserción falla
+
+assert.doesNotMatch(string, regexp[, message]) staibilty 2.
+Esta función verifica que una cadena NO haga match con una expresión regular. Si hace match, lanza un error.
+string: la cadena que quieres evaluar.
+regexp: una expresión regular contra la cual se compara la cadena.
+message (opcional): mensaje de error personalizado si la cadena sí hace match.
+string debe ser un string. Si pasas otro tipo, lanza un TypeError.
+regexp debe ser una RegExp. Nada de strings o funciones.
+
+assert.notEqual(actual, expected[, message])
+Verifica que actual != expected (con comparación no estricta, es decir, usando !=).
+Si sí son iguales (aunque sea por coerción de tipos), lanza un AssertionError.
+
+assert.ok(value[, message])
+Verifica que value sea truthy.
+Si el valor es falsy (como false, 0, '', null, undefined, o NaN), lanza un AssertionError.
+
+assert.rejects(asyncFn[, error][, message])
+Verifica que una función asíncrona o promesa rechace.
+Y si se pasa el argumento error, también verifica que el motivo del rechazo coincida con un patrón o clase de error.
+Si la promesa no es rechazada, o no coincide con el error esperado, lanza un AssertionError.
+
+asyncFn: una función async o promesa que debe rechazar.
+error (opcional): patrón de error que debe cumplir (puede ser un RegExp, función, objeto, clase de error).
+message (opcional): mensaje personalizado si la aserción falla.
+
+assert.strictEqual(actual, expected[, message])
+Verifica que actual === expected.
+Sí, usa comparación estricta, sin coerción de tipos (como el triple igual === en JavaScript).
+Si no son estrictamente iguales, lanza un AssertionError.
+
+assert.throws(fn[, error][, message])
+Verifica que una función síncrona (fn) lance una excepción (o sea, que haga throw).
+También puede verificar que el error lanzado coincida con un tipo específico, mensaje, expresión regular o propiedades.
+Si la función no lanza nada, o lanza algo que no coincide con el error esperado, lanza un AssertionError.
+fn: función síncrona que debe lanzar un error.
+error (opcional): patrón de error esperado (RegExp, clase, objeto, o función validadora).
+message (opcional): mensaje personalizado si la aserción falla.
+assert.throws() no funciona con funciones async o promesas.
+Para eso debes usar:  assert.rejects().
+
+
+assert.partialDeepStrictEqual(actual, expected[, message])
+Verifica que actual contiene todos los valores esperados en expected,
+haciendo una comparación profunda y estricta, pero solo sobre las propiedades del objeto expected.
+O sea:
+El objeto actual puede tener más cosas, pero como mínimo debe contener expected exactamente igual (mismo tipo y estructura en esas partes).
+actual: el objeto real, más grande o completo.
+expected: la parte que debe estar incluida dentro de actual.
+message (opcional): mensaje de error si la aserción falla.
+
+Buffer:
+El módulo Buffer en Node.js proporciona una manera eficiente de trabajar con secuencias de bytes sin procesar (datos binarios). Los objetos Buffer son instancias de una clase global que almacenan arrays de enteros de 8 bits (bytes).
+Propósito principal:
+Manipular datos binarios directamente.
+
+Interactuar con flujos de datos (streams), archivos, sockets de red y protocolos binarios.
+
+Convertir entre diferentes codificaciones (UTF-8, ASCII, Base64, Hex, etc.).
+
+Ofrecer una interfaz similar a un array para manejar bytes individuales.
+
+
+Buffers and character encodings
+Node.js usa Buffer para almacenar los bytes y codificaciones para convertir esos bytes en texto y viceversa.
+Codificaciones compatibles en Node.js
+
+'utf8'	Predeterminada, soporte completo para Unicode
+'ascii'	Solo caracteres del 0 al 127
+'utf16le'	UTF-16 little endian
+'base64'	Codificación de texto para bytes binarios
+'hex'	Representación hexadecimal
+'latin1' / 'binary'	ISO-8859-1 (bytes del 0 al 255)
+
+Si usás la codificación incorrecta, el texto se corrompe.
+ascii y latin1 no manejan bien caracteres especiales (ñ, á, emojis).
+Para la mayoría de los casos, usa utf8.
+
+Buffers and TypedArrays
+Un TypedArray es como un array normal de JavaScript, pero más eficiente, rápido y con tipado estricto.
+No guarda cualquier cosa: solo números (enteros, flotantes, etc.) de tamaño fijo.
+
+Internamente, Buffer es una extensión de Uint8Array, que a su vez es un tipo específico de TypedArray.
+uint8Array es un tipo de typedArray de 8 bits sin signo (0–255).
+Entonces Buffer es parte de un uint8Array que a su vez es un tipo de typedArray.
+
+
+Class: Blob
+blob significa binarie large object y es una clase que representa datos binarios inmutables como los de un archivo. Es muy útil cuando quieres manejar fragmentos grandes de datos.especialmente en operaciones como:
+Subidas/descargas de archivos
+Lectura o escritura de archivos en partes
+Transmisión de datos binarios
+
+Disponible desde:
+Node.js v15.7.0
+Dentro del módulo: buffer
+const { Blob } = require('buffer');
+
+metodos de la clase blob:
+blob.size	Tamaño en bytes del blob
+blob.type	Tipo MIME del contenido
+blob.text()	Devuelve el contenido como string
+blob.arrayBuffer()	Devuelve el contenido como ArrayBuffer
+blob.slice()	Corta una parte del blob, útil para fragmentarlo
+
+new buffer.Blob([sources[, options]])
+Este constructor crea una nueva instancia de la clase Blob en Node.js, directamente desde el módulo buffer.
+sources (Array) – obligatorio
+Una lista de partes que componen el contenido del blob.
+Pueden ser:
+Buffer
+ArrayBuffer
+Blob
+TypedArray
+DataView
+string
+Básicamente, cualquier cosa que represente datos binarios o texto.
+
+(objeto) – opcional
+type	Tipo MIME (como 'text/plain', 'image/png', etc.). Sirve para describir el contenido del blob.
+endings	"transparent" (por defecto) o "native" – cómo tratar saltos de línea \n. Solo afecta strings.
