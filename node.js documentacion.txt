@@ -173,3 +173,82 @@ Básicamente, cualquier cosa que represente datos binarios o texto.
 (objeto) – opcional
 type	Tipo MIME (como 'text/plain', 'image/png', etc.). Sirve para describir el contenido del blob.
 endings	"transparent" (por defecto) o "native" – cómo tratar saltos de línea \n. Solo afecta strings.
+
+Métodos útiles de Blob
+blob.size	Tamaño total del blob (en bytes).
+blob.type	Tipo MIME del contenido.
+blob.text()	Devuelve una promesa con el contenido como string UTF-8.
+blob.arrayBuffer()	Devuelve una promesa con un ArrayBuffer del contenido.
+blob.bytes()	(Desde v20.16.0) Devuelve una promesa con los bytes como Uint8Array.
+blob.slice(start, end, type)	Crea un nuevo Blob con un subconjunto del original.
+blob.stream()	Devuelve un ReadableStream para leer los datos.
+
+Uso típico
+Simular archivos (como en navegadores)
+Enviar/recibir binarios grandes
+Compatibilidad con fetch, stream, etc.
+
+Buffer.alloc(size[, fill[, encoding]])
+Crea un buffer inicializado.
+
+Llena con 0 por defecto.
+
+Buffer.allocUnsafe(size)
+Más rápido, pero NO inicializa la memoria.
+
+Puede contener datos sensibles residuales.
+
+Inicialízalo manualmente con .fill(0) si hace falta.
+
+Buffer.allocUnsafeSlow(size)
+Igual que allocUnsafe, pero no usa el pool interno.
+
+Ideal para mantener segmentos de memoria pequeños por tiempo indefinido.
+
+ Buffer.byteLength(string[, encoding])
+Retorna la cantidad de bytes que ocupa un string según su encoding.
+
+ No confundir con string.length.
+
+ Buffer.compare(buf1, buf2)
+Compara dos buffers lexicográficamente.
+
+Útil para ordenar listas de buffers.
+
+ Buffer.concat(list[, totalLength])
+Une varios buffers en uno solo.
+
+totalLength es opcional, pero recomendable para rendimiento.
+
+ Buffer.copyBytesFrom(view[, offset[, length]])
+Copia datos desde un TypedArray como Uint8Array, Uint16Array, etc., hacia un nuevo buffer.
+
+ Requiere Node.js 18.16+ o 19.8+
+ Buffer.from(array)
+Crea un buffer desde un array de bytes [0–255].
+
+Seguridad y Rendimiento
+Usa Buffer.alloc cuando necesites seguridad (contenido limpio).
+Usa Buffer.allocUnsafe cuando necesites velocidad, pero entiendas el riesgo.
+
+Buffer.from(arrayBuffer[, byteOffset[, length]])
+Crea un `Buffer` que comparte la misma memoria subyacente con el `ArrayBuffer` proporcionado. No copia los datos. Puede especificarse un desplazamiento inicial (`byteOffset`) y una longitud.
+
+Buffer.from(buffer)
+Crea un nuevo `Buffer` copiando el contenido del `Buffer` o `Uint8Array` dado. No comparte memoria.
+
+Buffer.from(object[, offsetOrEncoding[, length]])
+Convierte un objeto que implemente `valueOf()` o `Symbol.toPrimitive()` a un `Buffer`. El valor retornado por estos métodos se pasa a `Buffer.from()`.
+
+Buffer.from(string[, encoding])
+Crea un `Buffer` a partir de una cadena de texto usando la codificación especificada. Si no se indica, se usa `'utf8'` por defecto.
+
+Buffer.isBuffer(obj)`
+Devuelve `true` si el objeto dado es un `Buffer`. En caso contrario, devuelve `false`.
+
+Buffer.isEncoding(encoding)
+
+Devuelve `true` si el argumento es el nombre de una codificación soportada. De lo contrario, devuelve `false`.
+ Buffer.poolSize
+
+Propiedad estática que indica el tamaño del pool interno de `Buffer` en bytes. Valor predeterminado: 8192. Puede modificarse para ajustar el comportamiento del sistema de memoria interna.
