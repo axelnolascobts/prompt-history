@@ -153,7 +153,7 @@ async function Mostrar_un_Pokemon(nombre) {
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombre.toLowerCase()}`);
         if (!res.ok) throw new Error("No se encontró el Pokémon");
         const poke = await res.json();
-        crearTarjetaPokemon(poke);
+       // crearTarjetaPokemon(poke);
     } catch (error) {
         GRID.innerHTML = `<p style="grid-column: 1 / -1; color: red;">No se encontró el Pokémon "${nombre}"</p>`;
         console.error("Error buscando Pokémon:", error);

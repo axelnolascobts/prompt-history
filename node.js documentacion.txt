@@ -249,6 +249,15 @@ Devuelve `true` si el objeto dado es un `Buffer`. En caso contrario, devuelve `f
 Buffer.isEncoding(encoding)
 
 Devuelve `true` si el argumento es el nombre de una codificación soportada. De lo contrario, devuelve `false`.
- Buffer.poolSize
 
+Buffer.poolSize
 Propiedad estática que indica el tamaño del pool interno de `Buffer` en bytes. Valor predeterminado: 8192. Puede modificarse para ajustar el comportamiento del sistema de memoria interna.
+
+buf[index] 
+buf[index] es la forma en que accedes directamente a un byte específico dentro de un objeto Buffer en Node.js.
+El índice (index) es un número entero que representa la posición del byte dentro del buffer, comenzando desde 0.
+El valor que se obtiene o asigna es un número entre 0 y 255 (es decir, un byte).
+Este acceso es similar a cómo se accede a elementos de un array en JavaScript.
+Si accedes a un índice fuera de rango (index < 0 o index >= buf.length), el resultado será undefined.
+Puedes leer o modificar directamente los bytes del buffer con este acceso.
+
