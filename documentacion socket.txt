@@ -1,0 +1,157 @@
+Socket.io
+socket.io es una librería que habilita comunicación entre un cliente y un server, basado en eventos, latencia baja bidireccional.
+
+Permite que dos aplicaciones (como un servidor Node.js y un navegador) se comuniquen instantáneamente, sin necesidad de que el cliente esté haciendo polling (peticiones cada cierto tiempo).
+
+Utiliza WebSockets cuando es posible. Un WebSocket es un protocolo de comunicación que permite una conexión persistente y bidireccional entre un cliente (como un navegador) y un servidor.
+
+Si WebSockets no está disponible (por ejemplo, en redes restringidas), cae automáticamente a otras tecnologías como:
+long-polling
+XHR streaming
+
+Usa un protocolo propio sobre estas tecnologías para garantizar compatibilidad y facilidad de uso.
+
+Socket.IO se compone de dos capas principales:
+
+Engine.IO: Maneja la conexión de bajo nivel entre el cliente y el servidor, utilizando diferentes transportes como WebSocket y HTTP long-polling. Se encarga de establecer la conexión, gestionar las reconexiones y detectar desconexiones.
+
+Socket.IO: Proporciona una API de alto nivel para la comunicación basada en eventos, permitiendo emitir y escuchar eventos personalizados entre el cliente y el servidor.
+
+
+Socket.IO tiene una función llamada recuperación de estado de conexión (connectionStateRecovery), que ayuda a reconectar automáticamente al cliente y restaurar su sesión previa, incluyendo mensajes que no recibió.
+
+Logging y Debugging en Socket.IO:
+A partir de la versión 1.0, Socket.IO dejó de mostrar logs por defecto para evitar una salida excesivamente verbosa en la consola. Ahora, puedes habilitar selectivamente los logs que necesites mediante variables de entorno en Node.js o configuraciones en el navegador.
+Para habilitar los logs en el servidor, puedes establecer la variable de entorno DEBUG al iniciar tu aplicación. Esto te permitirá ver información detallada sobre el funcionamiento interno de Socket.IO.
+Mostrar todos los logs disponibles:
+DEBUG=* node app.js
+
+Mostrar solo los logs relacionados con el cliente de Socket.IO:
+DEBUG=socket.io:client* node app.js
+
+Mostrar logs tanto de Engine.IO como de Socket.IO:
+DEBUG=engine,socket.io* node app.js
+
+Activar logs en el cliente (navegador)
+En el entorno del navegador, puedes habilitar los logs de Socket.IO utilizando la propiedad localStorage.debug. Esto te permitirá ver los logs directamente en la consola del navegador.
+
+Ejemplos:
+Mostrar todos los logs disponibles:
+localStorage.debug = '*';
+
+Mostrar solo los logs relacionados con el cliente de Socket.IO:
+localStorage.debug = 'socket.io-client:socket';
+
+Desactivar todos los logs:
+localStorage.debug = '';
+
+Después de establecer la configuración deseada, recarga la página para que los cambios surtan efecto.
+
+Scopes de depuración disponibles
+Socket.IO divide sus logs en diferentes "scopes" o ámbitos, lo que te permite filtrar y enfocarte en áreas específicas de interés. Algunos de los scopes más comunes incluyen:
+
+socket.io:server: Información relacionada con el servidor de Socket.IO.
+
+socket.io:client: Información relacionada con el cliente de Socket.IO.
+
+engine: Detalles sobre el motor de transporte subyacente (Engine.IO).
+
+rooms:
+En Socket.IO, un room (sala) es una forma lógica de agrupar sockets para que puedas emitir eventos a subconjuntos de clientes conectados, sin tener que llevar tú mismo el control de qué socket pertenece a qué grupo.
+
+metodos sobre rooms:
+socket.join(room)	Une al socket a una sala
+socket.leave(room)	Elimina al socket de una sala
+io.to(room).emit(...)	Emite un evento a todos los sockets en la sala
+io.in(room).emit(...)	Alias de .to(...), más semántico
+io.except(room).emit(...)	Emite a todos excepto los que están en la sala
+socket.leave(room)	Un cliente individual deja un room
+server.socketsLeave(...)	Todos los clientes salen de uno o más rooms
+server.in(room).disconnectSockets()	Desconecta a todos los sockets de un room completamente
+
+server.socketsLeave(rooms)
+El método server.socketsLeave(rooms) en Socket.IO se utiliza para expulsar a todos los sockets de una o más salas (rooms), es decir, desvincularlos de esos rooms sin desconectarlos del servidor.
+Importante
+Los clientes no son desconectados, solo dejan de pertenecer a esos rooms.
+
+Este método se usa típicamente en lógica de administración de grupos o moderación: por ejemplo, remover usuarios de un chat privado, cerrar una sala, etc.
+
+				metodos para la parte del servidor (server.js)
+-io.on("connection", callback)
+¿Qué hace?
+Escucha nuevas conexiones de clientes.  
+
+Parámetros:
+"connection": nombre del evento predeterminado.
+callback(socket): función que se ejecuta cuando un cliente se conecta. El parámetro socket representa al cliente conectado.
+
+-socket.emit(event, data)
+¿Qué hace?
+Envía un evento personalizado y su información al cliente conectado actual.
+
+Parámetros:
+event: nombre del evento (string).
+data: información que se quiere enviar (puede ser cualquier dato serializable: string, objeto, array, etc.).
+
+-io.emit(event, data)
+¿Qué hace?
+Envía un evento a todos los clientes conectados.
+
+-socket.on(event, callback)
+¿Qué hace?
+Escucha un evento personalizado enviado por el cliente y responde con una función.
+
+Parámetros:
+event: nombre del evento (string).
+callback(data): función que se ejecuta al recibir el evento, donde data es la información enviada desde el cliente.
+
+-socket.broadcast.emit(event, data)
+¿Qué hace?
+Envía un evento a todos los clientes conectados, excepto al que lo emitió.
+
+-socket.join(room) / socket.leave(room)
+¿Qué hace?
+Agrega o elimina al cliente de una "sala" lógica. Muy útil para chats o grupos.
+
+-io.to(room).emit(event, data)
+¿Qué hace?
+Envía un evento sólo a los clientes que están dentro de una sala específica.
+
+-socket.disconnect()
+¿Qué hace?
+Desconecta el socket del servidor manualmente.
+
+-maxDisconnectionDuration: 20000 // 20 segundos esta en milisegundos puede insertar cualquier valor y cuando termine el tiempo cierra la sesion con el servidor.
+maxDisconnectionDuration: 2 * 60 * 1000 // 2 minutos valor por defecto
+
+-server.close([callback]):
+e usa para cerrar el servidor Socket.IO de manera ordenada, y opcionalmente ejecutar una función después de que el servidor se haya cerrado completamente.
+Deja de aceptar nuevas conexiones WebSocket/polling.
+Desconecta a todos los clientes conectados.
+Libera los recursos utilizados por el servidor (como el puerto si se creó internamente).
+
+
+					Métodos del cliente (socket.io-client)
+const socket = io(url, options)
+¿Qué hace?
+Conecta el cliente con el servidor Socket.IO.
+
+Parámetros:
+url: dirección del servidor (ej: "http://localhost:3000").
+options (opcional): configuración de la conexión (ej. reconexión, autenticación, etc.).	
+
+socket.on(event, callback)
+¿Qué hace?
+Escucha eventos enviados por el servidor.
+
+socket.emit(event, data)
+¿Qué hace?
+Envía un evento personalizado desde el cliente al servidor.
+
+socket.disconnect()
+¿Qué hace?
+Desconecta manualmente el cliente del servidor.
+
+socket.id
+¿Qué es?
+Es el identificador único del socket cliente. Útil para rastrear sesiones.
