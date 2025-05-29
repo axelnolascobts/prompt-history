@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Chat Node + Socket.IO</title>
+</head>
+<body>
+    <section class="chat-container">
+
+        <header class="chat-header">
+            <h1 id="title">CHAT TEST</h1>
+        </header>
+
+        <article class="messages-container">
+            <ul class="chat-messages" id="chat-messages">
+                <!-- PUT MESSAGES HERE -->
+            </ul>
+        </article>
+
+        <article class="form-messages-container">
+            <form class="messages-form">
+                <input id="message-input" placeholder="SEND A MESSAGE . . .">
+            </form>
+             <button id="send-button">SEND</button>
+        </article>
+
+    </section>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+    
+</body>
+</html>

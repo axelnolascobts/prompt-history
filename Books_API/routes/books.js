@@ -51,8 +51,8 @@ async function saveBook (title, autor) {
     let newID = await createID();
     let newBookData = {
         "id": newID,
-        "title": title,
-        "autor": autor
+        title,
+        autor
     }
 
     fs.writeFile(`${DATA_ROUTE}${newID}.json`, JSON.stringify(newBookData, null, 2), (err) => {
