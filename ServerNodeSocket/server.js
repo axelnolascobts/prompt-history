@@ -17,11 +17,13 @@ IO.on('connection', (socket) => {
 
         console.log(`Message recived: ${message}`);
         IO.emit('chat message', message);
+
     });
 
     socket.on('disconnect', () => {
 
         console.log('client disconnected');
+        IO.emit('chat message', `An User Was disconnected`);
 
     });
     

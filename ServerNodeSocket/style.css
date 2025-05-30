@@ -10,6 +10,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-height: 100vb;
+    height: 90vb;
 
 }
 
@@ -28,9 +30,19 @@ body {
     padding-bottom: 5px;
 }
 
+.messages-container {
+
+    overflow-y: scroll;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    scrollbar-width: none;
+}
+
 .form-messages-container {
 
-    position: absolute;
+    position: relative;
     display: flex;
     flex-direction: row;
     bottom: 0;
@@ -44,4 +56,20 @@ body {
 
 .messages-form {
     margin-right: 10px;
+}
+
+.chat-messages {
+    list-style: none;
+    padding: 0;
+    overflow-wrap: break-word;
+    max-width: 50%;
+    width: 100%;
+}
+
+.chat-messages li {
+    padding: 12px;
+    color: white;
+    background-color: rgb(58, 58, 58);
+    border-radius: 8px;
+    margin: 5px;
 }
