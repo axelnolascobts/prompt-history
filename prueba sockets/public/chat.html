@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Chat</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <h1>Real-time Chat</h1>
+
+  <ul id="messages"></ul>
+
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Write your message" />
+    <button type="submit">Send</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Pedir nombre de usuario
+    let name = '';
+    while (!name) {
+      name = prompt('Insert your name:');
+    }
+
+    socket.emit('new user', name);
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (input.value.trim()) {
+        socket.emit('chat message', { name, message: input.value.trim() });
+        input.value = '';
+      }
+    });
+
+    // Mostrar mensajes entrantes
+    socket.on('chat message', (data) => {
+      const item = document.createElement('li');
+      item.textContent = `[${data.name}] ${data.message}`;
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight; // Scroll automático
+    });
+
+    // Mostrar notificación de usuario conectado
+    socket.on('user connected', (username) => {
+      const item = document.createElement('li');
+      item.textContent = `${username} its connected`;
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+
+    // Mostrar notificación de usuario desconectado
+    socket.on('user disconnected', (username) => {
+      const item = document.createElement('li');
+      item.textContent = `${username} its disconnected`;
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+
+</html>

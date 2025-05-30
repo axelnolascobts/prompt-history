@@ -1,38 +1,45 @@
-const http = require('http');
-const socket = require('socket.io');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const path = require("path");
 
-const server = http.createServer();
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-const io = socket(server);
+const users = new Map();
 
-const usuarios = new Map(); 
+// Servir archivos estáticos desde la carpeta "public"
+app.use(express.static(path.join(__dirname, "public")));
 
-io.on('connection', (socket) => {
-  console.log('Usuario conectado:', socket.id);
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
 
-  socket.on('nuevo usuario', (nombre) => {
-    usuarios.set(socket.id, nombre);
-    io.emit('usuario conectado', nombre);
-    console.log(`${nombre} se conecto`);
+  // Registrar nuevo usuario
+  socket.on("new user", (username) => {
+    users.set(socket.id, username);
+    io.emit("user connected", username);
+    console.log(`${username} connected`);
   });
 
-
-  socket.on('chat message', (data) => {
-    io.emit('chat message', data);
-    console.log(`[${data.nombre}] ${data.mensaje}`);
+  // Recibir y emitir mensajes de chat
+  socket.on("chat message", (data) => {
+    io.emit("chat message", data);
+    console.log(`[${data.name}] ${data.message}`);
   });
 
- 
-  socket.on('disconnect', () => {
-    const nombre = usuarios.get(socket.id);
-    if (nombre) {
-      io.emit('usuario desconectado', nombre);
-      console.log(`${nombre} se desconecto`);
-      usuarios.delete(socket.id);
+  // Manejar desconexión
+  socket.on("disconnect", () => {
+    const username = users.get(socket.id);
+    if (username) {
+      io.emit("user disconnected", username);
+      console.log(`${username} disconnected`);
+      users.delete(socket.id);
     }
   });
 });
 
-server.listen(3000, () => {
-  console.log('Servidor escuchando en http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server listening on http://localhost:${PORT}`);
 });
