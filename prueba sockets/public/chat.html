@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-
+  
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,12 +9,19 @@
 </head>
 
 <body>
+
   <h1>Real-time Chat</h1>
 
   <ul id="messages"></ul>
 
   <form id="form">
-    <input id="input" autocomplete="off" placeholder="Write your message" />
+
+
+    <input id="input" autocomplete="off"
+     placeholder="Write your message, maximum 200 characters" 
+     maxlength="200"/>
+
+
     <button type="submit">Send</button>
   </form>
 
@@ -25,7 +32,12 @@
     // Pedir nombre de usuario
     let name = '';
     while (!name) {
-      name = prompt('Insert your name:');
+      alert("Please insert your name") 
+      name = prompt('Insert your name: (maxinum 30 characters)');
+    }
+    while (name.length > 30){
+      alert("You exceed the maximum characters for a name, choose another name shorter") 
+      name = prompt('Insert your name: (maxinum 30 characters)');
     }
 
     socket.emit('new user', name);
@@ -47,7 +59,7 @@
       const item = document.createElement('li');
       item.textContent = `[${data.name}] ${data.message}`;
       messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight; // Scroll automático
+      messages.scrollTop = messages.scrollHeight; 
     });
 
     // Mostrar notificación de usuario conectado

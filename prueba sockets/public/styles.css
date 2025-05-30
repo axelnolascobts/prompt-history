@@ -20,6 +20,7 @@ h1 {
   overflow-y: auto;
   background: #fff;
   margin-bottom: 10px;
+  overflow-wrap: break-word;
 }
 
 #messages li {
