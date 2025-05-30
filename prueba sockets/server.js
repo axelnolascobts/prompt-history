@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const users = new Map();
+const users = {};
 
 // Servir archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, "public")));
@@ -17,7 +17,7 @@ io.on("connection", (socket) => {
 
   // Registrar nuevo usuario
   socket.on("new user", (username) => {
-    users.set(socket.id, username);
+    users[socket.id] = username;
     io.emit("user connected", username);
     console.log(`${username} connected`);
   });
@@ -30,11 +30,11 @@ io.on("connection", (socket) => {
 
   // Manejar desconexión
   socket.on("disconnect", () => {
-    const username = users.get(socket.id);
+    const username = users[socket.id]
     if (username) {
       io.emit("user disconnected", username);
       console.log(`${username} disconnected`);
-      users.delete(socket.id);
+      delete username[socket.id];
     }
   });
 });
