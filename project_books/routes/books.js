@@ -10,7 +10,7 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 
 // Función para obtener el siguiente ID
-async function getnextID() {
+ function getnextID() {
     const files = fs.readdirSync(DATA_DIR);
     const ids = files
         .map(file => parseInt(file.replace('.json', '')))
@@ -44,8 +44,8 @@ router.get('/:id', (req, res) => {
 });
 
 // Agregar un nuevo libro
-router.post('/', async (req, res) => {
-    const newId = await getnextID();
+router.post('/',  (req, res) => {
+    const newId =  getnextID();
     const filePath = path.join(DATA_DIR, `${newId}.json`);
     const { title, author } = req.body;
 

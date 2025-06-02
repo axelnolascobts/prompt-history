@@ -2,7 +2,6 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -39,7 +38,12 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT =  3000;
 server.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
+
+//validar espacios en blancos en ingresar nombres de usuarios
+//mensaje avisando de ingresar texto en el chat si esta vacio o con espacios
+// que no se repitan los username
+// que el mismo username al ingresar no se muestre el mensaje de que ingreso al server
