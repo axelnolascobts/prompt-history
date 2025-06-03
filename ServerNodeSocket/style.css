@@ -22,12 +22,23 @@ body {
     color: white;
     background-color: rgb(58, 58, 58);
     justify-content: center;
+    align-items: center;
 }
 
 .chat-header, h1 {
 
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+.welcome {
+
+    margin-left: 80px;
+}
+
+.user-name {
+
+    margin-left: 3px;
 }
 
 .messages-container {
@@ -72,4 +83,15 @@ body {
     background-color: rgb(58, 58, 58);
     border-radius: 8px;
     margin: 5px;
+}
+
+.delete-button {
+
+    display: none;
+}
+
+.chat-messages li:hover {
+
+    background-color: black;
+    
 }
