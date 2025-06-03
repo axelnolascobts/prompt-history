@@ -15,13 +15,14 @@
 
 
     <input id="input" autocomplete="off"
-     placeholder="Write your message, maximum 200 characters" 
-     maxlength="200"/>
+     placeholder="Write your message, maximum 500 characters" 
+     maxlength="500"/>
 
 
     <button type="submit">Send</button>
   </form>
 
+   <ul id="chats"></ul>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
@@ -38,11 +39,11 @@
     }
 
     socket.emit('new user', name);
-
     const form = document.getElementById('form');
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
-
+    const delete_button = document.getElementById('delete_button')
+    const chats = document.getElementById('chats')
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       if (input.value.trim()) {
@@ -57,7 +58,15 @@
       item.textContent = `[${data.name}] ${data.message}`;
       messages.appendChild(item);
       messages.scrollTop = messages.scrollHeight; 
-    });
+    }); 
+
+    // // Mostrar usuarios para chatear
+    // socket.on('chats', (username) => {
+    //   const item = document.createElement('li');
+    //   item.textContent = `[${username}]`;
+    //   chats.appendChild(item);
+    //   chats.scrollTop = chats.scrollHeight; 
+    // }); 
 
     // Mostrar notificación de usuario conectado
     socket.on('user connected', (username) => {
@@ -73,7 +82,7 @@
       item.textContent = `${username} its disconnected`;
       messages.appendChild(item);
       messages.scrollTop = messages.scrollHeight;
-    });
+});
   </script>
 </body>
   

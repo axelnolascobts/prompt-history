@@ -6,6 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+const users_names = [];
 const users = {};
 
 // Servir archivos estáticos desde la carpeta "public"
@@ -19,7 +20,10 @@ io.on("connection", (socket) => {
     users[socket.id] = username;
     io.emit("user connected", username);
     console.log(`${username} connected`);
+    users_names.push(username);
+    console.log(`Current users: ${users_names.join(", ")}`);
   });
+
 
   // Recibir y emitir mensajes de chat
   socket.on("chat message", (data) => {
@@ -34,7 +38,13 @@ io.on("connection", (socket) => {
       io.emit("user disconnected", username);
       console.log(`${username} disconnected`);
       delete username[socket.id];
+      const index = users_names.indexOf(username);
+      if (index !== -1) {
+        users_names.splice(index, 1);
+      }
+      console.log(`Current users after disconnect: ${users_names.join(", ")}`); 
     }
+
   });
 });
 
@@ -43,7 +53,7 @@ server.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
 
-//validar espacios en blancos en ingresar nombres de usuarios
-//mensaje avisando de ingresar texto en el chat si esta vacio o con espacios
+// poder chatear con un solo cliente
+// poder borrar mensajes o que solo se muestre el texto "se elimino el mensaje"
 // que no se repitan los username
 // que el mismo username al ingresar no se muestre el mensaje de que ingreso al server
