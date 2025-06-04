@@ -27,16 +27,25 @@
 
     // Pedir nombre de usuario
     let name = '';
-    while (!name || name.trim().length < 1) {
-      alert("Please insert your name")
-      name = prompt('Insert your name: (maxinum 30 characters)');
+    function askName() {
+      while (!name || name.trim().length < 1) {
+        alert("Please insert your name")
+        name = prompt('Insert your name: (maxinum 30 characters)');
+      }
+      while (name.length > 30) {
+        alert("You exceed the maximum characters for a name, choose another name shorter")
+        name = prompt('Insert your name: (maxinum 30 characters)');
+      }
+      socket.emit('new user', name);
     }
-    while (name.length > 30) {
-      alert("You exceed the maximum characters for a name, choose another name shorter")
-      name = prompt('Insert your name: (maxinum 30 characters)');
-    }
+    askName();
 
-    socket.emit('new user', name);
+    socket.on('username exists', () => {
+      alert('That username already exists, please choose another one.');
+      name = '';
+      askName();
+    });
+
     const form = document.getElementById('form');
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
@@ -45,7 +54,7 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       if (input.value.trim()) {
-        const msgId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        const msgId = Date.now().toString() + Math.random().toString(36);
         socket.emit('chat message', { id: msgId, name, message: input.value.trim() });
         input.value = '';
       }
@@ -83,7 +92,7 @@
 
     // Mostrar usuarios para chatear
     socket.on('chats', (usernames) => {
-      chats.innerHTML = ""; // Limpia la lista antes de mostrar
+      chats.innerHTML = "";
       usernames.forEach(username => {
         const item = document.createElement('li');
         item.textContent = `[${username}]`;

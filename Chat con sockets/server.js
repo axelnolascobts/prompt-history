@@ -18,14 +18,17 @@ io.on("connection", (socket) => {
 
   // Registrar nuevo usuario
   socket.on("new user", (username) => {
+    if (users_names.includes(username)) {
+      socket.emit("username exists");
+      return;
+    }
     users[socket.id] = username;
-    io.emit("user connected", username);
-    console.log(`${username} connected`);
     users_names.push(username);
+    io.emit("user connected", username);
+    io.emit("chats", users_names);
+    console.log(`${username} connected`);
     console.log(`Current users: ${users_names.join(", ")}`);
-    io.emit("chats", users_names); 
   });
-
 
   // Recibir y emitir mensajes de chat
   socket.on("chat message", (data) => {
@@ -37,7 +40,7 @@ io.on("connection", (socket) => {
   // Eliminar mensaje
   socket.on("delete message", (id) => {
     // Opcional: verifica que el usuario sea el dueño del mensaje
-    const msg = messages.find(m => m.id === id);
+    const msg = messages.find((m) => m.id === id);
     if (msg && users[socket.id] === msg.name) {
       io.emit("message deleted", id);
     }
@@ -45,7 +48,7 @@ io.on("connection", (socket) => {
 
   // Manejar desconexión
   socket.on("disconnect", () => {
-    const username = users[socket.id]
+    const username = users[socket.id];
     if (username) {
       io.emit("user disconnected", username);
       console.log(`${username} disconnected`);
@@ -54,14 +57,13 @@ io.on("connection", (socket) => {
       if (index !== -1) {
         users_names.splice(index, 1);
       }
-      console.log(`Current users after disconnect: ${users_names.join(", ")}`); 
+      console.log(`Current users after disconnect: ${users_names.join(", ")}`);
       io.emit("chats", users_names); // <--- Agrega esto
     }
-
   });
 });
 
-const PORT =  3000;
+const PORT = 3000;
 server.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
