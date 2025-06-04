@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
+const { trace } = require("console");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -9,6 +10,7 @@ const io = new Server(server);
 const users_names = [];
 const users = {};
 const messages = []; 
+const usernameToSocketId = {};
 
 // Servir archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, "public")));
@@ -24,8 +26,8 @@ io.on("connection", (socket) => {
         return;
       }
      
-
     users[socket.id] = username;
+    usernameToSocketId[username] = socket.id;
     users_names.push(username);
     io.emit("user connected", username);
     io.emit("chats", users_names);
@@ -48,6 +50,21 @@ io.on("connection", (socket) => {
     }
   });
 
+  //Manejar mensajes privados
+  socket.on("private messages" , ({ to, message, id }) => {
+    const from = users[socket.id];
+    const targetSocketId = usernameToSocketId[to];
+
+    if (targetSocketId) {
+      const msgData = {from, to, message, id };
+
+    io.to(targetSocketId).emit("private message", msgData);
+    console.log(`[private] ${from} ${to}: ${message}`)
+    }else {
+      socket.emit("user not found", to);
+    }
+  });
+
   // Manejar desconexión
   socket.on("disconnect", () => {
     const username = users[socket.id];
@@ -55,6 +72,7 @@ io.on("connection", (socket) => {
       io.emit("user disconnected", username);
       console.log(`${username} disconnected`);
       delete users[socket.id];
+      delete usernameToSocketId[username];
       const index = users_names.indexOf(username);
       if (index !== -1) {
         users_names.splice(index, 1);

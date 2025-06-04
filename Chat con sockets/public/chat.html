@@ -13,16 +13,19 @@
   <form id="form">
 
 
-    <input id="input" autocomplete="off" placeholder="Write your message, maximum 500 characters" maxlength="500" />
+<input id="input" autocomplete="off" 
+placeholder="Write your message, maximum 500 characters" maxlength="500" />
 
 
     <button type="submit">Send</button>
   </form>
 
   <ul id="chats"></ul>
+  <div id="private-chats"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
+    const privateChats = {};
 
     // Pedir nombre de usuario
     let name = '';
@@ -93,8 +96,17 @@
     socket.on('chats', (usernames) => {
       chats.innerHTML = "";
       usernames.forEach(username => {
+        if(username === name);
+        return;
         const item = document.createElement('li');
         item.textContent = `[${username}]`;
+        item.style.cursor = 'pointer';
+
+        item.onclick = () => {
+          if(!privateChats[username]) {
+            createPrivateChatWindow(username);
+          }
+        };
         chats.appendChild(item);
       });
       chats.scrollTop = chats.scrollHeight;
@@ -115,6 +127,42 @@
       messages.appendChild(item);
       messages.scrollTop = messages.scrollHeight;
     });
+
+    //pagina para crear chat
+    function createPrivateChatWindow(username) {
+      if (document.getElementById(`chat-${username}`));
+      return;
+      const chatBox = document.createElement('div');
+      chatBox.className = 'private-chat-box'; //agregar estilo despues
+      chatBox.id = `chat-${username}`;
+
+      const title = document.createElement('h3');
+      title.textContent = `Chat con ${username}`;
+      chatBox.appendChild(title);
+
+      const messageList = document.createElement('ul');
+      messageList.className = 'private-messages' //agregar estilo despues
+      chatBox.appendChild(messageList);
+
+      const formList = document.createElement('form');
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'insert a message...';
+
+      const sendBtn = document.createElement('button');
+      sendBtn.textContent = 'send';
+      form.appendChild('input');
+      form.appendChild('sendBtn');
+
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        const message = input.value.trim();
+        if (message) {
+          const msgId = Math.random().toString(36);
+          socket.emit('private message',{ to: username, message, id: msgId });
+          input.value = '';
+        }};
+    };
   </script>
 </body>
 </html>
