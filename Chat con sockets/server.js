@@ -8,6 +8,7 @@ const io = new Server(server);
 
 const users_names = [];
 const users = {};
+const messages = []; // Guarda los mensajes
 
 // Servir archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, "public")));
@@ -22,13 +23,24 @@ io.on("connection", (socket) => {
     console.log(`${username} connected`);
     users_names.push(username);
     console.log(`Current users: ${users_names.join(", ")}`);
+    io.emit("chats", users_names); 
   });
 
 
   // Recibir y emitir mensajes de chat
   socket.on("chat message", (data) => {
+    messages.push(data); // Guarda el mensaje
     io.emit("chat message", data);
     console.log(`[${data.name}] ${data.message}`);
+  });
+
+  // Eliminar mensaje
+  socket.on("delete message", (id) => {
+    // Opcional: verifica que el usuario sea el dueño del mensaje
+    const msg = messages.find(m => m.id === id);
+    if (msg && users[socket.id] === msg.name) {
+      io.emit("message deleted", id);
+    }
   });
 
   // Manejar desconexión
@@ -37,12 +49,13 @@ io.on("connection", (socket) => {
     if (username) {
       io.emit("user disconnected", username);
       console.log(`${username} disconnected`);
-      delete username[socket.id];
+      delete users[socket.id]; // <--- Corrige esto
       const index = users_names.indexOf(username);
       if (index !== -1) {
         users_names.splice(index, 1);
       }
       console.log(`Current users after disconnect: ${users_names.join(", ")}`); 
+      io.emit("chats", users_names); // <--- Agrega esto
     }
 
   });

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-  
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,15 +14,13 @@
   <form id="form">
 
 
-    <input id="input" autocomplete="off"
-     placeholder="Write your message, maximum 500 characters" 
-     maxlength="500"/>
+    <input id="input" autocomplete="off" placeholder="Write your message, maximum 500 characters" maxlength="500" />
 
 
     <button type="submit">Send</button>
   </form>
 
-   <ul id="chats"></ul>
+  <ul id="chats"></ul>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
@@ -30,11 +28,11 @@
     // Pedir nombre de usuario
     let name = '';
     while (!name || name.trim().length < 1) {
-      alert("Please insert your name") 
+      alert("Please insert your name")
       name = prompt('Insert your name: (maxinum 30 characters)');
     }
-    while (name.length > 30){
-      alert("You exceed the maximum characters for a name, choose another name shorter") 
+    while (name.length > 30) {
+      alert("You exceed the maximum characters for a name, choose another name shorter")
       name = prompt('Insert your name: (maxinum 30 characters)');
     }
 
@@ -47,26 +45,52 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       if (input.value.trim()) {
-        socket.emit('chat message', { name, message: input.value.trim() });
+        const msgId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        socket.emit('chat message', { id: msgId, name, message: input.value.trim() });
         input.value = '';
       }
-    }); 
+    });
 
     // Mostrar mensajes entrantes
     socket.on('chat message', (data) => {
       const item = document.createElement('li');
       item.textContent = `[${data.name}] ${data.message}`;
-      messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight; 
-    }); 
 
-    // // Mostrar usuarios para chatear
-    // socket.on('chats', (username) => {
-    //   const item = document.createElement('li');
-    //   item.textContent = `[${username}]`;
-    //   chats.appendChild(item);
-    //   chats.scrollTop = chats.scrollHeight; 
-    // }); 
+      // Si el mensaje es del usuario actual, agrega botón eliminar
+      if (data.name === name) {
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Eliminar';
+        delBtn.onclick = () => {
+          socket.emit('delete message', data.id);
+        };
+        item.appendChild(delBtn);
+      }
+
+      item.dataset.id = data.id; // Guarda el id del mensaje en el elemento
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+
+    // Escucha mensajes eliminados
+    socket.on('message deleted', (id) => {
+      const items = messages.querySelectorAll('li');
+      items.forEach(item => {
+        if (item.dataset.id === id) {
+          item.textContent = 'Se eliminó el mensaje';
+        }
+      });
+    });
+
+    // Mostrar usuarios para chatear
+    socket.on('chats', (usernames) => {
+      chats.innerHTML = ""; // Limpia la lista antes de mostrar
+      usernames.forEach(username => {
+        const item = document.createElement('li');
+        item.textContent = `[${username}]`;
+        chats.appendChild(item);
+      });
+      chats.scrollTop = chats.scrollHeight;
+    });
 
     // Mostrar notificación de usuario conectado
     socket.on('user connected', (username) => {
@@ -82,8 +106,8 @@
       item.textContent = `${username} its disconnected`;
       messages.appendChild(item);
       messages.scrollTop = messages.scrollHeight;
-});
+    });
   </script>
 </body>
-  
+
 </html>
