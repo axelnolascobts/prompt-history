@@ -88,10 +88,16 @@ body {
 .delete-button {
 
     display: none;
+    cursor: pointer;
+}
+
+.chat-messages li:hover .delete-button {
+
+    display: block;
+    text-decoration: underline;
 }
 
 .chat-messages li:hover {
 
     background-color: black;
-    
 }
