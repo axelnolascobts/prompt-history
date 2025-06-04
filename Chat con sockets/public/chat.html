@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -54,7 +53,7 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       if (input.value.trim()) {
-        const msgId = Date.now().toString() + Math.random().toString(36);
+        const msgId = Math.random().toString(36);
         socket.emit('chat message', { id: msgId, name, message: input.value.trim() });
         input.value = '';
       }
@@ -74,8 +73,8 @@
         };
         item.appendChild(delBtn);
       }
-
-      item.dataset.id = data.id; // Guarda el id del mensaje en el elemento
+      // Guarda el id del mensaje en el elemento
+      item.dataset.id = data.id; 
       messages.appendChild(item);
       messages.scrollTop = messages.scrollHeight;
     });
@@ -118,5 +117,4 @@
     });
   </script>
 </body>
-
 </html>

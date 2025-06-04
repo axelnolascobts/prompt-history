@@ -17,11 +17,14 @@ io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
   // Registrar nuevo usuario
-  socket.on("new user", (username) => {
-    if (users_names.includes(username)) {
-      socket.emit("username exists");
-      return;
-    }
+ socket.on("new user", (username) => {
+    if (users_names.some(name =>
+      name.toLowerCase() === username.toLowerCase())) {
+        socket.emit("username exists")
+        return;
+      }
+     
+
     users[socket.id] = username;
     users_names.push(username);
     io.emit("user connected", username);
