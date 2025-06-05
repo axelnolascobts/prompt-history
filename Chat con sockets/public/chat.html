@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,41 +10,48 @@
 
 <body>
   <h1>Real-time Chat</h1>
-  <ul id="messages"></ul>
-  <form id="form">
+  <div id="container">
+    <div id="sidebar">
+      <strong>Chats</strong>
+      <ul id="chat-list">
+        <li class="selected" data-user="Everyone">General</li>
+      </ul>
+    </div>
+    <div id="main">
+      <ul id="messages"></ul>
+      <form id="form">
+        <input id="input" autocomplete="off" placeholder="Write your message, maximum 500 characters" maxlength="500" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
 
-
-<input id="input" autocomplete="off" 
-placeholder="Write your message, maximum 500 characters" maxlength="500" />
-
-
-    <button type="submit">Send</button>
-  </form>
-
-  <ul id="chats"></ul>
-  <div id="private-chats"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
-    const privateChats = {};
-
-    // Pedir nombre de usuario
     let name = '';
+    let currentChat = "Everyone"; // "Everyone" para general, o nombre de usuario para privado
+
+    // Estructura para guardar mensajes por chat
+    const chatMessages = { "Everyone": [] };
+
+    // Solicita el nombre de usuario y lo valida
     function askName() {
       while (!name || name.trim().length < 1) {
-        alert("Please insert your name")
-        name = prompt('Insert your name: (maxinum 30 characters)');
+        alert("Por favor ingresa tu nombre");
+        name = prompt('Ingresa tu nombre (máximo 30 caracteres)').trim();
       }
       while (name.length > 30) {
-        alert("You exceed the maximum characters for a name, choose another name shorter")
-        name = prompt('Insert your name: (maxinum 30 characters)');
+        alert("Excediste el máximo de caracteres para el nombre, elige uno más corto");
+        name = prompt('Ingresa tu nombre (máximo 30 caracteres)').trim();
       }
       socket.emit('new user', name);
     }
     askName();
 
+    // Si el nombre de usuario ya existe, solicita otro
     socket.on('username exists', () => {
-      alert('That username already exists, please choose another one.');
+      alert('Ese nombre de usuario ya existe, por favor elige otro.');
       name = '';
       askName();
     });
@@ -51,118 +59,130 @@ placeholder="Write your message, maximum 500 characters" maxlength="500" />
     const form = document.getElementById('form');
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
-    const delete_button = document.getElementById('delete_button')
-    const chats = document.getElementById('chats')
+    const chatList = document.getElementById('chat-list');
+
+    // Actualiza la lista de chats (usuarios)
+    socket.on('chats', (usernames) => {
+      // Mantiene el chat general
+      chatList.innerHTML = '<li class="selected" data-user="Everyone">General</li>';
+      usernames.forEach(username => {
+        if (username === name) return;
+        const li = document.createElement('li');
+        li.textContent = username;
+        li.dataset.user = username;
+        chatList.appendChild(li);
+        if (!chatMessages[username]) chatMessages[username] = [];
+      });
+      // Selección de chat
+      for (let i = 0; i < chatList.children.length; i++) {
+        chatList.children[i].onclick = function () {
+          for (let j = 0; j < chatList.children.length; j++) {
+            chatList.children[j].classList.remove('selected');
+          }
+          this.classList.add('selected');
+          currentChat = this.dataset.user;
+          renderMessages();
+        };
+      }
+    });
+
+    // Enviar mensaje
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      if (input.value.trim()) {
-        const msgId = Math.random().toString(36);
-        socket.emit('chat message', { id: msgId, name, message: input.value.trim() });
-        input.value = '';
+      const msg = input.value.trim();
+      if (!msg) return;
+      const msgId = Math.random().toString(36);
+      if (currentChat === "Everyone") {
+        socket.emit('chat message', { id: msgId, name, message: msg });
+      } else {
+        socket.emit('private message', { to: currentChat, message: msg, id: msgId });
       }
+      input.value = '';
     });
 
-    // Mostrar mensajes entrantes
+    // Mensajes públicos
     socket.on('chat message', (data) => {
-      const item = document.createElement('li');
-      item.textContent = `[${data.name}] ${data.message}`;
-
-      // Si el mensaje es del usuario actual, agrega botón eliminar
-      if (data.name === name) {
-        const delBtn = document.createElement('button');
-        delBtn.textContent = 'Eliminar';
-        delBtn.onclick = () => {
-          socket.emit('delete message', data.id);
-        };
-        item.appendChild(delBtn);
-      }
-      // Guarda el id del mensaje en el elemento
-      item.dataset.id = data.id; 
-      messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight;
+      chatMessages["Everyone"].push(data);
+      if (currentChat === "Everyone") renderMessages();
     });
 
-    // Escucha mensajes eliminados
-    socket.on('message deleted', (id) => {
-      const items = messages.querySelectorAll('li');
-      items.forEach(item => {
-        if (item.dataset.id === id) {
-          item.textContent = 'Se eliminó el mensaje';
+    // Mensajes privados recibidos
+    socket.on('private message', ({ from, to, message, id }) => {
+      const chatKey = from === name ? to : from;
+      if (!chatMessages[chatKey]) chatMessages[chatKey] = [];
+      // Marca como propio si eres el remitente
+      const isSelf = from === name;
+      chatMessages[chatKey].push({ from, to, message, id, self: isSelf });
+      if (currentChat === chatKey) renderMessages();
+    });
+
+    // Eliminar mensaje (general y privado)
+    socket.on('message deleted', ({ id, chat }) => {
+      // Revisa todos los chats privados y el general
+      for (let chatName in chatMessages) {
+        const messagesArray = chatMessages[chatName];
+        if (!messagesArray) continue;
+        const index = messagesArray.findIndex(message => message.id === id);
+        if (index !== -1) {
+          messagesArray[index].deleted = true;
+          if (currentChat === chatName) renderMessages();
         }
-      });
+      }
     });
 
-    // Mostrar usuarios para chatear
-    socket.on('chats', (usernames) => {
-      chats.innerHTML = "";
-      usernames.forEach(username => {
-        if(username === name);
-        return;
+    // Renderiza los mensajes del chat actual
+    function renderMessages() {
+      messages.innerHTML = '';
+      const msgs = chatMessages[currentChat] || [];
+      msgs.forEach(data => {
         const item = document.createElement('li');
-        item.textContent = `[${username}]`;
-        item.style.cursor = 'pointer';
-
-        item.onclick = () => {
-          if(!privateChats[username]) {
-            createPrivateChatWindow(username);
+        if (data.deleted) {
+          item.textContent = 'Este mensaje fue eliminado';
+        } else if (currentChat === "Everyone") {
+          item.textContent = `[${data.name}] ${data.message}`;
+          if (data.name === name) {
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'Eliminar';
+            delBtn.onclick = () => {
+              socket.emit('delete message', { id: data.id, chat: "Everyone" });
+            };
+            item.appendChild(delBtn);
           }
-        };
-        chats.appendChild(item);
+        } else {
+          // Chat privado
+          if (data.self) {
+            item.textContent = `[Tú -> ${currentChat}]: ${data.message}`;
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'Eliminar';
+            delBtn.onclick = () => {
+              socket.emit('delete message', { id: data.id, chat: currentChat });
+            };
+            item.appendChild(delBtn);
+          } else {
+            item.textContent = `[${data.from}]: ${data.message}`;
+          }
+        }
+        messages.appendChild(item);
       });
-      chats.scrollTop = chats.scrollHeight;
-    });
+      messages.scrollTop = messages.scrollHeight;
+    }
 
-    // Mostrar notificación de usuario conectado
+    // Notificaciones de conexion/desconexion
     socket.on('user connected', (username) => {
-      const item = document.createElement('li');
-      item.textContent = `${username} its connected`;
-      messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight;
+      if (username !== name) {
+        chatMessages["Everyone"].push({ name: "Sistema", message: `${username} se conecto` });
+        if (currentChat === "Everyone") renderMessages();
+      }
     });
 
-    // Mostrar notificación de usuario desconectado
     socket.on('user disconnected', (username) => {
-      const item = document.createElement('li');
-      item.textContent = `${username} its disconnected`;
-      messages.appendChild(item);
-      messages.scrollTop = messages.scrollHeight;
+      chatMessages["Everyone"].push({ name: "Sistema", message: `${username} se desconecto` });
+      if (currentChat === "Everyone") renderMessages();
     });
 
-    //pagina para crear chat
-    function createPrivateChatWindow(username) {
-      if (document.getElementById(`chat-${username}`));
-      return;
-      const chatBox = document.createElement('div');
-      chatBox.className = 'private-chat-box'; //agregar estilo despues
-      chatBox.id = `chat-${username}`;
-
-      const title = document.createElement('h3');
-      title.textContent = `Chat con ${username}`;
-      chatBox.appendChild(title);
-
-      const messageList = document.createElement('ul');
-      messageList.className = 'private-messages' //agregar estilo despues
-      chatBox.appendChild(messageList);
-
-      const formList = document.createElement('form');
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = 'insert a message...';
-
-      const sendBtn = document.createElement('button');
-      sendBtn.textContent = 'send';
-      form.appendChild('input');
-      form.appendChild('sendBtn');
-
-      form.onsubmit = (e) => {
-        e.preventDefault();
-        const message = input.value.trim();
-        if (message) {
-          const msgId = Math.random().toString(36);
-          socket.emit('private message',{ to: username, message, id: msgId });
-          input.value = '';
-        }};
-    };
+    // Inicializa la vista
+    renderMessages();
   </script>
 </body>
+
 </html>

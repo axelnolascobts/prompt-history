@@ -2,91 +2,136 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
-const { trace } = require("console");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const users_names = [];
 const users = {};
-const messages = []; 
-const usernameToSocketId = {};
+const usernameToSocketIds = {};
+const messages = { Everyone: [] };
+const usersNames = [];
 
-// Servir archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, "public")));
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
+  console.log(`Usuario conectado: ${socket.id}`);
 
-  // Registrar nuevo usuario
- socket.on("new user", (username) => {
-    if (users_names.some(name =>
-      name.toLowerCase() === username.toLowerCase())) {
-        socket.emit("username exists")
-        return;
+  // Nuevo usuario
+  socket.on("new user", (username) => {
+    const normalized = username.trim().toLowerCase();
+    let nameInUse = false;
+    for (let key in users) {
+      if (users[key].trim().toLowerCase() === normalized) {
+        nameInUse = true;
+        break;
       }
-     
+    }
+    if (nameInUse) {
+      socket.emit("username exists");
+      return;
+    }
     users[socket.id] = username;
-    usernameToSocketId[username] = socket.id;
-    users_names.push(username);
-    io.emit("user connected", username);
-    io.emit("chats", users_names);
-    console.log(`${username} connected`);
-    console.log(`Current users: ${users_names.join(", ")}`);
+
+    // Manejo de múltiples conexiones por usuario
+    if (!usernameToSocketIds[username]) {
+      usernameToSocketIds[username] = new Set();
+      usersNames.push(username);
+      io.emit("user connected", username);
+      io.emit("chats", usersNames);
+      console.log(`Usuario registrado: ${username}`);
+      console.log(`Usuarios actuales: ${usersNames.join(", ")}`);
+    }
+    usernameToSocketIds[username].add(socket.id);
   });
 
-  // Recibir y emitir mensajes de chat
+  // Mensaje público
   socket.on("chat message", (data) => {
-    messages.push(data); 
+    messages["Everyone"].push(data);
     io.emit("chat message", data);
-    console.log(`[${data.name}] ${data.message}`);
+    console.log(`[General] ${data.name}: ${data.message}`);
   });
 
-  // Eliminar mensaje
-  socket.on("delete message", (id) => {
-    const msg = messages.find((m) => m.id === id);
-    if (msg && users[socket.id] === msg.name) {
-      io.emit("message deleted", id);
-    }
-  });
-
-  //Manejar mensajes privados
-  socket.on("private messages" , ({ to, message, id }) => {
+  // Mensaje privado
+  socket.on("private message", ({ to, message, id }) => {
     const from = users[socket.id];
-    const targetSocketId = usernameToSocketId[to];
+    if (!messages[from]) messages[from] = [];
+    if (!messages[to]) messages[to] = [];
+    const messageData = { from, to, message, id };
 
-    if (targetSocketId) {
-      const msgData = {from, to, message, id };
+    // Guarda en ambos historiales
+    messages[from].push({ ...messageData, self: true });
+    messages[to].push(messageData);
 
-    io.to(targetSocketId).emit("private message", msgData);
-    console.log(`[private] ${from} ${to}: ${message}`)
-    }else {
-      socket.emit("user not found", to);
+    // Envía al emisor con self: true y al receptor normal
+    for (let socketId in users) {
+      const userName = users[socketId];
+      if (userName === from) {
+        io.to(socketId).emit("private message", { ...messageData, self: true });
+      } else if (userName === to) {
+        io.to(socketId).emit("private message", messageData);
+      }
+    }
+    console.log(`[Privado] ${from} -> ${to}: ${message}`);
+  });
+
+  // Eliminar mensaje (general y privado)
+  socket.on("delete message", ({ id, chat }) => {
+    // Buscar el arreglo de mensajes del chat
+    const chatMessages = messages[chat];
+    if (!chatMessages) return;
+    // Buscar el mensaje por id
+    const message = chatMessages.find((msg) => msg.id === id);
+    if (!message) return;
+
+    // Si es mensaje general y es tuyo, lo puedes eliminar
+    if (chat === "Everyone" && message.name === users[socket.id]) {
+      message.deleted = true;
+      io.emit("message deleted", { id, chat: "Everyone" });
+      console.log(`Message deleted in general: ${message.id}`);
+    }
+    // Si es privado y tú lo enviaste, lo puedes eliminar
+    else if (message.from === users[socket.id] && chat !== "Everyone") {
+      // Marcar como eliminado en ambos historiales (emisor y receptor)
+      const involvedUsers = [message.from, message.to];
+      for (let i = 0; i < involvedUsers.length; i++) {
+        const userMessages = messages[involvedUsers[i]];
+        if (!userMessages) continue;
+        const index = userMessages.findIndex((msg) => msg.id === id);
+        if (index !== -1) userMessages[index].deleted = true;
+      }
+      // Avisar a ambos usuarios
+      for (let socketId in users) {
+        const userName = users[socketId];
+        if (userName === chat || userName === users[socket.id]) {
+          io.to(socketId).emit("message deleted", { id, chat });
+        }
+      }
+      console.log(`Private message deleted: ${message.id} in chat ${chat}`);
     }
   });
 
-  // Manejar desconexión
+  // Desconexión de usuario
   socket.on("disconnect", () => {
     const username = users[socket.id];
     if (username) {
-      io.emit("user disconnected", username);
-      console.log(`${username} disconnected`);
       delete users[socket.id];
-      delete usernameToSocketId[username];
-      const index = users_names.indexOf(username);
-      if (index !== -1) {
-        users_names.splice(index, 1);
+
+      const sockets = usernameToSocketIds[username];
+      sockets.delete(socket.id);
+
+      if (sockets.size === 0) {
+        delete usernameToSocketIds[username];
+        const index = usersNames.indexOf(username);
+        if (index !== -1) usersNames.splice(index, 1);
+        socket.broadcast.emit("user disconnected", username);
+        io.emit("chats", usersNames);
+        console.log(`Usuario desconectado: ${username}`);
       }
-      console.log(`Current users after disconnect: ${users_names.join(", ")}`);
-      io.emit("chats", users_names); 
     }
   });
 });
 
 const PORT = 3000;
 server.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
-
-// poder chatear con un solo cliente
-// que el mismo username al ingresar no se muestre el mensaje de que ingreso al server
