@@ -10,7 +10,7 @@ const PORT = 3000;
 APP.use(express.static('/home/user/Documentos/prompt-history/ServerNodeSocket/'));
 let userNames = [];
 let privateRooms = [];
-let privateNames = [];
+let mainChatUserIds = [];
 
 IO.on('connection', (socket) => {
 
@@ -24,11 +24,12 @@ IO.on('connection', (socket) => {
 
             socket.userName = userName;
             userNames.push(userName.toLowerCase());
+            mainChatUserIds.push(socket.id);
             //console.log(userNames);
             
             console.log(`User: ${socket.userName} with id: ${socket.id} connected to server`);
 
-            IO.emit('chat message', `User: ${socket.userName} connected to server`);
+            IO.emit('server message', `User ${socket.userName} connected to server`);
 
         } else {
 
@@ -43,8 +44,6 @@ IO.on('connection', (socket) => {
 
         socket.userName = username;
 
-        console.log(`User: ${socket.userName} with id: ${socket.id} connected to private room`);
-
     });
 
     socket.on('chat message', (message) => {
@@ -57,19 +56,47 @@ IO.on('connection', (socket) => {
 
     socket.on('private room', (user, receptor) => {
 
+        let keyPass = true;
         const ORDER_NAMES = [user, receptor].sort();
         
         const ROOM_NAME = ORDER_NAMES.join("-");
         socket.join(ROOM_NAME);
 
-        let privateRoomIndex = privateRooms.indexOf(ROOM_NAME);
+        for ( let room of privateRooms ) {
 
-        if (privateRoomIndex === -1) {
+            if (room.userName === socket.userName && room.roomName === ROOM_NAME){
 
-            privateRooms.push(ROOM_NAME);
-            //console.log(privateRooms);
+                socket.emit('private room error', "You are in chat now!");
+                socket.disconnect();
+                keyPass = false;
+                
+            }
+        }
+
+        if(keyPass) {
+
+            console.log(`User: ${socket.userName} with id: ${socket.id} connected to private room`);
+            IO.to(ROOM_NAME).emit('private server message', `User: ${socket.userName} join to private chat`);
+
+            let roomData = {
+                userName: socket.userName,
+                userId: socket.id,
+                roomName: ROOM_NAME
+            };
+
+            privateRooms.push(roomData);
+            console.log(privateRooms);
 
         }
+
+        // let privateRoomIndex = privateRooms.indexOf(ROOM_NAME);
+
+        // if (privateRoomIndex === -1) {
+
+        //     privateRooms.push(ROOM_NAME);
+        //     //console.log(privateRooms);
+
+        // }
 
     });
 
@@ -80,6 +107,8 @@ IO.on('connection', (socket) => {
         const ROOM_NAME = ORDER_NAMES.join("-");
 
         IO.to(ROOM_NAME).emit('private message', `[${socket.userName}]: ${message}`);
+        console.log(`Private message "${message}" recived from user: ${socket.userName}, with id: ${socket.id}`);
+
 
     });
 
@@ -88,25 +117,36 @@ IO.on('connection', (socket) => {
 
         if(socket.userName !== undefined) {
 
-            let userNameIndex = userNames.indexOf(socket.userName);
+            let userIdIndex = mainChatUserIds.indexOf(socket.id);
 
-            if(userNameIndex !== -1) {
+            if (userIdIndex !== -1) {
 
-                userNames.splice(userNameIndex, 1);
+                userNames.splice(userIdIndex, 1);
+                mainChatUserIds.splice(userIdIndex, 1);
 
-            }
+                console.log(userNames);
 
-            console.log(`User: ${socket.userName} with id: ${socket.id} was discconected`);
+                console.log(`User: ${socket.userName} with id: ${socket.id} was discconected`);
 
-            IO.emit('chat message', `User: ${socket.userName} was discconected`);
+                IO.emit('server message', `User ${socket.userName} was discconected`);
 
-            for ( let room of privateRooms ) {
+            } else {
 
-                if (room.includes(socket.userName)) {
+                let index = 0;
 
-                    IO.to(room).emit('private message', `User: ${socket.userName} was disconected`);
-                    socket.leave(room);
+                for ( let room of privateRooms ) {
 
+                    if (room.userId === socket.id) {
+
+                        IO.to(room.roomName).emit('private server message', `User ${socket.userName} left private chat`);
+                        console.log(`User: ${socket.userName} with id: ${socket.id} was left room: ${room.roomName}`);
+                        socket.leave(room);
+
+                        privateRooms.splice(index, 1);
+
+                    }
+
+                    index++;
                 }
             }
 

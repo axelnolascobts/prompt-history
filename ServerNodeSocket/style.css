@@ -36,6 +36,10 @@ body {
     margin-left: 80px;
 }
 
+.private-name {
+    margin-left: 20px;
+}
+
 .user-name {
 
     margin-left: 3px;
@@ -77,12 +81,24 @@ body {
     width: 100%;
 }
 
-.chat-messages li {
+.message-bubble {
     padding: 12px;
     color: white;
     background-color: rgb(58, 58, 58);
     border-radius: 8px;
     margin: 5px;
+}
+
+.server-message {
+
+    padding: 5px;
+    color: white;
+    background-color: rgb(36, 36, 36);
+    border-radius: 8px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+
 }
 
 .delete-button {
@@ -91,13 +107,13 @@ body {
     cursor: pointer;
 }
 
-.chat-messages li:hover .delete-button {
+.message-bubble:hover .delete-button {
 
     display: block;
     text-decoration: underline;
 }
 
-.chat-messages li:hover {
+.message-bubble:hover {
 
     background-color: black;
 }

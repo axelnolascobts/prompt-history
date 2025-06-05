@@ -55,6 +55,15 @@ function askUserName() {
 
     });
 
+    socket.on('server message', (message) => {
+
+        const MESSAGE = document.createElement("li");
+        MESSAGE.className = "server-message";
+        MESSAGE.textContent = message;
+        CHAT_MESSAGES.appendChild(MESSAGE);
+
+    });
+
     SEND_BUTTON.onclick = () => {
 
         if(MESSAGE_INPUT.value.trim() !== ""){
@@ -85,7 +94,7 @@ function askUserName() {
                 const match = MESSAGES_TEXT[i].textContent.match(/^\[([^\]]+)\]:/);
                 if (match && match[1] !== userName) {
                     const targetUser = match[1];
-                    window.open(`private.html?user=${targetUser}&from=${userName}`, '_blank', 'width=500', 'height=500');
+                    window.open(`private.html?user=${targetUser}&from=${userName}`, '_blank', 'width=700', 'height=500');
                 }
             };
         });

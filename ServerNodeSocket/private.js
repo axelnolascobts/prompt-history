@@ -2,6 +2,7 @@ const MESSAGE_INPUT = document.getElementById("message-input");
 const SEND_BUTTON = document.getElementById("send-button");
 const CHAT_MESSAGES = document.getElementById("chat-messages");
 const SHOW_USERNAME = document.getElementById("show-user-id");
+const SHOW_RECEPTOR_NAME = document.getElementById("show-receptor-user");
 const URLPARAMS = new URLSearchParams(window.location.search);
 const USER = URLPARAMS.get("from");
 const RECEPTOR = URLPARAMS.get("user");
@@ -14,9 +15,15 @@ socket.on('connect', () => {
     //console.log('conected to server');
 
     SHOW_USERNAME.textContent = USER;
+    SHOW_RECEPTOR_NAME.textContent = RECEPTOR;
     socket.emit('set private name', USER);
     socket.emit('private room', USER, RECEPTOR);
 
+});
+
+socket.on('private room error', (message) => {
+
+    alert(message);
 });
 
 socket.on('private message', (message) => {
@@ -37,6 +44,15 @@ socket.on('private message', (message) => {
     MESSAGE.appendChild(DELETE_BUTTON);
 
     setEventDelete();
+
+});
+
+socket.on('private server message', (message) => {
+
+    const MESSAGE = document.createElement("li");
+    MESSAGE.className = "server-message";
+    MESSAGE.textContent = message;
+    CHAT_MESSAGES.appendChild(MESSAGE);
 
 });
 
