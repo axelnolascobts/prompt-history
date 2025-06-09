@@ -1,0 +1,48 @@
+# QUE ES UNA REST API?
+
+Es una API (aplication programing interface) que sigue los principios de diseño de arquitectura REST que significa trasferencia de estado representacional, que consiste en un conjunto de reglas a seguir para crear una API.
+
+REST no es un protocolo ni un estandar, sino un conjunto de límites relacionados con la arquitectura.
+
+Cuando el cliente envia una solicitud a través de una API RESTful esta transfiere una representacion del estado del recurso requerido a quien lo solicitó. LA información se entrega por HTTP en formato JSON, HTML, PHP, Python, XLT o texto sin formato.
+
+Los encabezados y los parámetros son importantes en los métodos HTTP ya que contienen información de identificación esencial sobre los metadatos, la autorización, el URI (identificador uniforme de recursos), la caché, las cookies y otros elementos. 
+
+Hay encabezados de solicitud y encabezados de respuesta, cada uno tiene sus propios códigos de estado e información de conexión HTTP.
+
+Para que una API se considere REST debe tener:
+
+- Arquitectura cliente-servidor compuesta por clientes, servidores y recursos, con la gestion de solicitudes atravez de HTTP.
+
+- Una comunicación sin estado entre el cliente y el servidor, lo que implica que la información del cliente no se almacena entre las solicitudes GET y que cada una de ellas es independiente y está desconectada del resto.
+
+- Datos que se puedan almacenar en caché y optimicen las interacciones entre el cliente y el server.
+
+- Una interfaz uniforme entre elementos que permita que la infromación se transfiera de manera estandar: 
+
+    Los recursos solicitados deben ser independientes de las representaciones enviadas por el cliente e identificables.
+
+    El cliente debe poder manipular los recursos a través de la representación que recibe, ya que contiene suficiente información para ello.
+
+    Los mesajes autodescriptivos que se envian al cliente deben contener la información necesaria para describir la manera de procesarla.
+
+    Debe contener hipertexto lo que significa que cuando el cliente acceda a los recursos debe poder utilizar hipervínculos para poder buscar las demás acciones disponibles en ese momento.
+
+Un sistema capáz de organizar cada tipo de servidor que participa en la recuperacion de nformación solicitada.
+
+De manera opcional enviar código ejecutable al cliente cuando lo requiera.
+
+RESUMEN DE LOS ELEMENTOS DE UNA REST API:
+
+- Interfaz uniforme.
+- Desacoplamiento cliente-servidor.
+- Sin estado.
+- Capacidad de almacenamiento caché.
+- Arquitectura en capas.
+- Código bajo demanda (opcional).
+
+# COMO FUNCIONA UNA API REST?
+
+Se comunican através de solicitudes HTTP para realizar funciones estandar de bases de datos como crear leer actualizar y eliminar registros (CRUD) dentro de un recurso.
+
+cada recurso tiene su propia URI única (un recurso es un elemento almacenado por ejemplo: usuarios, productos, notas).
