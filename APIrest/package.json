@@ -1,0 +1,1 @@
+{"scripts":{"start":"node app.js","dev":"nodemon app.js"},"dependencies":{"express":"^5.1.0","fs":"^0.0.1-security","swagger-ui-express":"^5.0.1","uuid":"^11.1.0"}}

@@ -1,0 +1,9 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "my-api",
+        "version": "1.0.0",
+        "description": "api to a student database"
+    },
+    "paths": {}
+}
