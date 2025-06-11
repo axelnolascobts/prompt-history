@@ -1,7 +1,19 @@
 [
-    {
-        "id": "1",
-        "name": "test",
-        "age": "21"
-    }
+  {
+    "id": "86e8141a-07c4-42d2-bd71-0b7fb58d9976",
+    "name": " prueba   ",
+    "email": "prueba@gmail.com  ",
+    "courses": [
+      "matematicas 1",
+      "Ingles 1"
+    ]
+  },
+  {
+    "id": "d1f387bc-5709-43cb-86a8-f7dc96ff26e5",
+    "name": " prueba1   ",
+    "email": "prueba@gmail.com3  ",
+    "courses": [
+      "matematicas 1"
+    ]
+  }
 ]

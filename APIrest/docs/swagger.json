@@ -1,9 +1,27 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "my-api",
+        "title": "API-student",
         "version": "1.0.0",
         "description": "api to a student database"
     },
-    "paths": {}
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/students":{
+            "get":{
+                "summary": "return all the students and the data",
+                "responses":{
+                    "200": {  
+                    "description": "A list of students"
+                    }
+                }
+            }
+        }
+        
+    } 
 }
