@@ -5,37 +5,33 @@ const DATA_ROUTE = "/home/user/Documentos/prompt-history/Books_API/data/db.json"
 
 function readData() {
 
-    let students = [];
+    let data;
 
-    fs.readFile(DATA_ROUTE, 'utf8', function(error, data) {
+    try {
 
-        if (error) {
+        data = fs.readFileSync(DATA_ROUTE, 'utf8');
+    } catch (error) {
 
-            fs.appendFile(DATA_ROUTE, '[]', function(error) {
+        fs.writeFileSync(DATA_ROUTE, '[]');
+        return [];
 
-                if (error) {
+    }
 
-                    console.log("error");
-                }
-            });
-        }
+    let students = JSON.parse(data);
 
-        students = JSON.parse(data);
+    return students;
 
-        return students;
-
-    });
 }
 
 function writeData(data) {
 
-    fs.writeFile(DATA_ROUTE, JSON.stringify(data, null, 2), (err) => {
-    
-        if (err) {
-            return ({ message: "Failed to save student" });
-        }
-    
-    });
+    try {
+
+        fs.writeFileSync(DATA_ROUTE, JSON.stringify(data, null, 2));
+    } catch (err) {
+
+        return {status: 500, message: "Failed to save student" };
+    }
 
 };
 
@@ -46,60 +42,79 @@ function getStudentById(id) {
 
     if (student) {
 
-        return JSON.parse(student);
+        return {status: 200, data: student};
     } else {
 
-        return ({ message: "Student not found or not exist"})
+        return {status: 404, message: "Student not found or not exist"};
     }
 }
 
 function createNewStudent(name, email, courses) {
 
+    if (name === undefined || email === undefined) {
+
+        return {status: 400, message: "There is no content to update the data"};
+    }
+
     let studentsData = readData();
-    let studentMail = studentsData.find(studentData => studentData.email === email);
+    let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === email.toLowerCase());
 
     if (studentMail){
 
-        return JSON.parse( {message: "The email is ocuped, plis use another email to create a new student"} );
+        return {status: 400, message: "The email is ocuped, plis use another email to create a new student"};
 
     } else {
 
         if (email.trim() === "" || name.trim() === "") {
 
-            return JSON.parse( {message: "name and email are required and obligatory data, plis fill it"} );
+            return {status: 400, message: "Name and email are required and obligatory data, plis fill it"};
 
         } else {
 
             let id = uuidv4();
+            let coursesAuxiliar = courses ? courses : "[]";
+            let coursesList = reviewCourses(coursesAuxiliar);
+            let uniqueCourses = nonDuplicateCourses(coursesList);
 
-            const newStudent = {
+            if (!uniqueCourses) {
+
+                return {status: 400, message: "Check the courses, there cannot be repeated courses"};
+
+            }
+
+            let newStudent = {
                 id,
                 name,
                 email,
-                courses
+                courses: coursesList
             };
 
             studentsData.push(newStudent);
 
-            fs.writeFile(DATA_ROUTE, JSON.stringify({ studentsData }, null, 2), (error) => {
-                
-                if (error) {
+            try {
 
-                    return ({ message: "Failed to save student" });
-                }
-                
-                return json(newStudent);
+                writeData(studentsData);
+                return {status: 201, data: newStudent};
 
-            });
+            } catch (error) {
+
+                return {status: 500, message: "Failed to save student"};
+            }
+
         }
     } 
 }
 
 function completeStudentUpdate(id, name, email, courses) {
 
+    if (name === undefined || email === undefined) {
+
+        return {status: 400, message: "There is no content to update the data"};
+    }
+
     if ( name.trim() === "" || email.trim() === "" ) {
 
-        return ({message: "Name or email cannot be empty fields"});
+        return {status: 400, message: "Name or email cannot be empty fields"};
 
     } else {
 
@@ -109,25 +124,105 @@ function completeStudentUpdate(id, name, email, courses) {
 
         if (student) {
 
-            if (student.name === name || student.email === email || student.courses === courses) {
+            if (student.name === name || student.email === email) {
 
-                return ({message: "The entire user cannot be updated because some data did not change. Please change all user data"});
+                return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change all user data"};
 
             } else {
+
+                let coursesAuxiliar = courses ? courses : "[]";
+                let coursesList = reviewCourses(coursesAuxiliar);
+                let uniqueCourses = nonDuplicateCourses(coursesList);
+
+                if (!uniqueCourses) {
+
+                    return {status: 400, message: "Check the courses, there cannot be repeated courses"};
+
+                }
+
+                let compareCourses = comparateCourses(student.courses, coursesList);
+
+                if (!compareCourses ) {
+
+                    return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change all user data"};
+
+                }
 
                 let updatedStudent = {
 
                     id,
                     name,
                     email,
-                    courses
+                    courses: coursesList
                 };
 
                 studentsData[studentIndex] = updatedStudent;
 
                 writeData(studentsData);
 
-                return JSON.parse(updatedStudent);
+                return {status: 200, data: updatedStudent};
+            }
+        } else {
+
+            return {status: 404, message: "Student not found or not exist"};
+        }
+    }
+}
+
+function partialStudentUpdate(id, name, email, courses) {
+
+    if (name === undefined && email === undefined && courses === undefined) {
+
+        return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change something"};
+    } else {
+
+        if ( name.trim() === "" || email.trim() === "" ) {
+
+            return {status: 400, message: "Name or email cannot be empty fields"};
+
+        } else {
+
+            let studentsData = readData();
+            let student = studentsData.find(studentData => studentData.id === id);
+            let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
+
+            if (student) {
+
+                let coursesAuxiliar = courses ? courses : "[]";
+                let coursesList = reviewCourses(coursesAuxiliar);
+                let uniqueCourses = nonDuplicateCourses(coursesList);
+
+                if (!uniqueCourses) {
+
+                    return {status: 400, message: "Check the courses, there cannot be repeated courses"};
+
+                }
+
+                let compareCourses = comparateCourses(student.courses, coursesList);
+
+                if (student.name === name && student.email === email && !compareCourses) {
+
+                    return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change something"};
+
+                } else {
+
+                    let updatedStudent = {
+
+                        id,
+                        name: name ? name : student.name,
+                        email: email ? email : student.email,
+                        courses: coursesList
+                    };
+
+                    studentsData[studentIndex] = updatedStudent;
+
+                    writeData(studentsData);
+
+                    return {status:200, data: updatedStudent};
+                }
+            } else {
+
+                return {status: 404, message: "Student not found or not exist"};
             }
         }
     }
@@ -140,15 +235,88 @@ function deleteStudent(id) {
 
     if (studentIndex === -1) {
 
-        return ({message: "Student not found or not exist"});
+        return {status: 404, message: "Student not found or not exist"};
     } else {
 
         studentsData.splice(studentIndex, 1);
 
         writeData(studentsData);
 
-        return ({message: "Student was deleted"});
+        return {status: 200, message: "Student was deleted"};
     }
 }
 
-module.exports = { readData, getStudentById, createNewStudent, deleteStudent, completeStudentUpdate };
+function reviewCourses(courses) {
+
+    if (!Array.isArray(courses)) {
+
+        if (typeof courses === 'string') {
+            let coursesArray = [];
+
+            if (courses.includes(",")) {
+
+                coursesArray = courses.split(",");
+                coursesArray.sort();
+
+            } else {
+
+                coursesArray.push(courses);
+
+            }
+
+            return coursesArray;
+        }
+
+    } else {
+
+        courses.sort();
+        return courses;
+    }
+}
+
+function nonDuplicateCourses(courses) {
+
+    if (courses.length > 1) {
+
+        for (i = 0; i <= courses.length - 2; i++) {
+
+            for (j = i + 1; j <= courses.length -1; j++) {
+
+                if (courses[i] === courses[j]) {
+
+                    return false;
+                }
+
+            }
+
+        }
+    }
+
+    return true;
+}
+
+function comparateCourses(courses1, courses2) {
+
+    if (courses1.length === courses2.length) {
+
+        let countSameCourses = 0;
+
+        for (let i = 0; i <= courses1.length -1; i++) {
+
+            if (courses1[i] === courses2[i]){
+
+                countSameCourses++;
+            }
+        }
+
+        if (countSameCourses === courses1.length) {
+
+            return false;
+            
+        }
+    }
+
+    return true;
+}
+
+module.exports = { readData, getStudentById, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate };

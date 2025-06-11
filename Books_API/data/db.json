@@ -1,0 +1,35 @@
+[
+  {
+    "id": "452bcd40-a7db-4bd3-a9f2-d490030adff0",
+    "name": "pancho villa",
+    "email": "panchitoVilla@gmail.com",
+    "courses": "[]"
+  },
+  {
+    "id": "f2aabbfd-88a2-4c83-93f1-1eea702799f6",
+    "name": "pancho villoo",
+    "email": "hola@gmail.com",
+    "courses": "[]"
+  },
+  {
+    "id": "0523cd42-ed43-4952-af51-053cad4f637d",
+    "name": "aaa",
+    "email": "i",
+    "courses": "[]"
+  },
+  {
+    "id": "0a6848a1-0aa7-4784-8350-d9497b6b2d45",
+    "name": "pancho",
+    "email": "aaaa",
+    "courses": "[]"
+  },
+  {
+    "id": "45d67277-064f-4f18-86bd-0c919ceca45e",
+    "name": "jaime",
+    "email": "aoshxaxshao",
+    "courses": [
+      " español",
+      "si"
+    ]
+  }
+]
