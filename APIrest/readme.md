@@ -137,3 +137,14 @@ ENDPOINT: http://localhost:3000/students/:id PATCH
     "status: "400": 
     "description": ""courses must be an array '[]'",
 }
+
+ENDPOINT: http://localhost:3000/students/:id DELETE
+
+{
+    "status": "200":
+    "description": "Data inserted in the student"
+}
+{
+    "status": "404":
+    "description": "Student not found"
+}
