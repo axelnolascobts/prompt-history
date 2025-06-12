@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
+const { search } = require("../routes/studentRoutes");
 
 const DBPATH = path.join(__dirname, "../data/db.json");
 
@@ -18,6 +19,9 @@ function WriteData(data) {
 // GET students
 exports.getAllStudents = (req, res) => {
   const students = ReadData();
+    if (!students) {
+    return res.status(404).json({ message: "Students not found" });
+  }
   res.json(students);
 };
 
@@ -67,6 +71,21 @@ exports.updateStudent = (req, res) => {
   }
 
   const { name, email, courses } = req.body;
+
+  if (typeof name !== 'string' || name.trim()=== '' ||
+  typeof email !== 'string' || email.trim()=== '' || !Array.isArray(courses)) {
+    return res.status(400).json({ message: "PUT request must be replace: name, email and courses"})
+  }
+
+  const trimName = name.trim();
+  const trimEmail = email.trim();
+  const currentStudent = students[index];
+  const emailExist = students.some((s, i) => s.email === trimEmail && i !== index);
+  
+  if (emailExist) {
+    return res.status(400).json({ message: "The email already is used"})
+  }
+
   if (!name || !email) {
     return res.status(400).json({ message: "Name and email are required" });
   }
@@ -75,10 +94,19 @@ exports.updateStudent = (req, res) => {
       return res.status(400).json({message: "courses must be an array '[]'"})
   }
 
+    const sameName = currentStudent.name === trimName;
+    const sameEmail = currentStudent.email === trimEmail;
+    const sameCourses = JSON.stringify(currentStudent.courses) === JSON.stringify(courses)
+
+    if(sameName || sameEmail || sameCourses) {
+      return res.status(400).json({ message:
+         "1 or more data is the same, please insert different data"})
+    }
+
   students[index] = {
     id: students[index].id,
-    name,
-    email,
+    name: trimName,
+    email: trimEmail ,
     courses: courses || [],
   };
   WriteData(students);
@@ -136,5 +164,5 @@ exports.deleteStudent = (req, res) => {
 
   students.splice(index, 1);
   WriteData(students);
-  res.status(204).send();
+  res.status(200).json({ message: "Student deleted"});
 };

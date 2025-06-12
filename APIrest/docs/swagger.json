@@ -29,6 +29,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Students not found"
           }
         }
       },
@@ -109,7 +112,8 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
+            },
+            "description": "UUID of the student update"
           }
         ],
         "requestBody": {
@@ -118,6 +122,16 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/NewStudent"
+              },
+              "example": {
+                "updatedStudent": {
+                  "summary": "a new student object",
+                  "value": {
+                    "name": "Jane Smith",
+                    "email": "jane@example.com",
+                    "courses": ["Math", "Science"]
+                  }
+                }
               }
             }
           }
@@ -127,7 +141,33 @@
             "description": "Student updated successfully"
           },
           "400": {
-            "description": "Invalid input"
+            "description": "Invalid input or no change in data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "missingFields": {
+                    "summary": "missing requiered files",
+                    "value": {
+                      "message": "name and email required"
+                    }
+                  },
+                  "noChange": {
+                    "summary": "No data was changed",
+                    "value": {
+                      "message": "All fileds must differ from current values"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Student not found"
@@ -185,7 +225,7 @@
           }
         ],
         "responses": {
-          "204": {
+          "200": {
             "description": "Student deleted successfully"
           },
           "404": {
@@ -224,7 +264,7 @@
       },
       "NewStudent": {
         "type": "object",
-        "required": ["name", "email"],
+        "required": ["name", "email", "courses"],
         "properties": {
           "name": {
             "type": "string"
