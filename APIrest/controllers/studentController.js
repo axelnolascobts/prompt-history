@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
-const { search } = require("../routes/studentRoutes");
+
 
 const DBPATH = path.join(__dirname, "../data/db.json");
 
