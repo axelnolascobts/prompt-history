@@ -1,7 +1,57 @@
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
+const AJV = require("ajv");
+const AJVFORMATS = require("ajv-formats");
 
-const DATA_ROUTE = "/home/user/Documentos/prompt-history/REST_API/data/db.json" 
+const DATA_ROUTE = "/home/user/Documentos/prompt-history/REST_API/data/db.json";
+
+const AJV_VALIDATOR = new AJV({ allErrors: true });
+AJVFORMATS(AJV_VALIDATOR);
+
+const NEW_STUDENT_SCHEMA = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    email: { type: "string", format: "email" },
+    courses: { anyOf: [
+        { type: "string" },
+        { type: "array", items: { "type": "string" } }
+      ] }
+  },
+  required: ["name", "email"],
+  additionalProperties: false
+};
+
+const UPDATE_EVERY_STUDENT_DATA_SCHEMA = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    email: { type: "string", format: "email" },
+    courses: { anyOf: [
+        { type: "string" },
+        { type: "array", items: { "type": "string" } }
+      ] }
+  },
+  required: ["name", "email", "courses"],
+  additionalProperties: false
+};
+
+const UPDATE_PARTIAL_STUDENT_DATA_SCHEMA = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    email: { type: "string", format: "email" },
+    courses: { anyOf: [
+        { type: "string" },
+        { type: "array", items: { "type": "string" } }
+      ] }
+  },
+  additionalProperties: false
+};
+
+const VALIDATE_NEW_STUDENT = AJV_VALIDATOR.compile(NEW_STUDENT_SCHEMA);
+const VALIDATE_UPDATE_EVERY_STUDENT = AJV_VALIDATOR.compile(UPDATE_EVERY_STUDENT_DATA_SCHEMA);
+const VALIDATE_UPDATE_PARTIAL_STUDENT = AJV_VALIDATOR.compile(UPDATE_PARTIAL_STUDENT_DATA_SCHEMA);
 
 function readData() {
 
@@ -49,22 +99,30 @@ function getStudentById(id) {
     }
 }
 
-function createNewStudent(name, email, courses) {
+function createNewStudent(body) {
 
-    if (name === undefined || email === undefined) {
+    const VALIDATE_SCHEMA = VALIDATE_NEW_STUDENT(body);
 
-        return {status: 400, message: "There is no content to update the data"};
+    if (!VALIDATE_SCHEMA) {
+
+        return {status: 400, message: "Invalid input format"};
+        
     }
 
+    /*if (name === undefined || email === undefined) {
+
+        return {status: 400, message: "There is no content to update the data"};
+    }*/
+
     let studentsData = readData();
-    let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === email.toLowerCase());
+    let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === body.email.toLowerCase());
     
-    let validData = validateNameAndEmail(name, email);
+    /*let validData = validateNameAndEmail(name, email);
 
     if (!validData) {
 
         return {status: 400, message: "Invalid data type, name and email must be text strings."};
-    }
+    }*/
 
     if (studentMail){
 
@@ -72,14 +130,14 @@ function createNewStudent(name, email, courses) {
 
     } else {
 
-        if (email.trim() === "" || name.trim() === "") {
+        if (/*email.trim() === "" ||*/ body.name.trim() === "") {
 
-            return {status: 400, message: "Name and email are required and obligatory data, plis fill it"};
+            return {status: 400, message: "Name is required and obligatory data, plis fill it"};
 
         } else {
 
             let id = uuidv4();
-            let coursesAuxiliar = courses ? courses : [];
+            let coursesAuxiliar = body.courses ? body.courses : [];
             let coursesList = reviewCourses(coursesAuxiliar);
             let uniqueCourses = nonDuplicateCourses(coursesList);
 
@@ -91,8 +149,8 @@ function createNewStudent(name, email, courses) {
 
             let newStudent = {
                 id,
-                name,
-                email,
+                name: body.name,
+                email: body.email,
                 courses: coursesList
             };
 
@@ -112,9 +170,17 @@ function createNewStudent(name, email, courses) {
     } 
 }
 
-function completeStudentUpdate(id, name, email, courses) {
+function completeStudentUpdate(id, body) {
 
-    if (name === undefined || email === undefined) {
+    const VALIDATE_SCHEMA = VALIDATE_UPDATE_EVERY_STUDENT(body);
+
+    if (!VALIDATE_SCHEMA) {
+
+        return {status: 400, message: "Invalid input format"};
+        
+    }
+
+    /*if (name === undefined || email === undefined) {
 
         return {status: 400, message: "There is no content to update the data"};
     }
@@ -124,11 +190,11 @@ function completeStudentUpdate(id, name, email, courses) {
     if (!validData) {
 
         return {status: 400, message: "Invalid data type, name and email must be text strings."};
-    }
+    }*/
 
-    if ( name.trim() === "" || email.trim() === "" ) {
+    if ( body.name.trim() === "" /*|| email.trim() === "" */) {
 
-        return {status: 400, message: "Name or email cannot be empty fields"};
+        return {status: 400, message: "Name cannot be empty field"};
 
     } else {
 
@@ -138,13 +204,13 @@ function completeStudentUpdate(id, name, email, courses) {
 
         if (student) {
 
-            if (student.name === name || student.email === email) {
+            if (student.name === body.name || student.email === body.email) {
 
                 return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change all user data"};
 
             } else {
 
-                let coursesAuxiliar = courses ? courses : [];
+                let coursesAuxiliar = body.courses ? body.courses : [];
                 let coursesList = reviewCourses(coursesAuxiliar);
                 let uniqueCourses = nonDuplicateCourses(coursesList);
 
@@ -165,8 +231,8 @@ function completeStudentUpdate(id, name, email, courses) {
                 let updatedStudent = {
 
                     id,
-                    name,
-                    email,
+                    name: body.name,
+                    email: body.email,
                     courses: coursesList
                 };
 
@@ -183,23 +249,31 @@ function completeStudentUpdate(id, name, email, courses) {
     }
 }
 
-function partialStudentUpdate(id, name, email, courses) {
+function partialStudentUpdate(id, body) {
 
-    if (name === undefined && email === undefined && courses === undefined) {
+    const VALIDATE_SCHEMA = VALIDATE_UPDATE_PARTIAL_STUDENT(body);
+
+    if (!VALIDATE_SCHEMA) {
+
+        return {status: 400, message: "Invalid input format"};
+        
+    }
+
+    if (body.name === undefined && body.email === undefined && body.courses === undefined) {
 
         return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change something"};
     } else {
 
-        let validData = validateNameAndEmail(name, email);
+        /*let validData = validateNameAndEmail(name, email);
 
         if (!validData) {
 
             return {status: 400, message: "Invalid data type, name and email must be text strings."};
-        }
+        }*/
 
-        if ( name.trim() === "" || email.trim() === "" ) {
+        if ( body.name.trim() === "" /*|| body.email.trim() === ""*/ ) {
 
-            return {status: 400, message: "Name or email cannot be empty fields"};
+            return {status: 400, message: "Name cannot be empty field"};
 
         } else {
 
@@ -209,7 +283,7 @@ function partialStudentUpdate(id, name, email, courses) {
 
             if (student) {
 
-                let coursesAuxiliar = courses ? courses : [];
+                let coursesAuxiliar = body.courses ? body.courses : [];
                 let coursesList = reviewCourses(coursesAuxiliar);
                 let uniqueCourses = nonDuplicateCourses(coursesList);
 
@@ -221,7 +295,7 @@ function partialStudentUpdate(id, name, email, courses) {
 
                 let compareCourses = comparateCourses(student.courses, coursesList);
 
-                if (student.name === name && student.email === email && !compareCourses) {
+                if (student.name === body.name && student.email === body.email && !compareCourses) {
 
                     return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change something"};
 
@@ -230,8 +304,8 @@ function partialStudentUpdate(id, name, email, courses) {
                     let updatedStudent = {
 
                         id,
-                        name: name ? name : student.name,
-                        email: email ? email : student.email,
+                        name: body.name ? body.name : student.name,
+                        email: body.email ? body.email : student.email,
                         courses: coursesList
                     };
 
@@ -340,7 +414,7 @@ function comparateCourses(courses1, courses2) {
     return true;
 }
 
-function validateNameAndEmail(name, email) {
+/*function validateNameAndEmail(name, email) {
 
     if(typeof name === 'string' && typeof email === 'string') {
 
@@ -350,6 +424,6 @@ function validateNameAndEmail(name, email) {
         return false;
     }
 
-}
+}*/
 
 module.exports = { readData, getStudentById, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate };

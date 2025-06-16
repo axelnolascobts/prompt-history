@@ -12,7 +12,7 @@ APP.use('/students', ROUTE);
 APP.use('/api-docs', SWAGGER_UI.serve, SWAGGER_UI.setup(SWAGGER_DOCUMENT));
 
 APP.use((request, response) => {
-    response.status(404).json({ message: "Route not found" });
+    response.status(404).json({ status: 404, message: "Route not found" });
 });
 
 APP.listen(PORT, () => {
