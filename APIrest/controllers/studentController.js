@@ -98,16 +98,34 @@ exports.updateStudent = (req, res) => {
       .json({ message: "Invalid input", errors: validateStudent.errors });
   }
 
-  if (
-    students.some((s) => s.email === data.email && s.id !== students[index].id)
-  ) {
+  const currentStudent = students[index];
+
+  const trimmedName = data.name.trim();
+  const trimmedEmail = data.email.trim();
+
+  const isSameName = currentStudent.name === trimmedName;
+  const isSameEmail = currentStudent.email === trimmedEmail;
+  const isSameCourses =
+    JSON.stringify(currentStudent.courses) === JSON.stringify(data.courses);
+
+  if (isSameName || isSameEmail || isSameCourses) {
+    return res.status(400).json({
+      message:
+        "All fields (name, email, and courses) must be different from the current values",
+    });
+  }
+
+  const emailUsedByAnother = students.some(
+    (s) => s.email === trimmedEmail && s.id !== currentStudent.id
+  );
+  if (emailUsedByAnother) {
     return res.status(400).json({ message: "The email already exists" });
   }
 
   students[index] = {
-    id: students[index].id,
-    name: data.name.trim(),
-    email: data.email.trim(),
+    id: currentStudent.id,
+    name: trimmedName,
+    email: trimmedEmail,
     courses: data.courses,
   };
 
