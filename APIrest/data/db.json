@@ -1,18 +1,18 @@
 [
   {
     "id": "86e8141a-07c4-42d2-bd71-0b7fb58d9976",
-    "name": "Milton1",
-    "email": "milton@gmail.com1",
+    "name": "Milton",
+    "email": "milton@gmail2.com",
     "courses": [
       "matematicas"
     ]
   },
   {
-    "id": "d1f387bc-5709-43cb-86a8-f7dc96ff26e5",
-    "name": " prueba1   ",
-    "email": "prueba@gmail.com3  ",
+    "id": "4e0e92bd-8091-45b5-b28c-b81d642d7b40",
+    "name": "Milton",
+    "email": "milton@gmail.com",
     "courses": [
-      "matematicas 1"
+      "matematicas"
     ]
   }
 ]
