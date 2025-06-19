@@ -337,7 +337,7 @@ function deleteStudent(id) {
 
         writeData(studentsData);
 
-        return {status: 200, message: "Student was deleted"};
+        return {status: 204, message: "Student was deleted"};
     }
 }
 

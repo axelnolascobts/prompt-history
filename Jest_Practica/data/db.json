@@ -1,0 +1,24 @@
+[
+  {
+    "teamName": "Bulls",
+    "cityTeam": "Chicago",
+    "playerNames": [
+      "Tatum",
+      "Brown",
+      "White",
+      "Holiday",
+      "Horford"
+    ]
+  },
+  {
+    "teamName": "Warriors",
+    "cityTeam": "San Francisco",
+    "playerNames": [
+      "Curry",
+      "Green",
+      "Butler",
+      "Tooney",
+      "Kuminga"
+    ]
+  }
+]

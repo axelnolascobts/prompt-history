@@ -19,3 +19,5 @@ APP.listen(PORT, () => {
 
     console.log(`Server listening in http://localhost:${PORT}`);
 });
+
+module.exports = APP;
