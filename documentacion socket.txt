@@ -155,3 +155,12 @@ Desconecta manualmente el cliente del servidor.
 socket.id
 ¿Qué es?
 Es el identificador único del socket cliente. Útil para rastrear sesiones.
+
+							Namespace:
+Un namespace en Socket.IO es como una "subruta" lógica en el servidor WebSocket que permite organizar múltiples canales de comunicación separados dentro del mismo servidor y puerto.
+Sirve para separar diferentes flujos de datos: por ejemplo, chat general (/), chat de admins (/admin), logs (/logs), etc.
+¿Cómo funciona?
+Cuando un cliente se conecta a un namespace, se crea una conexión independiente (con su propio socket), aunque sea al mismo servidor.
+
+
+

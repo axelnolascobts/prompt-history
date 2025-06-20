@@ -78,6 +78,15 @@ exports.createStudent = (req, res) => {
     courses: data.courses,
   };
 
+ 
+    if (typeof newStudent.name === "string") {
+    newStudent.name = newStudent.name.trim();
+    if (newStudent.name === "") {
+      return res.status(400).json({ message: "Name cannot be empty" });
+    }
+  }
+
+
   students.push(newStudent);
   WriteData(students);
   res.status(201).json(newStudent);
@@ -102,6 +111,10 @@ exports.updateStudent = (req, res) => {
 
   const trimmedName = data.name.trim();
   const trimmedEmail = data.email.trim();
+
+  if (trimmedName === "") {
+    return res.status(400).json({ message: "Name cannot be empty" });
+  }
 
   const isSameName = currentStudent.name === trimmedName;
   const isSameEmail = currentStudent.email === trimmedEmail;
@@ -132,6 +145,7 @@ exports.updateStudent = (req, res) => {
   WriteData(students);
   res.json(students[index]);
 };
+
 
 // PATCH modificar parcialmente
 exports.patchStudent = (req, res) => {
