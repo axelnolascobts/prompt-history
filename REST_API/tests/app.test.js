@@ -1,6 +1,9 @@
 const REQUEST = require('supertest');
 const APP = require('../app.js');
 
+jest.mock('fs');
+const fs = require('fs');
+
 describe("Some Endpoints from students REST API", () => {
 
     test("GET /students should return students data list", async () => {
@@ -70,6 +73,45 @@ describe("Some Endpoints from students REST API", () => {
         );
     });
 
+    beforeEach(() => {
+
+        fs.readFileSync.mockReturnValue(JSON.stringify(
+            [
+                {
+                    "id": "78b2c235-21ce-4fc5-b53d-482a061e6a90",
+                    "name": "holaaa",
+                    "email": "a@hola.com",
+                    "courses": []
+                },
+                {
+                    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+                    "name": "Benjamin",
+                    "email": "benhja@hola.com",
+                    "courses": [
+                        "biología"
+                    ]
+                },
+                {
+                    "id": "8e90aad9-1ebd-4308-8f73-62a89f58f142",
+                    "name": "Dante",
+                    "email": "dadada@hola.com",
+                    "courses": [
+                        "historia",
+                        "matemáticas"
+                    ]
+                }
+            ]
+        ));
+
+        fs.writeFileSync.mockImplementation(() => {});
+
+    });
+
+    afterEach(() => {
+
+        jest.clearAllMocks();
+    });
+
     // test("POST /students should return a new student", async () => {
 
     //     const RESPONSE = await REQUEST(APP).post('/students')
@@ -83,12 +125,12 @@ describe("Some Endpoints from students REST API", () => {
     //         }
     //     );
 
-    //     expect(RESPONSE.statusCode).toBe(200);
+    //     expect(RESPONSE.statusCode).toBe(201);
     //     expect(RESPONSE.body).toEqual(
     //         {
     //             "status": 201,
     //             "data": {
-    //                 "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+    //                 "id": "4fd81bc4-6389-42a0-bc63-eaae6ff1afa5",
     //                 "name": "Pancho",
     //                 "email": "pancho@hola.com",
     //                 "courses": [
@@ -99,7 +141,34 @@ describe("Some Endpoints from students REST API", () => {
     //     );
     // });
 
+    test("POST /students should return error message", async () => {
 
+        const RESPONSE = await REQUEST(APP).post('/students')
+        .send(
+            {
+                "name": "",
+                "email": "correo@error.com",
+                "courses": [
+                    "biología"
+                ]
+            }
+        );
 
+        expect(RESPONSE.statusCode).toBe(400);
+        expect(RESPONSE.body).toEqual(
+            {
+                "status": 400,
+                "message": "Name is required and obligatory data, plis fill it",
+            }
+        );
+    });
+
+    test("DELETE /students/:id should delete specific student", async () => {
+
+        const RESPONSE = await REQUEST(APP).delete('/students/fb5f899d-54a5-4ac6-8cc1-378e66afbd5d');
+
+        expect(RESPONSE.statusCode).toBe(204);
+
+    });
     
 });

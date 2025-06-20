@@ -343,30 +343,40 @@ function deleteStudent(id) {
 
 function reviewCourses(courses) {
 
+    let coursesArray = [];
+
     if (!Array.isArray(courses)) {
 
         if (typeof courses === 'string') {
-            let coursesArray = [];
 
             if (courses.includes(",")) {
 
-                coursesArray = courses.split(",");
-                coursesArray.sort();
+                let auxiliarArray = courses.split(",");
+                auxiliarArray.sort();
+
+                for (let course of auxiliarArray) {
+
+                    coursesArray.push(course.trim());
+                }
 
             } else {
 
-                coursesArray.push(courses);
+                coursesArray.push(courses.trim());
 
             }
-
-            return coursesArray;
         }
 
     } else {
 
-        courses.sort();
-        return courses;
+        for (let course of courses) {
+
+            coursesArray.push(course.trim());
+        }
+
+        coursesArray.sort();
     }
+
+    return coursesArray;
 }
 
 function nonDuplicateCourses(courses) {
@@ -377,7 +387,7 @@ function nonDuplicateCourses(courses) {
 
             for (j = i + 1; j <= courses.length -1; j++) {
 
-                if (courses[i].trim() === courses[j].trim()) {
+                if (courses[i].trim().toLowerCase() === courses[j].trim().toLowerCase()) {
 
                     return false;
                 }
