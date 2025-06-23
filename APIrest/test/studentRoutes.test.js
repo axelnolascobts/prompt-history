@@ -110,3 +110,180 @@ describe('DELETE /students/:id', () => {
     expect(res.body).toHaveProperty('message', 'Student deleted');
   });
 });
+
+describe('PUT /students/:id', () => {
+  const existingStudent = {
+    id: '123',
+    name: 'Milton',
+    email: 'milton@gmail.com',
+    courses: ['Math']
+  };
+
+  beforeEach(() => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent]));
+    fs.writeFileSync.mockClear();
+  });
+
+  it('should update the student with new valid data', async () => {
+    const updatedData = {
+      name: 'Milton Updated',
+      email: 'miltonupdated@gmail.com',
+      courses: ['Science']
+    };
+
+    const res = await request(app)
+      .put(`/students/${existingStudent.id}`)
+      .send(updatedData);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.name).toBe(updatedData.name);
+    expect(res.body.email).toBe(updatedData.email);
+    expect(res.body.courses).toEqual(updatedData.courses);
+    expect(fs.writeFileSync).toHaveBeenCalled();
+  });
+
+  it('should reject if data is invalid (empty name)', async () => {
+    const res = await request(app)
+      .put(`/students/${existingStudent.id}`)
+      .send({
+        name: '',
+        email: 'valid@example.com',
+        courses: ['Math']
+      });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Invalid input');
+        expect(res.body.errors).toBeDefined();
+
+  });
+
+  it('should reject if name has invalid characters', async () => {
+    const res = await request(app)
+      .put(`/students/${existingStudent.id}`)
+      .send({
+        name: '@@@',
+        email: 'valid@example.com',
+        courses: ['Math']
+      });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/Name contains invalid characters/);
+  });
+
+  it('should return 404 if student is not found', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+
+    const res = await request(app)
+      .put('/students/unknown-id')
+      .send({
+        name: 'New',
+        email: 'new@email.com',
+        courses: ['Math']
+      });
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toBe('Student not found');
+  });
+
+  it('should reject if courses are not valid strings', async () => {
+    const res = await request(app)
+      .put(`/students/${existingStudent.id}`)
+      .send({
+        name: 'Valid Name',
+        email: 'valid@email.com',
+        courses: ['']
+      });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('All courses must be non-empty strings');
+  });
+});
+
+describe('PATCH /students/:id', () => {
+  const existingStudent = {
+    id: '123',
+    name: 'Milton',
+    email: 'milton@gmail.com',
+    courses: ['Math']
+  };
+
+  beforeEach(() => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent]));
+    fs.writeFileSync.mockClear();
+  });
+
+  it('should update only the name of the student', async () => {
+    const res = await request(app)
+      .patch(`/students/${existingStudent.id}`)
+      .send({ name: 'Milton Patched' });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.name).toBe('Milton Patched');
+    expect(fs.writeFileSync).toHaveBeenCalled();
+  });
+
+  it('should reject invalid name characters', async () => {
+    const res = await request(app)
+      .patch(`/students/${existingStudent.id}`)
+      .send({ name: '###' });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/Name contains invalid characters/);
+  });
+
+  it('should reject empty email', async () => {
+    const res = await request(app)
+      .patch(`/students/${existingStudent.id}`)
+      .send({ email: '' });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Email cannot be empty');
+  });
+
+  it('should reject duplicated email', async () => {
+    const otherStudent = {
+      id: '456',
+      name: 'Another',
+      email: 'duplicate@gmail.com',
+      courses: ['Science']
+    };
+
+    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent, otherStudent]));
+
+    const res = await request(app)
+      .patch(`/students/${existingStudent.id}`)
+      .send({ email: 'duplicate@gmail.com' });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('This email is already registered');
+  });
+
+  it('should return 404 if student not found', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+
+    const res = await request(app)
+      .patch('/students/nonexistent-id')
+      .send({ name: 'No One' });
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toBe('Student not found');
+  });
+
+  it('should reject invalid courses format', async () => {
+    const res = await request(app)
+      .patch(`/students/${existingStudent.id}`)
+      .send({ courses: 'not-an-array' });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Courses must be an array of strings');
+  });
+
+  it('should reject empty strings in courses array', async () => {
+    const res = await request(app)
+      .patch(`/students/${existingStudent.id}`)
+      .send({ courses: [''] });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('All courses must be non-empty strings');
+  });
+});

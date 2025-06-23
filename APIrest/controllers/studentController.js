@@ -9,6 +9,8 @@ addFormats(ajv);
 
 const DBPATH = path.join(__dirname, "../data/db.json");
 
+
+
 // JSON Schema para validar estudiantes
 const studentSchema = {
   type: "object",
@@ -26,6 +28,8 @@ const studentSchema = {
 
 const validateStudent = ajv.compile(studentSchema);
 
+
+
 // Leer datos
 function ReadData() {
   const data = fs.readFileSync(DBPATH, "utf8");
@@ -37,6 +41,8 @@ function WriteData(data) {
   fs.writeFileSync(DBPATH, JSON.stringify(data, null, 2));
 }
 
+
+
 // GET todos
 exports.getAllStudents = (req, res) => {
   const students = ReadData();
@@ -45,6 +51,9 @@ exports.getAllStudents = (req, res) => {
   }
   res.json(students);
 };
+
+
+
 
 // GET por ID
 exports.getStudentsById = (req, res) => {
@@ -55,6 +64,44 @@ exports.getStudentsById = (req, res) => {
   }
   res.json(student);
 };
+
+
+
+
+// GET por name
+exports.getStudentByName = (req, res) => {
+  const students = ReadData();
+  const nameParam = req.params.name.toLowerCase();
+
+  const matches = students.filter((s) =>
+    s.name.toLowerCase().includes(nameParam)
+  );
+
+  if (matches.length === 0) {
+    return res.status(404).json({ message: "No students found with that name" });
+  }
+
+  res.json(matches);
+};
+
+
+
+// GET por email
+exports.getStudentByEmail = (req, res) => {
+  const students = ReadData();
+  const emailParam = req.params.email.toLowerCase();
+
+  const match = students.find((s) => s.email.toLowerCase() === emailParam);
+
+  if (!match) {
+    return res.status(404).json({ message: "No student found with that email" });
+  }
+
+  res.json(match);
+};
+
+
+
 
 // POST crear
 exports.createStudent = (req, res) => {
@@ -74,7 +121,7 @@ exports.createStudent = (req, res) => {
   const newStudent = {
     id: uuidv4(),
     name: data.name.trim(),
-    email: data.email.trim(),
+    email: data.email.trim().toLowerCase(),
     courses: data.courses,
   };
 
@@ -85,12 +132,21 @@ exports.createStudent = (req, res) => {
       return res.status(400).json({ message: "Name cannot be empty" });
     }
   }
+  if (!/^[\p{L} .'-]+$/u.test(newStudent.name)) {
+  return res.status(400).json({ message: "Name contains invalid characters" });
+}
 
+if (!data.courses.every(c => typeof c === "string" && c.trim() !== "")) {
+  return res.status(400).json({ message: "All courses must be non-empty strings" });
+}
 
   students.push(newStudent);
   WriteData(students);
   res.status(201).json(newStudent);
 };
+
+
+
 
 // PUT actualizar completamente
 exports.updateStudent = (req, res) => {
@@ -101,6 +157,7 @@ exports.updateStudent = (req, res) => {
   }
 
   const data = req.body;
+
   if (!validateStudent(data)) {
     return res
       .status(400)
@@ -110,41 +167,58 @@ exports.updateStudent = (req, res) => {
   const currentStudent = students[index];
 
   const trimmedName = data.name.trim();
-  const trimmedEmail = data.email.trim();
+  const trimmedEmail = data.email.trim().toLowerCase();
+  const courses = data.courses;
 
+  
   if (trimmedName === "") {
     return res.status(400).json({ message: "Name cannot be empty" });
   }
 
-  const isSameName = currentStudent.name === trimmedName;
-  const isSameEmail = currentStudent.email === trimmedEmail;
-  const isSameCourses =
-    JSON.stringify(currentStudent.courses) === JSON.stringify(data.courses);
+  if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
+    return res
+      .status(400)
+      .json({ message: "Name contains invalid characters" });
+  }
 
-  if (isSameName || isSameEmail || isSameCourses) {
+  if (!courses.every((c) => typeof c === "string" && c.trim() !== "")) {
+    return res
+      .status(400)
+      .json({ message: "All courses must be non-empty strings" });
+  }
+
+  const emailUsedByAnother = students.some(
+    (s) => s.email.toLowerCase() === trimmedEmail && s.id !== currentStudent.id
+  );
+  if (emailUsedByAnother) {
+    return res.status(400).json({ message: "The email already exists" });
+  }
+
+  const isSameName = currentStudent.name === trimmedName;
+  const isSameEmail = currentStudent.email.toLowerCase() === trimmedEmail;
+  const isSameCourses =
+    JSON.stringify(currentStudent.courses) === JSON.stringify(courses);
+
+  if (isSameName && isSameEmail && isSameCourses) {
     return res.status(400).json({
       message:
         "All fields (name, email, and courses) must be different from the current values",
     });
   }
 
-  const emailUsedByAnother = students.some(
-    (s) => s.email === trimmedEmail && s.id !== currentStudent.id
-  );
-  if (emailUsedByAnother) {
-    return res.status(400).json({ message: "The email already exists" });
-  }
-
   students[index] = {
     id: currentStudent.id,
     name: trimmedName,
     email: trimmedEmail,
-    courses: data.courses,
+    courses,
   };
 
   WriteData(students);
   res.json(students[index]);
 };
+
+
+
 
 
 // PATCH modificar parcialmente
@@ -162,10 +236,15 @@ exports.patchStudent = (req, res) => {
     if (name === "") {
       return res.status(400).json({ message: "Name cannot be empty" });
     }
+    if (!/^[\p{L} .'-]+$/u.test(name)) {
+      return res
+        .status(400)
+        .json({ message: "Name contains invalid characters" });
+    }
   }
 
   if (typeof email === "string") {
-    email = email.trim();
+    email = email.trim().toLowerCase();
     if (email === "") {
       return res.status(400).json({ message: "Email cannot be empty" });
     }
@@ -176,8 +255,17 @@ exports.patchStudent = (req, res) => {
     }
   }
 
-  if (courses && !Array.isArray(courses)) {
-    return res.status(400).json({ message: "Courses must be an array" });
+  if (courses !== undefined) {
+    if (!Array.isArray(courses)) {
+      return res
+        .status(400)
+        .json({ message: "Courses must be an array of strings" });
+    }
+    if (!courses.every((c) => typeof c === "string" && c.trim() !== "")) {
+      return res
+        .status(400)
+        .json({ message: "All courses must be non-empty strings" });
+    }
   }
 
   if (name) student.name = name;
@@ -187,6 +275,8 @@ exports.patchStudent = (req, res) => {
   WriteData(students);
   res.json(student);
 };
+
+
 
 // DELETE
 exports.deleteStudent = (req, res) => {
@@ -200,3 +290,5 @@ exports.deleteStudent = (req, res) => {
   WriteData(students);
   res.status(200).json({ message: "Student deleted", deleted: deleted[0] });
 };
+
+
