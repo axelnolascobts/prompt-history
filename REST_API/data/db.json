@@ -33,11 +33,13 @@
   },
   {
     "id": "38c786af-5a04-4fe2-ba9b-b4a877446784",
-    "name": "HOLO",
-    "email": "ahAS@hola.com",
+    "name": "Holaaa",
+    "email": "fxds@hola.com",
     "courses": [
-      "",
-      "a"
+      "materia55",
+      "materia7",
+      "MATERIA1",
+      "materia3"
     ]
   },
   {
@@ -112,13 +114,14 @@
   },
   {
     "id": "543e7a8a-a5ad-4dcb-adea-169398c97d22",
-    "name": "Holaaa",
-    "email": "fxds@hola.com",
+    "name": "Holaaa Editado",
+    "email": "xd@hola.com",
     "courses": [
       "materia55",
       "materia7",
       "MATERIA1",
-      "materia3"
+      "materia3",
+      "ojo"
     ]
   }
 ]

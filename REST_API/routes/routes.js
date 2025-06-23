@@ -1,6 +1,6 @@
 const express = require('express');
 const ROUTER = express.Router();
-const { readData, getStudentById, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate } = require('./controllers');
+const { readData, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate } = require('./controllers');
 
 ROUTER.get('/', (request, response) => {
 
@@ -10,10 +10,10 @@ ROUTER.get('/', (request, response) => {
 
 });
 
-ROUTER.get('/:id', (request, response) => {
+ROUTER.get('/:searchParam', (request, response) => {
 
-    let id = request.params.id;
-    let student = getStudentById(id);
+    let searchParam = request.params.searchParam;
+    let student = getStudentBySearchParam(searchParam);
 
     response.status(student.status).json(student);
 
@@ -32,38 +32,38 @@ ROUTER.post('/', (request, response) => {
 
 });
 
-ROUTER.put('/:id', (request, response) => {
+ROUTER.put('/:searchParam', (request, response) => {
 
-    /*let id = request.params.id;
-    let name = request.body.name;
-    let email = request.body.email;
-    let courses = request.body.courses;*/
-    let body = request.body;
-
-    let updatedStudent = completeStudentUpdate(id, body);
-
-    response.status(updatedStudent.status).json(updatedStudent);
-
-});
-
-ROUTER.patch('/:id', (request, response) => {
-
-    let id = request.params.id;
+    let searchParam = request.params.searchParam;
     /*let name = request.body.name;
     let email = request.body.email;
     let courses = request.body.courses;*/
     let body = request.body;
 
-    let updatedStudent = partialStudentUpdate(id, body);
+    let updatedStudent = completeStudentUpdate(searchParam, body);
 
     response.status(updatedStudent.status).json(updatedStudent);
 
 });
 
-ROUTER.delete('/:id', (request, response) => {
+ROUTER.patch('/:searchParam', (request, response) => {
 
-    let id = request.params.id;
-    let resultOfOperation = deleteStudent(id);
+    let searchParam = request.params.searchParam;
+    /*let name = request.body.name;
+    let email = request.body.email;
+    let courses = request.body.courses;*/
+    let body = request.body;
+
+    let updatedStudent = partialStudentUpdate(searchParam, body);
+
+    response.status(updatedStudent.status).json(updatedStudent);
+
+});
+
+ROUTER.delete('/:searchParam', (request, response) => {
+
+    let searchParam = request.params.searchParam;
+    let resultOfOperation = deleteStudent(searchParam);
 
     response.status(resultOfOperation.status).json(resultOfOperation);
 

@@ -85,10 +85,15 @@ function writeData(data) {
 
 };
 
-function getStudentById(id) {
+function getStudentBySearchParam(searchParam) {
 
-    let studentsData = readData();
-    let student = studentsData.find(studentData => studentData.id === id);
+    let searchResult = searchStudents(searchParam);
+    let student = searchResult.student;
+
+    if (Array.isArray(searchResult)) {
+
+        return {status: 200, data: searchResult};
+    }
 
     if (student) {
 
@@ -170,7 +175,7 @@ function createNewStudent(body) {
     } 
 }
 
-function completeStudentUpdate(id, body) {
+function completeStudentUpdate(searchParam, body) {
 
     const VALIDATE_SCHEMA = VALIDATE_UPDATE_EVERY_STUDENT(body);
 
@@ -199,10 +204,20 @@ function completeStudentUpdate(id, body) {
     } else {
 
         let studentsData = readData();
-        let student = studentsData.find(studentData => studentData.id === id);
-        let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
+        //let student = studentsData.find(studentData => studentData.id === id);
+        //let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
+
+        let searchResult = searchStudents(searchParam);
+        let student = searchResult.student;
+        let studentIndex = searchResult.studentIndex;
 
         if (student) {
+
+            if (Array.isArray(searchResult)) {
+
+                return {status: 400, message: "To edit a student, search by ID or email, please"};
+
+            }
 
             if (student.name === body.name || student.email === body.email) {
 
@@ -210,13 +225,21 @@ function completeStudentUpdate(id, body) {
 
             } else {
 
+                let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === body.email.toLowerCase());
+
+                if (studentMail) {
+
+                    return {status: 400, message: "The email is ocuped, plis use another email to create a new student"};
+
+                }
+
                 let coursesAuxiliar = body.courses ? body.courses : [];
                 let coursesList = reviewCourses(coursesAuxiliar);
                 let uniqueCourses = nonDuplicateCourses(coursesList);
 
                 if (!uniqueCourses) {
 
-                    return {status: 400, message: "Check the courses, there cannot be repeated courses"};
+                    return {status: 400, message: "Check the courses, there cannot be repeated or empty courses"};
 
                 }
 
@@ -230,7 +253,7 @@ function completeStudentUpdate(id, body) {
 
                 let updatedStudent = {
 
-                    id,
+                    id: student.id,
                     name: body.name,
                     email: body.email,
                     courses: coursesList
@@ -249,7 +272,7 @@ function completeStudentUpdate(id, body) {
     }
 }
 
-function partialStudentUpdate(id, body) {
+function partialStudentUpdate(searchParam, body) {
 
     const VALIDATE_SCHEMA = VALIDATE_UPDATE_PARTIAL_STUDENT(body);
 
@@ -278,10 +301,20 @@ function partialStudentUpdate(id, body) {
         } else {
 
             let studentsData = readData();
-            let student = studentsData.find(studentData => studentData.id === id);
-            let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
+            // let student = studentsData.find(studentData => studentData.id === id);
+            // let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
+
+            let searchResult = searchStudents(searchParam);
+            let student = searchResult.student;
+            let studentIndex = searchResult.studentIndex;
 
             if (student) {
+
+                if (Array.isArray(searchResult)) {
+
+                    return {status: 400, message: "To edit a student, search by ID or email, please"};
+
+                }
 
                 let coursesAuxiliar = body.courses ? body.courses : [];
                 let coursesList = reviewCourses(coursesAuxiliar);
@@ -289,7 +322,7 @@ function partialStudentUpdate(id, body) {
 
                 if (!uniqueCourses) {
 
-                    return {status: 400, message: "Check the courses, there cannot be repeated courses"};
+                    return {status: 400, message: "Check the courses, there cannot be repeated or empty courses"};
 
                 }
 
@@ -303,11 +336,19 @@ function partialStudentUpdate(id, body) {
 
                     let updatedStudent = {
 
-                        id,
+                        id: student.id,
                         name: body.name ? body.name : student.name,
                         email: body.email ? body.email : student.email,
                         courses: coursesList
                     };
+
+                    let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === body.email.toLowerCase());
+
+                    if (studentMail && studentMail.email !== student.email) {
+
+                        return {status: 400, message: "The email is ocuped, plis use another email to create a new student"};
+
+                    }
 
                     studentsData[studentIndex] = updatedStudent;
 
@@ -323,15 +364,24 @@ function partialStudentUpdate(id, body) {
     }
 }
 
-function deleteStudent(id) {
+function deleteStudent(searchParam) {
 
     let studentsData = readData();
-    let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
+    //let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
+
+    let searchResult = searchStudents(searchParam);
+    let studentIndex = searchResult.studentIndex;
 
     if (studentIndex === -1) {
 
         return {status: 404, message: "Student not found or not exist"};
     } else {
+
+        if (Array.isArray(searchResult)) {
+
+            return {status: 400, message: "To delete a student, search by ID or email, please"};
+
+        }
 
         studentsData.splice(studentIndex, 1);
 
@@ -387,7 +437,7 @@ function nonDuplicateCourses(courses) {
 
             for (j = i + 1; j <= courses.length -1; j++) {
 
-                if (courses[i].trim().toLowerCase() === courses[j].trim().toLowerCase()) {
+                if (courses[i].trim().toLowerCase() === courses[j].trim().toLowerCase() || courses[i].trim().toLowerCase() === "") {
 
                     return false;
                 }
@@ -424,6 +474,56 @@ function comparateCourses(courses1, courses2) {
     return true;
 }
 
+function searchStudents(searchParam) {
+
+    const UUID_PATTERN =  /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+    const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    let uuidMatch = searchParam.match(UUID_PATTERN);
+    let emailMAtch = searchParam.match(EMAIL_PATTERN);
+
+    let studentsData = readData();
+
+    if (uuidMatch) {
+
+        let student = studentsData.find(studentData => studentData.id === searchParam);
+        let studentIndex = studentsData.findIndex(studentData => studentData.id === searchParam);
+
+        if (student) {
+
+            return { student, studentIndex }
+        }
+
+        return false;
+        
+    } else if (emailMAtch) {
+
+        let student = studentsData.find(studentData => studentData.email === searchParam);
+        let studentIndex = studentsData.findIndex(studentData => studentData.email === searchParam);
+
+         if (student) {
+
+            return { student, studentIndex }
+        }
+
+        return false;
+
+    } else if (!uuidMatch && !emailMAtch) {
+
+        let students = studentsData.filter(studentData => studentData.name.trim().toLowerCase() === searchParam.trim().toLowerCase());
+
+        if (students.length === 0) {
+
+            return false;
+
+        }
+
+        return students;
+
+    }
+
+}
+
 /*function validateNameAndEmail(name, email) {
 
     if(typeof name === 'string' && typeof email === 'string') {
@@ -436,4 +536,4 @@ function comparateCourses(courses1, courses2) {
 
 }*/
 
-module.exports = { readData, getStudentById, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate };
+module.exports = { readData, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate };
