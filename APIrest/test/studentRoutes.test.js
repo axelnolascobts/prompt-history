@@ -78,6 +78,23 @@ describe('POST /students', () => {
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
+    it('should give error 400', async () => {
+    const newStudent = {
+      name: "Milton",
+      email: "milton@gmail.com",
+      courses: ["Math", "math"]
+    };
+
+    const res = await request(app)
+      .post('/students')
+      .send(newStudent);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('message', 'Courses must not contain duplicates')
+    });
+  });
+
+
     it('should respond with status 404', async () => {
     const InvalidStudent = {
       name: "Milton",
@@ -92,7 +109,7 @@ describe('POST /students', () => {
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty('message', 'Invalid input');
   });
-});
+
 
 describe('DELETE /students/:id', () => {
    it('should respond with status 200 and delete the data', async () => {
@@ -197,6 +214,21 @@ describe('PUT /students/:id', () => {
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe('All courses must be non-empty strings');
   });
+
+      it('should give error 400', async () => {
+    const newStudent = {
+      name: "Milton",
+      email: "milton@gmail.com",
+      courses: ["Math", "math"]
+    };
+
+    const res = await request(app)
+      .put(`/students/${existingStudent.id}`)
+      .send(newStudent);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('message', 'Courses must not contain duplicates')
+    });
 });
 
 describe('PATCH /students/:id', () => {

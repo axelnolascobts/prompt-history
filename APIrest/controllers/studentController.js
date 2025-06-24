@@ -9,7 +9,7 @@ addFormats(ajv);
 
 const DBPATH = path.join(__dirname, "../data/db.json");
 
-
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 // JSON Schema para validar estudiantes
 const studentSchema = {
@@ -28,7 +28,10 @@ const studentSchema = {
 
 const validateStudent = ajv.compile(studentSchema);
 
-
+const hasDuplicateCourses = (arr) => {
+  const normalized = arr.map(c => c.trim().toLowerCase());
+  return new Set(normalized).size !== normalized.length;
+};
 
 // Leer datos
 function ReadData() {
@@ -41,19 +44,11 @@ function WriteData(data) {
   fs.writeFileSync(DBPATH, JSON.stringify(data, null, 2));
 }
 
-
-
 // GET todos
 exports.getAllStudents = (req, res) => {
   const students = ReadData();
-  if (!students) {
-    return res.status(404).json({ message: "Students not found" });
-  }
   res.json(students);
 };
-
-
-
 
 // GET por ID
 exports.getStudentsById = (req, res) => {
@@ -64,9 +59,6 @@ exports.getStudentsById = (req, res) => {
   }
   res.json(student);
 };
-
-
-
 
 // GET por name
 exports.getStudentByName = (req, res) => {
@@ -84,8 +76,6 @@ exports.getStudentByName = (req, res) => {
   res.json(matches);
 };
 
-
-
 // GET por email
 exports.getStudentByEmail = (req, res) => {
   const students = ReadData();
@@ -100,53 +90,56 @@ exports.getStudentByEmail = (req, res) => {
   res.json(match);
 };
 
-
-
-
 // POST crear
 exports.createStudent = (req, res) => {
   const students = ReadData();
   const data = req.body;
 
   if (!validateStudent(data)) {
-    return res
-      .status(400)
-      .json({ message: "Invalid input", errors: validateStudent.errors });
+    return res.status(400).json({ message: "Invalid input", errors: validateStudent.errors });
   }
 
-  if (students.some((s) => s.email === data.email)) {
+  if (students.some((s) => s.email.toLowerCase() === data.email.trim().toLowerCase())) {
     return res.status(400).json({ message: "The email already exists" });
+  }
+
+  // Validaciones adicionales
+
+  const trimmedName = data.name.trim();
+  const email = data.email.trim().toLowerCase();
+  const courses = data.courses;
+
+  if (trimmedName === "") {
+    return res.status(400).json({ message: "Name cannot be empty" });
+  }
+
+  if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
+    return res.status(400).json({ message: "Name contains invalid characters" });
+  }
+
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: "Invalid email format" });
+  }
+
+  if (!courses.every(c => typeof c === "string" && c.trim() !== "")) {
+    return res.status(400).json({ message: "All courses must be non-empty strings" });
+  }
+
+  if (hasDuplicateCourses(courses)) {
+    return res.status(400).json({ message: "Courses must not contain duplicates" });
   }
 
   const newStudent = {
     id: uuidv4(),
-    name: data.name.trim(),
-    email: data.email.trim().toLowerCase(),
-    courses: data.courses,
+    name: trimmedName,
+    email,
+    courses,
   };
-
- 
-    if (typeof newStudent.name === "string") {
-    newStudent.name = newStudent.name.trim();
-    if (newStudent.name === "") {
-      return res.status(400).json({ message: "Name cannot be empty" });
-    }
-  }
-  if (!/^[\p{L} .'-]+$/u.test(newStudent.name)) {
-  return res.status(400).json({ message: "Name contains invalid characters" });
-}
-
-if (!data.courses.every(c => typeof c === "string" && c.trim() !== "")) {
-  return res.status(400).json({ message: "All courses must be non-empty strings" });
-}
 
   students.push(newStudent);
   WriteData(students);
   res.status(201).json(newStudent);
 };
-
-
-
 
 // PUT actualizar completamente
 exports.updateStudent = (req, res) => {
@@ -159,9 +152,7 @@ exports.updateStudent = (req, res) => {
   const data = req.body;
 
   if (!validateStudent(data)) {
-    return res
-      .status(400)
-      .json({ message: "Invalid input", errors: validateStudent.errors });
+    return res.status(400).json({ message: "Invalid input", errors: validateStudent.errors });
   }
 
   const currentStudent = students[index];
@@ -170,21 +161,24 @@ exports.updateStudent = (req, res) => {
   const trimmedEmail = data.email.trim().toLowerCase();
   const courses = data.courses;
 
-  
   if (trimmedName === "") {
     return res.status(400).json({ message: "Name cannot be empty" });
   }
 
   if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
-    return res
-      .status(400)
-      .json({ message: "Name contains invalid characters" });
+    return res.status(400).json({ message: "Name contains invalid characters" });
+  }
+
+  if (!emailRegex.test(trimmedEmail)) {
+    return res.status(400).json({ message: "Invalid email format" });
   }
 
   if (!courses.every((c) => typeof c === "string" && c.trim() !== "")) {
-    return res
-      .status(400)
-      .json({ message: "All courses must be non-empty strings" });
+    return res.status(400).json({ message: "All courses must be non-empty strings" });
+  }
+
+  if (hasDuplicateCourses(courses)) {
+    return res.status(400).json({ message: "Courses must not contain duplicates" });
   }
 
   const emailUsedByAnother = students.some(
@@ -196,13 +190,11 @@ exports.updateStudent = (req, res) => {
 
   const isSameName = currentStudent.name === trimmedName;
   const isSameEmail = currentStudent.email.toLowerCase() === trimmedEmail;
-  const isSameCourses =
-    JSON.stringify(currentStudent.courses) === JSON.stringify(courses);
+  const isSameCourses = JSON.stringify(currentStudent.courses) === JSON.stringify(courses);
 
   if (isSameName && isSameEmail && isSameCourses) {
     return res.status(400).json({
-      message:
-        "All fields (name, email, and courses) must be different from the current values",
+      message: "All fields (name, email, and courses) must be different from the current values",
     });
   }
 
@@ -216,10 +208,6 @@ exports.updateStudent = (req, res) => {
   WriteData(students);
   res.json(students[index]);
 };
-
-
-
-
 
 // PATCH modificar parcialmente
 exports.patchStudent = (req, res) => {
@@ -237,9 +225,7 @@ exports.patchStudent = (req, res) => {
       return res.status(400).json({ message: "Name cannot be empty" });
     }
     if (!/^[\p{L} .'-]+$/u.test(name)) {
-      return res
-        .status(400)
-        .json({ message: "Name contains invalid characters" });
+      return res.status(400).json({ message: "Name contains invalid characters" });
     }
   }
 
@@ -248,23 +234,29 @@ exports.patchStudent = (req, res) => {
     if (email === "") {
       return res.status(400).json({ message: "Email cannot be empty" });
     }
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
     if (students.some((s) => s.email === email && s.id !== student.id)) {
-      return res
-        .status(400)
-        .json({ message: "This email is already registered" });
+      return res.status(400).json({ message: "This email is already registered" });
     }
   }
 
   if (courses !== undefined) {
     if (!Array.isArray(courses)) {
-      return res
-        .status(400)
-        .json({ message: "Courses must be an array of strings" });
+      return res.status(400).json({ message: "Courses must be an array of strings" });
     }
-    if (!courses.every((c) => typeof c === "string" && c.trim() !== "")) {
-      return res
-        .status(400)
-        .json({ message: "All courses must be non-empty strings" });
+
+    if (!courses.every(c => typeof c === "string" && c.trim() !== "")) {
+      return res.status(400).json({ message: "All courses must be non-empty strings" });
+    }
+
+    if (!courses.every(c => /^[\p{L}\d ]+$/u.test(c.trim()))) {
+      return res.status(400).json({ message: "The course name contains invalid characters" });
+    }
+
+    if (hasDuplicateCourses(courses)) {
+      return res.status(400).json({ message: "Courses must not contain duplicates" });
     }
   }
 
@@ -275,8 +267,6 @@ exports.patchStudent = (req, res) => {
   WriteData(students);
   res.json(student);
 };
-
-
 
 // DELETE
 exports.deleteStudent = (req, res) => {
@@ -290,5 +280,3 @@ exports.deleteStudent = (req, res) => {
   WriteData(students);
   res.status(200).json({ message: "Student deleted", deleted: deleted[0] });
 };
-
-
