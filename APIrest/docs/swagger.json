@@ -93,26 +93,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "invalidInput": {
-                    "summary": "Input validation failed",
-                    "value": {
-                      "message": "Invalid input",
-                      "errors": [
-                        {
-                          "field": "email",
-                          "error": "Invalid format"
-                        }
-                      ]
-                    }
-                  },
-                  "emailExists": {
-                    "summary": "Email already registered",
-                    "value": {
-                      "message": "The email already exists"
-                    }
-                  }
                 }
               }
             }
@@ -128,7 +108,6 @@
           {
             "name": "id",
             "in": "path",
-            "description": "UUID of the student",
             "required": true,
             "schema": {
               "type": "string",
@@ -143,17 +122,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Student"
-                },
-                "examples": {
-                  "studentExample": {
-                    "summary": "Student data",
-                    "value": {
-                      "id": "123e4567-e89b-12d3-a456-426614174000",
-                      "name": "John Smith",
-                      "email": "john@example.com",
-                      "courses": ["Math", "Biology"]
-                    }
-                  }
                 }
               }
             }
@@ -164,9 +132,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "message": "Student not found"
                 }
               }
             }
@@ -174,13 +139,12 @@
         }
       },
       "put": {
-        "summary": "Fully update a student",
+        "summary": "Fully update a student by ID",
         "tags": ["Students"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "UUID of the student to update",
             "required": true,
             "schema": {
               "type": "string",
@@ -192,133 +156,39 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewStudent"
-              },
-              "example": {
-                "name": "Jane Smith",
-                "email": "jane@example.com",
-                "courses": ["Math", "Science"]
-              }
+              "schema": { "$ref": "#/components/schemas/NewStudent" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Student updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Student"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input or no change in data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "missingFields": {
-                    "summary": "Missing required fields",
-                    "value": {
-                      "message": "name and email required"
-                    }
-                  },
-                  "noChange": {
-                    "summary": "No data was changed",
-                    "value": {
-                      "message": "All fields must differ from current values"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Student not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "message": "Student not found"
-                }
-              }
-            }
-          }
+          "200": { "description": "Student updated successfully" },
+          "400": { "description": "Invalid input" },
+          "404": { "description": "Student not found" }
         }
       },
       "patch": {
-        "summary": "Partially update a student",
+        "summary": "Partially update a student by ID",
         "tags": ["Students"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "UUID of the student to partially update",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "requestBody": {
           "required": false,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PartialStudent"
-              },
-              "example": {
-                "name": "Jane Partial",
-                "courses": ["History", "Art"]
-              }
+              "schema": { "$ref": "#/components/schemas/PartialStudent" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Student partially updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Student"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "message": "Invalid input"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Student not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "message": "Student not found"
-                }
-              }
-            }
-          }
+          "200": { "description": "Student partially updated" },
+          "400": { "description": "Invalid input" },
+          "404": { "description": "Student not found" }
         }
       },
       "delete": {
@@ -328,12 +198,8 @@
           {
             "name": "id",
             "in": "path",
-            "description": "UUID of the student to delete",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -347,29 +213,210 @@
                     "message": { "type": "string" },
                     "deleted": { "$ref": "#/components/schemas/Student" }
                   }
-                },
-                "example": {
-                  "message": "Student deleted",
-                  "deleted": {
-                    "id": "123e4567-e89b-12d3-a456-426614174000",
-                    "name": "John Smith",
-                    "email": "john@example.com",
-                    "courses": ["Math", "Biology"]
+                }
+              }
+            }
+          },
+          "404": { "description": "Student not found" }
+        }
+      }
+    },
+    "/students/email/{email}": {
+      "get": {
+        "summary": "Retrieve a student by email",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "email" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Student found" },
+          "404": { "description": "Student not found" }
+        }
+      },
+      "put": {
+        "summary": "Fully update a student by email",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "email" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewStudent" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Student updated successfully" },
+          "400": { "description": "Invalid input" },
+          "404": { "description": "Student not found" }
+        }
+      },
+      "patch": {
+        "summary": "Partially update a student by email",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "email" }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PartialStudent" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Student partially updated" },
+          "400": { "description": "Invalid input" },
+          "404": { "description": "Student not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a student by email",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "email" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Student deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "deleted": { "$ref": "#/components/schemas/Student" }
                   }
                 }
               }
             }
           },
-          "404": {
-            "description": "Student not found",
+          "404": { "description": "Student not found" }
+        }
+      }
+    },
+    "/students/name/{name}": {
+      "get": {
+        "summary": "Search students by partial name",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Partial or full name of the student"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Students found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "message": "Student not found"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Student" }
                 }
+              }
+            }
+          },
+          "404": {
+            "description": "No students found with that name",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Operation not allowed by name",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operations by name are forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "message": "Only allowed by email or id" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Operation not allowed by name",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operations by name are forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "message": "Only allowed by email or id" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Operation not allowed by name",
+        "tags": ["Students"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Operations by name are forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "message": "Only allowed by email or id" }
               }
             }
           }
@@ -382,28 +429,12 @@
       "Student": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "John Smith",
-            "description": "Full name of the student; only letters, spaces, apostrophes, periods, and hyphens allowed"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "john@example.com",
-            "description": "Valid email address"
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
           "courses": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": ["Math", "Biology"],
-            "description": "List of course names; no duplicates allowed; only letters, numbers, and spaces"
+            "items": { "type": "string" }
           }
         }
       },
@@ -411,54 +442,29 @@
         "type": "object",
         "required": ["name", "email", "courses"],
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Full name of the student; required; only letters, spaces, apostrophes, periods, and hyphens allowed"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Valid email address; required"
-          },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
           "courses": {
             "type": "array",
-            "items": {
-              "type": "string",
-              "description": "Course name; must be non-empty string; only letters, numbers, and spaces"
-            },
-            "description": "Array of course names; no duplicates allowed; required"
+            "items": { "type": "string" }
           }
         }
       },
       "PartialStudent": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Full name of the student; only letters, spaces, apostrophes, periods, and hyphens allowed"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Valid email address"
-          },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
           "courses": {
             "type": "array",
-            "items": {
-              "type": "string",
-              "description": "Course name; must be non-empty string; only letters, numbers, and spaces"
-            },
-            "description": "Array of course names; no duplicates allowed"
+            "items": { "type": "string" }
           }
         }
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "description": "Description of the error"
-          },
+          "message": { "type": "string" },
           "errors": {
             "type": "array",
             "items": {
@@ -467,8 +473,7 @@
                 "field": { "type": "string" },
                 "error": { "type": "string" }
               }
-            },
-            "description": "Optional list of validation errors"
+            }
           }
         }
       }

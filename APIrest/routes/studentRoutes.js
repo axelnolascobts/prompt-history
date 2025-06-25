@@ -19,4 +19,13 @@ router.patch("/:id", studentController.patchStudent);
 router.delete("/:id", studentController.deleteStudent);
 
 
+router.put("/email/:email", studentController.updateStudentByEmail);
+router.patch("/email/:email", studentController.patchStudentByEmail);
+router.delete("/email/:email", studentController.deleteStudentByEmail);
+
+
+router.put("/name/:name", studentController.forbidOperationByName);
+router.patch("/name/:name", studentController.forbidOperationByName);
+router.delete("/name/:name", studentController.forbidOperationByName);
+
 module.exports = router;
