@@ -440,6 +440,187 @@ describe("Some Endpoints from students REST API", () => {
         expect(RESPONSE.statusCode).toBe(201);
     });
 
+    test("PATCH /students/:searchParam should return not found student", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/8e90aad9-1ebd-4308-8f73-62a89fadf142')
+        .send(
+            {
+                "name": "col",
+                "email": "coayduaa@cureo.com",
+                "courses": "biología"
+
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(404);
+
+    });
+
+    test("PATCH /students/:searchParam should return for try to use an used email", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/8e90aad9-1ebd-4308-8f73-62a89f58f142')
+        .send(
+            {
+                "name": "col",
+                "email": "a@hola.com",
+                "courses": "biología"
+
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("PATCH /students/:searchParam should return error for not change data", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/8e90aad9-1ebd-4308-8f73-62a89f58f142')
+        .send(
+            {
+                "name": "Dante",
+                "email": "dadada@hola.com",
+                "courses": [
+                    "historia",
+                    "matemáticas"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("PATCH /students/:searchParam should return error for use name by search param", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/Dante')
+        .send(
+            {
+                "name": "Dante",
+                "email": "dadada@hola.com",
+                "courses": [
+                    "historia",
+                    "matemáticas"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("PATCH /students/:searchParam should return error for send a empty name", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/Dante')
+        .send(
+            {
+                "name": "   ",
+                "email": "dadada@hola.com",
+                "courses": [
+                    "historia",
+                    "matemáticas"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("PUT /students/:searchParam should return error for send a empty name", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/students/Dante')
+        .send(
+            {
+                "name": "   ",
+                "email": "dadada@hola.com",
+                "courses": [
+                    "historia",
+                    "matemáticas"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("PUT /students/:searchParam should return error for send an incorrect input format", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/students/Dante')
+        .send(
+            {
+                "name": "Dante",
+                "email": "correomalo",
+                "courses": [
+                    "historia",
+                    "matemáticas"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("POST /students/:searchParam should return error for repeated courses", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/students/')
+        .send(
+            {
+                "name": "Dante",
+                "email": "correoejemplo@correo.com",
+                "courses": [
+                    "historia",
+                    "historia"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("POST /students/:searchParam should return error for try to usea an ocuped email", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/students/')
+        .send(
+            {
+                "name": "Dante",
+                "email": "benhja@hola.com",
+                "courses": [
+                    "historia",
+                    "materia"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("POST /students/:searchParam should return error for use incorrect input format", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/students/')
+        .send(
+            {
+                "name": 8,
+                "email": "correomalo",
+                "courses": [ 23 ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
+    test("DELETE /students/:searchParam should return an error for use name", async () => {
+
+        const RESPONSE = await REQUEST(APP).delete('/students/holaaa');
+
+        expect(RESPONSE.statusCode).toBe(400);
+
+    });
+
     test("DELETE /students/:searchParam should delete specific student", async () => {
 
         const RESPONSE = await REQUEST(APP).delete('/students/8e90aad9-1ebd-4308-8f73-62a89f58f142');
@@ -448,11 +629,11 @@ describe("Some Endpoints from students REST API", () => {
 
     });
 
-    test("DELETE /students/:searchParam should delete specific student", async () => {
+    test("DELETE /students/:searchParam should return not found studentnt for incorrect id", async () => {
 
         const RESPONSE = await REQUEST(APP).delete('/students/8e90aad9-1ebd-4308-8f73-62a89fadf142');
 
-        expect(RESPONSE.statusCode).toBe(204);
+        expect(RESPONSE.statusCode).toBe(404);
 
     });
 
@@ -461,14 +642,6 @@ describe("Some Endpoints from students REST API", () => {
         const RESPONSE = await REQUEST(APP).delete('/students/correo@correo.com');
 
         expect(RESPONSE.statusCode).toBe(404);
-
-    });
-
-    test("DELETE /students/:searchParam should return an error for use name", async () => {
-
-        const RESPONSE = await REQUEST(APP).delete('/students/Benjamin');
-
-        expect(RESPONSE.statusCode).toBe(400);
 
     });
     

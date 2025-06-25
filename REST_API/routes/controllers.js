@@ -14,7 +14,7 @@ const NEW_STUDENT_SCHEMA = {
     name: { type: "string" },
     email: { type: "string", format: "email" },
     courses: { anyOf: [
-        { type: "string" },
+        //{ type: "string" },
         { type: "array", items: { "type": "string" } }
       ] }
   },
@@ -28,7 +28,7 @@ const UPDATE_EVERY_STUDENT_DATA_SCHEMA = {
     name: { type: "string" },
     email: { type: "string", format: "email" },
     courses: { anyOf: [
-        { type: "string" },
+        //{ type: "string" },
         { type: "array", items: { "type": "string" } }
       ] }
   },
@@ -42,7 +42,7 @@ const UPDATE_PARTIAL_STUDENT_DATA_SCHEMA = {
     name: { type: "string" },
     email: { type: "string", format: "email" },
     courses: { anyOf: [
-        { type: "string" },
+        //{ type: "string" },
         { type: "array", items: { "type": "string" } }
       ] }
   },
@@ -84,6 +84,14 @@ function writeData(data) {
     }
 
 };
+
+function getAllStudents() {
+
+    let students = readData();
+
+    return {status: 200, data: students}
+
+}
 
 function getStudentBySearchParam(searchParam) {
 
@@ -131,13 +139,13 @@ function createNewStudent(body) {
 
     if (studentMail){
 
-        return {status: 400, message: "The email is ocuped, plis use another email to create a new student"};
+        return {status: 400, message: "This student already exists, use other data"};
 
     } else {
 
         if (/*email.trim() === "" ||*/ body.name.trim() === "") {
 
-            return {status: 400, message: "Name is required and obligatory data, plis fill it"};
+            return {status: 400, message: "Name is required and obligatory data, please fill it"};
 
         } else {
 
@@ -148,7 +156,7 @@ function createNewStudent(body) {
 
             if (!uniqueCourses) {
 
-                return {status: 400, message: "Check the courses, there cannot be repeated courses"};
+                return {status: 400, message: "Check the courses, there cannot be repeated courses or in this case empty courses"};
 
             }
 
@@ -220,17 +228,17 @@ function completeStudentUpdate(searchParam, body) {
 
             }
 
-            if (student.name === body.name || student.email === body.email) {
+            if ( !body ) {
 
-                return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change all user data"};
+                return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change user data"};
 
             } else {
 
                 let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === body.email.toLowerCase());
 
-                if (studentMail) {
+                if (studentMail && studentMail.email !== student.email) {
 
-                    return {status: 400, message: "The email is ocuped, plis use another email to create a new student"};
+                    return {status: 400, message: "This student already exists, use other data"};
 
                 }
 
@@ -248,7 +256,7 @@ function completeStudentUpdate(searchParam, body) {
 
                 if (!compareCourses ) {
 
-                    return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change all user data"};
+                    return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change user data"};
 
                 }
 
@@ -295,12 +303,12 @@ function partialStudentUpdate(searchParam, body) {
             return {status: 400, message: "Invalid data type, name and email must be text strings."};
         }*/
 
-        if ( body.name.trim() === "" /*|| body.email.trim() === ""*/ ) {
+        if ( !body ) {
 
-            return {status: 400, message: "Name cannot be empty field"};
+            return {status: 400, message: "Not content"};
 
         } else {
-
+            
             let studentsData = readData();
             // let student = studentsData.find(studentData => studentData.id === id);
             // let studentIndex = studentsData.findIndex(studentData => studentData.id === id);
@@ -343,11 +351,17 @@ function partialStudentUpdate(searchParam, body) {
                         courses: coursesList
                     };
 
-                    let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === body.email.toLowerCase());
+                    if ( updatedStudent.name.trim() === "" /*|| body.email.trim() === ""*/ ) {
+                    
+                        return {status: 400, message: "Name cannot be empty field"};
+
+                    }
+
+                    let studentMail = studentsData.find(studentData => studentData.email.toLowerCase() === updatedStudent.email.toLowerCase());
 
                     if (studentMail && studentMail.email !== student.email) {
 
-                        return {status: 400, message: "The email is ocuped, plis use another email to create a new student"};
+                        return {status: 400, message: "This student already exists, use other data"};
 
                     }
 
@@ -519,7 +533,8 @@ function searchStudents(searchParam) {
 
         }
 
-        return { student };
+        studentIndex = 0;
+        return { student, studentIndex };
 
     }
 
@@ -537,4 +552,4 @@ function searchStudents(searchParam) {
 
 }*/
 
-module.exports = { readData, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate };
+module.exports = { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate };

@@ -1,10 +1,10 @@
 const express = require('express');
 const ROUTER = express.Router();
-const { readData, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate } = require('./controllers');
+const { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate } = require('./controllers');
 
 ROUTER.get('/', (request, response) => {
 
-    let studentsData = readData();
+    let studentsData = getAllStudents();
 
     response.status(200).json(studentsData);
 

@@ -1,8 +1,8 @@
 [
   {
     "id": "38c786af-5a04-4fe2-ba9b-b4a877446784",
-    "name": "Holaaa",
-    "email": "fxds@hola.com",
+    "name": "Francisco Villa",
+    "email": "francisco@hola.com",
     "courses": [
       "materia55",
       "materia7",
@@ -11,17 +11,17 @@
     ]
   },
   {
-    "id": "86cd2854-2e97-4246-9c39-6a26308d6de8",
-    "name": "H",
-    "email": "aasaasasasa@hola.com",
+    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+    "name": "Benito Juarez",
+    "email": "benitojuarez@hola.com",
     "courses": [
-      ""
+      "biología"
     ]
   },
   {
     "id": "543a8818-9c1f-47b7-a42c-4133effb9d43",
-    "name": "H",
-    "email": "aaasasa@hola.com",
+    "name": "Pedro",
+    "email": "pedro02@hola.com",
     "courses": [
       "materia",
       "materia1",
@@ -29,67 +29,9 @@
     ]
   },
   {
-    "id": "bba37705-84e5-4024-ba77-35306508416c",
-    "name": "H",
-    "email": "aaasagggsaxais@hola.com",
-    "courses": [
-      "MATERIA1",
-      "materia",
-      "materia1"
-    ]
-  },
-  {
-    "id": "e8c54379-2f9a-4acf-813c-50799ce03689",
-    "name": "H",
-    "email": "aaasagahsasagsaxais@hola.com",
-    "courses": [
-      "        "
-    ]
-  },
-  {
-    "id": "917606ff-e6c8-4fd6-8830-55dd7ca5861b",
-    "name": "H",
-    "email": "aasssssssais@hola.com",
-    "courses": [
-      ""
-    ]
-  },
-  {
-    "id": "68bc0a57-43a1-4c19-a621-615f14d86c9f",
-    "name": "Holaaa",
-    "email": "filossss@hola.com",
-    "courses": [
-      "MATERIA1",
-      "hola"
-    ]
-  },
-  {
-    "id": "10e3e518-2bbf-4992-a10e-638ccb8ab0a5",
-    "name": "Holaaa",
-    "email": "filaaaaaaaaaaas@hola.com",
-    "courses": [
-      "MATERIA1"
-    ]
-  },
-  {
-    "id": "a1286a55-63cd-4e9c-8d8e-239df08e0d1c",
-    "name": "Holaaa",
-    "email": "filaasxsxaaaaaas@hola.com",
-    "courses": [
-      "MATERIA1",
-      "materia3"
-    ]
-  },
-  {
-    "id": "543e7a8a-a5ad-4dcb-adea-169398c97d22",
-    "name": "Holaaa Editado",
-    "email": "xd@hola.com",
-    "courses": [
-      "materia55",
-      "materia7",
-      "MATERIA1",
-      "materia3",
-      "ojo"
-    ]
+    "id": "636b7dbd-607a-48a6-8967-8bb8758bd724",
+    "name": "nonbre",
+    "email": "nombre@nombre.com",
+    "courses": []
   }
 ]
