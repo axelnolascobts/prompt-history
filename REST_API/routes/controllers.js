@@ -90,9 +90,9 @@ function getStudentBySearchParam(searchParam) {
     let searchResult = searchStudents(searchParam);
     let student = searchResult.student;
 
-    if (Array.isArray(searchResult)) {
+    if (Array.isArray(student)) {
 
-        return {status: 200, data: searchResult};
+        return {status: 200, data: student};
     }
 
     if (student) {
@@ -210,10 +210,11 @@ function completeStudentUpdate(searchParam, body) {
         let searchResult = searchStudents(searchParam);
         let student = searchResult.student;
         let studentIndex = searchResult.studentIndex;
+        
 
         if (student) {
 
-            if (Array.isArray(searchResult)) {
+            if (Array.isArray(student)) {
 
                 return {status: 400, message: "To edit a student, search by ID or email, please"};
 
@@ -310,7 +311,7 @@ function partialStudentUpdate(searchParam, body) {
 
             if (student) {
 
-                if (Array.isArray(searchResult)) {
+                if (Array.isArray(student)) {
 
                     return {status: 400, message: "To edit a student, search by ID or email, please"};
 
@@ -372,12 +373,12 @@ function deleteStudent(searchParam) {
     let searchResult = searchStudents(searchParam);
     let studentIndex = searchResult.studentIndex;
 
-    if (studentIndex === -1) {
+    if (studentIndex === undefined) {
 
         return {status: 404, message: "Student not found or not exist"};
     } else {
 
-        if (Array.isArray(searchResult)) {
+        if (Array.isArray(searchResult.student)) {
 
             return {status: 400, message: "To delete a student, search by ID or email, please"};
 
@@ -475,7 +476,7 @@ function comparateCourses(courses1, courses2) {
 }
 
 function searchStudents(searchParam) {
-
+    
     const UUID_PATTERN =  /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
     const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -510,15 +511,15 @@ function searchStudents(searchParam) {
 
     } else if (!uuidMatch && !emailMAtch) {
 
-        let students = studentsData.filter(studentData => studentData.name.trim().toLowerCase() === searchParam.trim().toLowerCase());
+        let student = studentsData.filter(studentData => studentData.name.trim().toLowerCase() === searchParam.trim().toLowerCase());
 
-        if (students.length === 0) {
+        if (student.length === 0) {
 
             return false;
 
         }
 
-        return students;
+        return { student };
 
     }
 

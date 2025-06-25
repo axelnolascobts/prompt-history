@@ -1,37 +1,5 @@
 [
   {
-    "id": "78b2c235-21ce-4fc5-b53d-482a061e6a90",
-    "name": "holaaa",
-    "email": "a@hola.com",
-    "courses": []
-  },
-  {
-    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
-    "name": "Benjamin",
-    "email": "benhja@hola.com",
-    "courses": [
-      "biología"
-    ]
-  },
-  {
-    "id": "8e90aad9-1ebd-4308-8f73-62a89f58f142",
-    "name": "Dante",
-    "email": "dadada@hola.com",
-    "courses": [
-      "historia",
-      "matemáticas"
-    ]
-  },
-  {
-    "id": "2f9d2ea7-d403-4af7-9d90-41896646d368",
-    "name": "HOLO",
-    "email": "DANTE@hola.com",
-    "courses": [
-      "historia",
-      "matemáticas"
-    ]
-  },
-  {
     "id": "38c786af-5a04-4fe2-ba9b-b4a877446784",
     "name": "Holaaa",
     "email": "fxds@hola.com",
