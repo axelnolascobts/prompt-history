@@ -1,18 +1,18 @@
 [
   {
     "id": "86e8141a-07c4-42d2-bd71-0b7fb58d9976",
-    "name": "milton",
-    "email": "prueba2@gmail2.com",
+    "name": "Milton",
+    "email": "milton@gmail1.com",
     "courses": [
       "Matematicas"
     ]
   },
   {
     "id": "4e0e92bd-8091-45b5-b28c-b81d642d7b40",
-    "name": "Milton",
-    "email": "milton@gmail.com",
+    "name": "milton mejia",
+    "email": "mejia@gmail2.com",
     "courses": [
-      "matematicas"
+      "Matematicas"
     ]
   },
   {
@@ -47,6 +47,14 @@
     "courses": [
       "",
       ""
+    ]
+  },
+  {
+    "id": "08da2261-f243-4820-aab3-700945a1bafb",
+    "name": "juan",
+    "email": "juan@gmail43.com",
+    "courses": [
+      "Matematicas 2"
     ]
   }
 ]

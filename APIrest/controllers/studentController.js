@@ -48,7 +48,11 @@ function WriteData(data) {
 // GET todos
 exports.getAllStudents = (req, res) => {
   const students = ReadData();
-  res.json(students);
+  res.status(200).json({
+  status: 200,
+  message: "Students retrieved successfully",
+  data: students
+});
 };
 
 // GET por ID
@@ -58,7 +62,11 @@ exports.getStudentsById = (req, res) => {
   if (!student) {
     return res.status(404).json({ message: "Student not found" });
   }
-  res.json(student);
+  res.status(200).json({
+  status: 200,
+  message: "Student retrieved successfully",
+  data: student
+});
 };
 
 // GET por name
@@ -74,7 +82,11 @@ exports.getStudentByName = (req, res) => {
     return res.status(404).json({ message: "No students found with that name" });
   }
 
-  res.json(matches);
+  res.status(200).json({
+  status: 200,
+  message: "Student(s) retrieved successfully",
+  data: matches
+});
 };
 
 // GET por email
@@ -88,7 +100,11 @@ exports.getStudentByEmail = (req, res) => {
     return res.status(404).json({ message: "No student found with that email" });
   }
 
-  res.json(match);
+  res.status(200).json({
+  status: 200,
+  message: "Student retrieved successfully",
+  data: match
+});
 };
 
 // POST crear
@@ -149,7 +165,12 @@ exports.createStudent = (req, res) => {
 
   students.push(newStudent);
   WriteData(students);
-  res.status(201).json(newStudent);
+  
+  res.status(201).json({
+  status: 201,
+  message: "Student created successfully",
+  data: newStudent
+});
 };
 
 // PUT actualizar
@@ -209,7 +230,11 @@ exports.updateStudent = (req, res) => {
   };
 
   WriteData(students);
-  res.json(students[index]);
+  res.status(200).json({
+  status: 200,
+  message: "Student edited successfully",
+  data: students[index]
+});
 };
 
 // PATCH actualizar parcialmente
