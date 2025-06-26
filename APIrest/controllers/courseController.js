@@ -1,19 +1,35 @@
 const fs = require("fs");
 const path = require("path");
-const DBPATH = path.join(__dirname, "../data/db.json");
 
-// Leer datos
-function ReadData() {
+const DBPATH = path.join(__dirname, "../data/db.json");
+const COURSEPATH = path.join(__dirname, "../data/courses.json");
+
+// Leer datos de estudiantes
+function readStudents() {
   const data = fs.readFileSync(DBPATH, "utf8");
   return JSON.parse(data);
 }
 
-// Guardar datos
-function WriteData(data) {
+// Escribir datos de estudiantes
+function writeStudents(data) {
   fs.writeFileSync(DBPATH, JSON.stringify(data, null, 2));
 }
 
-// Crear un nuevo curso
+// Leer lista global de cursos
+function readCourses() {
+  if (!fs.existsSync(COURSEPATH)) {
+    fs.writeFileSync(COURSEPATH, JSON.stringify([]));
+  }
+  const data = fs.readFileSync(COURSEPATH, "utf8");
+  return JSON.parse(data);
+}
+
+// Escribir lista global de cursos
+function writeCourses(courses) {
+  fs.writeFileSync(COURSEPATH, JSON.stringify(courses, null, 2));
+}
+
+// Crear un nuevo curso y guardarlo en courses.json
 exports.createCourse = (req, res) => {
   const { course } = req.body;
   if (!course || typeof course !== "string" || course.trim() === "") {
@@ -23,67 +39,103 @@ exports.createCourse = (req, res) => {
       data: null
     });
   }
-  // No hay lista global de cursos, solo validamos que el nombre sea válido
-  res.status(201).json({
-    status: 201,
-    message: "Course created (add to students via student endpoints)",
-    data: { course: course.trim() }
-  });
-};
 
-// Obtener alumnos de un curso (usando query param)
-exports.getCourseStudents = (req, res) => {
-  const course = req.query.course;
-  if (!course || typeof course !== "string" || course.trim() === "") {
-    return res.status(400).json({
-      status: 400,
-      message: "Course query param is required",
+  const normalized = course.trim().toLowerCase();
+  const courses = readCourses();
+
+  if (courses.some(c => c.name.toLowerCase() === normalized)) {
+    return res.status(409).json({
+      status: 409,
+      message: "Course already exists",
       data: null
     });
   }
-  const students = ReadData();
+
+  courses.push({ name: normalized, students: [] });
+  writeCourses(courses);
+
+  return res.status(201).json({
+    status: 201,
+    message: "Course created successfully",
+    data: { course: normalized }
+  });
+};
+
+// Obtener alumnos de un curso
+exports.getCourseStudents = (req, res) => {
+  const course = req.params.course || req.query.course;
+  if (!course || typeof course !== "string" || course.trim() === "") {
+    return res.status(400).json({
+      status: 400,
+      message: "Course param is required",
+      data: null
+    });
+  }
+
   const normalized = course.trim().toLowerCase();
+  const courses = readCourses();
+
+  const courseObj = courses.find(c => c.name.toLowerCase() === normalized);
+  if (!courseObj) {
+    return res.status(404).json({
+      status: 404,
+      message: `Course '${normalized}' does not exist`,
+      data: null
+    });
+  }
+
+  const students = readStudents();
+
+  // Filtrar estudiantes inscritos en el curso
   const enrolled = students.filter(s =>
-    s.courses.map(c => c.trim().toLowerCase()).includes(normalized)
+    s.courses.some(cName => cName.trim().toLowerCase() === normalized)
   );
-  // Siempre 200, aunque enrolled sea []
+
   return res.status(200).json({
     status: 200,
-    message: "Students retrieved for course",
+    message: `Students retrieved for course '${normalized}'`,
     data: enrolled
   });
 };
 
-// Eliminar un curso de todos los alumnos (usando query param)
+// Eliminar un curso de todos los alumnos y de courses.json
 exports.deleteCourse = (req, res) => {
-  const course = req.query.course;
+  const course = req.params.course || req.query.course;
   if (!course || typeof course !== "string" || course.trim() === "") {
     return res.status(400).json({
       status: 400,
-      message: "Course query param is required",
+      message: "Course param is required",
       data: null
     });
   }
-  let students = ReadData();
+
   const normalized = course.trim().toLowerCase();
-  let found = false;
-  students = students.map(s => {
-    const before = s.courses.length;
-    s.courses = s.courses.filter(c => c.trim().toLowerCase() !== normalized);
-    if (s.courses.length < before) found = true;
-    return s;
-  });
-  if (!found) {
+  let courses = readCourses();
+
+  const courseIndex = courses.findIndex(c => c.name.toLowerCase() === normalized);
+  if (courseIndex === -1) {
     return res.status(404).json({
       status: 404,
-      message: "Course not found",
+      message: `Course '${normalized}' not found`,
       data: null
     });
   }
-  WriteData(students);
-  res.status(200).json({
+
+  // Eliminar el curso de todos los estudiantes inscritos
+  let students = readStudents();
+  students = students.map(s => {
+    s.courses = s.courses.filter(c => c.trim().toLowerCase() !== normalized);
+    return s;
+  });
+  writeStudents(students);
+
+  // Eliminar curso de la lista global
+  courses.splice(courseIndex, 1);
+  writeCourses(courses);
+
+  return res.status(200).json({
     status: 200,
-    message: "Course deleted from all students",
-    data: course
+    message: `Course '${normalized}' deleted from system and all students`,
+    data: normalized
   });
 };

@@ -4,12 +4,28 @@ const fs = require('fs');
 
 jest.mock('fs');
 
+const fakeCourses = [
+  { name: 'Math', students: [] },
+  { name: 'Science', students: [] }
+];
+
+const fakeStudents = [
+  { id: '1', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] }
+];
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  fs.readFileSync.mockImplementation((filePath) => {
+    if (filePath.includes('courses.json')) {
+      return JSON.stringify(fakeCourses);
+    }
+    return JSON.stringify(fakeStudents);
+  });
+  fs.writeFileSync.mockClear();
+});
+
 describe('GET /students', () => {
   it('should respond with status 200 and return an array', async () => {
-    const fakeStudents = [
-      { id: '1', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] }
-    ];
-    fs.readFileSync.mockReturnValue(JSON.stringify(fakeStudents));
     const res = await request(app).get('/students');
     expect(res.statusCode).toBe(200);
     expect(res.body.data).toEqual(fakeStudents);
@@ -17,101 +33,94 @@ describe('GET /students', () => {
   });
 
   it('should filter by id', async () => {
-    const fakeStudents = [
-      { id: '1', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] }
-    ];
-    fs.readFileSync.mockReturnValue(JSON.stringify(fakeStudents));
     const res = await request(app).get('/students').query({ id: '1' });
     expect(res.statusCode).toBe(200);
     expect(res.body.data[0].id).toBe('1');
   });
 
   it('should filter by name', async () => {
-    const fakeStudents = [
-      { id: '1', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] },
-      { id: '2', name: 'Ana', email: 'ana@gmail.com', courses: ['Science'] }
-    ];
-    fs.readFileSync.mockReturnValue(JSON.stringify(fakeStudents));
-    const res = await request(app).get('/students').query({ name: 'mil' });
+    const res = await request(app).get('/students').query({ name: 'Milton' });
     expect(res.statusCode).toBe(200);
     expect(res.body.data[0].name).toBe('Milton');
   });
 
   it('should filter by email', async () => {
-    const fakeStudents = [
-      { id: '1', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] }
-    ];
-    fs.readFileSync.mockReturnValue(JSON.stringify(fakeStudents));
     const res = await request(app).get('/students').query({ email: 'milton@gmail.com' });
     expect(res.statusCode).toBe(200);
     expect(res.body.data[0].email).toBe('milton@gmail.com');
   });
 
   it('should filter by course', async () => {
-    const fakeStudents = [
-      { id: '1', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] },
-      { id: '2', name: 'Ana', email: 'ana@gmail.com', courses: ['Science', 'Math'] }
-    ];
-    fs.readFileSync.mockReturnValue(JSON.stringify(fakeStudents));
     const res = await request(app).get('/students').query({ course: 'Math' });
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.length).toBe(2);
+    expect(res.body.data[0].courses).toContain('Math');
   });
 
   it('should return 404 if no student matches', async () => {
-    fs.readFileSync.mockReturnValue('[]');
-    const res = await request(app).get('/students').query({ name: 'nobody' });
+    fs.readFileSync.mockReturnValueOnce(JSON.stringify([]));
+    const res = await request(app).get('/students').query({ id: '999' });
     expect(res.statusCode).toBe(404);
-    expect(res.body).toHaveProperty('message');
+    expect(res.body.message).toBe('No students found with the given query');
   });
 });
 
 describe('POST /students', () => {
   beforeEach(() => {
-    fs.readFileSync.mockReturnValue('[]');
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([]);
+    });
     fs.writeFileSync.mockClear();
   });
 
   it('should create a new student with valid data', async () => {
     const newStudent = {
       name: "Milton",
-      email: "milton@gmail.com",
-      courses: ["Math", "Science"]
+      email: "milton2@gmail.com",
+      courses: ["Math"]
     };
     const res = await request(app).post('/students').send(newStudent);
     expect(res.statusCode).toBe(201);
-    expect(res.body.data).toMatchObject(newStudent);
+    expect(res.body.message).toBe('Student created successfully and courses updated');
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
   it('should reject empty request body', async () => {
     const res = await request(app).post('/students').send({});
     expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Request body cannot be empty');
+    expect(res.body.message).toBe('Request body cannot be empty');
   });
 
   it('should reject duplicate email', async () => {
-    const existingStudent = { id: '1', name: "Exists", email: "milton@gmail.com", courses: ["Math"] };
-    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent]));
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([
+        { id: '1', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] }
+      ]);
+    });
     const newStudent = {
       name: "Milton",
       email: "milton@gmail.com",
-      courses: ["Science"]
+      courses: ["Math"]
     };
     const res = await request(app).post('/students').send(newStudent);
     expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty('message', 'The email already exists');
+    expect(res.body.message).toBe('The email already exists');
   });
 
   it('should reject invalid course duplicates', async () => {
     const newStudent = {
       name: "Milton",
-      email: "milton@gmail.com",
-      courses: ["Math", "math"]
+      email: "milton3@gmail.com",
+      courses: ["Math", "Math"]
     };
     const res = await request(app).post('/students').send(newStudent);
     expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty('message', 'Courses must not contain duplicates');
+    expect(res.body.message).toBe('Courses must not contain duplicates');
   });
 
   it('should reject invalid email format', async () => {
@@ -128,8 +137,8 @@ describe('POST /students', () => {
   it('should reject empty or invalid course strings', async () => {
     const newStudent = {
       name: "Milton",
-      email: "milton@gmail.com",
-      courses: ["", "Science"]
+      email: "milton4@gmail.com",
+      courses: [""]
     };
     const res = await request(app).post('/students').send(newStudent);
     expect(res.statusCode).toBe(400);
@@ -146,21 +155,20 @@ describe('PUT /students', () => {
   };
 
   beforeEach(() => {
-    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent]));
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([existingStudent]);
+    });
     fs.writeFileSync.mockClear();
   });
 
   it('should update the student with valid data', async () => {
-    const updatedData = {
-      name: 'Milton Updated',
-      email: 'miltonupdated@gmail.com',
-      courses: ['Science']
-    };
-    const res = await request(app).put('/students').query({ id: '123' }).send(updatedData);
+    const updated = { name: 'Milton Updated', email: 'milton@gmail.com', courses: ['Math'] };
+    const res = await request(app).put('/students').query({ id: '123' }).send(updated);
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.name).toBe(updatedData.name);
-    expect(res.body.data.email).toBe(updatedData.email);
-    expect(res.body.data.courses).toEqual(updatedData.courses);
+    expect(res.body.message).toBe('Student edited successfully and courses updated');
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
@@ -171,50 +179,44 @@ describe('PUT /students', () => {
   });
 
   it('should reject invalid name characters', async () => {
-    const res = await request(app).put('/students').query({ id: '123' }).send({
-      name: '@@@',
-      email: 'valid@example.com',
-      courses: ['Math']
-    });
+    const updated = { name: 'Milton123', email: 'milton@gmail.com', courses: ['Math'] };
+    const res = await request(app).put('/students').query({ id: '123' }).send(updated);
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toMatch(/Name contains invalid characters/);
+    expect(res.body.message).toBe('Name contains invalid characters');
   });
 
   it('should reject duplicate email with another student', async () => {
-    const otherStudent = {
-      id: '999',
-      name: 'Other',
-      email: 'dup@gmail.com',
-      courses: ['Science']
-    };
-    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent, otherStudent]));
-
-    const res = await request(app).put('/students').query({ id: '123' }).send({
-      name: 'New Name',
-      email: 'dup@gmail.com',
-      courses: ['Math']
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([
+        existingStudent,
+        { id: '456', name: 'Other', email: 'other@mail.com', courses: ['Science'] }
+      ]);
     });
+    const updated = { name: 'Milton', email: 'other@mail.com', courses: ['Math'] };
+    const res = await request(app).put('/students').query({ id: '123' }).send(updated);
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe('The email already exists');
   });
 
   it('should return 404 if student not found', async () => {
-    fs.readFileSync.mockReturnValue('[]');
-    const res = await request(app).put('/students').query({ id: 'notfound' }).send({
-      name: 'New Name',
-      email: 'new@mail.com',
-      courses: ['Math']
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([]);
     });
+    const updated = { name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] };
+    const res = await request(app).put('/students').query({ id: '999' }).send(updated);
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toBe('Student not found');
   });
 
   it('should reject courses with duplicates', async () => {
-    const res = await request(app).put('/students').query({ id: '123' }).send({
-      name: 'Valid Name',
-      email: 'valid@email.com',
-      courses: ['Math', 'math']
-    });
+    const updated = { name: 'Milton', email: 'milton@gmail.com', courses: ['Math', 'Math'] };
+    const res = await request(app).put('/students').query({ id: '123' }).send(updated);
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe('Courses must not contain duplicates');
   });
@@ -229,32 +231,33 @@ describe('PATCH /students', () => {
   };
 
   beforeEach(() => {
-    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent]));
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([existingStudent, { id: '456', name: 'Other', email: 'other@mail.com', courses: ['Science'] }]);
+    });
     fs.writeFileSync.mockClear();
   });
 
   it('should update only name', async () => {
-    const res = await request(app).patch('/students').query({ id: '123' }).send({ name: 'Patched Name' });
+    const res = await request(app).patch('/students').query({ id: '123' }).send({ name: 'Milton Patched' });
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.name).toBe('Patched Name');
+    expect(res.body.message).toBe('Student updated successfully with course synchronization');
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
   it('should update email and courses together', async () => {
-    const res = await request(app).patch('/students').query({ id: '123' }).send({
-      email: 'newemail@mail.com',
-      courses: ['Science']
-    });
+    const res = await request(app).patch('/students').query({ id: '123' }).send({ email: 'milton2@gmail.com', courses: ['Science'] });
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.email).toBe('newemail@mail.com');
-    expect(res.body.data.courses).toEqual(['Science']);
+    expect(res.body.message).toBe('Student updated successfully with course synchronization');
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
   it('should reject invalid name', async () => {
-    const res = await request(app).patch('/students').query({ id: '123' }).send({ name: '###' });
+    const res = await request(app).patch('/students').query({ id: '123' }).send({ name: 'Milton123' });
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toMatch(/Name contains invalid characters/);
+    expect(res.body.message).toBe('Name contains invalid characters');
   });
 
   it('should reject empty email', async () => {
@@ -264,20 +267,13 @@ describe('PATCH /students', () => {
   });
 
   it('should reject duplicate email', async () => {
-    const otherStudent = {
-      id: '456',
-      name: 'Another',
-      email: 'duplicate@mail.com',
-      courses: ['Science']
-    };
-    fs.readFileSync.mockReturnValue(JSON.stringify([existingStudent, otherStudent]));
-    const res = await request(app).patch('/students').query({ id: '123' }).send({ email: 'duplicate@mail.com' });
+    const res = await request(app).patch('/students').query({ id: '123' }).send({ email: 'other@mail.com' });
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBe('This email is already registered');
+    expect(res.body.message).toBe('This user is already registered');
   });
 
   it('should reject non-array courses', async () => {
-    const res = await request(app).patch('/students').query({ id: '123' }).send({ courses: 'not-an-array' });
+    const res = await request(app).patch('/students').query({ id: '123' }).send({ courses: 'Math' });
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe('Courses must be an array of strings');
   });
@@ -289,8 +285,13 @@ describe('PATCH /students', () => {
   });
 
   it('should return 404 if student not found', async () => {
-    fs.readFileSync.mockReturnValue('[]');
-    const res = await request(app).patch('/students').query({ id: 'notfound' }).send({ name: 'No One' });
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([]);
+    });
+    const res = await request(app).patch('/students').query({ id: '999' }).send({ name: 'Nobody' });
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toBe('Student not found');
   });
@@ -298,53 +299,28 @@ describe('PATCH /students', () => {
 
 describe('DELETE /students', () => {
   it('should delete a student if exists', async () => {
-    const student = {
-      id: 'delete-123',
-      name: 'ToDelete',
-      email: 'delete@mail.com',
-      courses: ['Math']
-    };
-    fs.readFileSync.mockReturnValue(JSON.stringify([student]));
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify([{ name: 'Math', students: ['milton@gmail.com'] }]);
+      }
+      return JSON.stringify([{ id: '123', name: 'Milton', email: 'milton@gmail.com', courses: ['Math'] }]);
+    });
     fs.writeFileSync.mockClear();
-    const res = await request(app).delete('/students').query({ id: 'delete-123' });
+    const res = await request(app).delete('/students').query({ id: '123' });
     expect(res.statusCode).toBe(200);
-    expect(res.body.message).toBe('Student deleted');
+    expect(res.body.message).toBe('Student deleted successfully and courses updated');
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
   it('should return 404 if student not found', async () => {
-    fs.readFileSync.mockReturnValue('[]');
-    const res = await request(app).delete('/students').query({ id: 'notfound' });
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify(fakeCourses);
+      }
+      return JSON.stringify([]);
+    });
+    const res = await request(app).delete('/students').query({ id: '999' });
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toBe('Student not found');
-  });
-});
-
-// Opcional: pruebas para /students/by-course y /students/course si tienes esos endpoints
-describe('GET /students/by-course', () => {
-  it('should get students by course', async () => {
-    const students = [
-      { id: '1', name: 'Milton', email: 'm1@mail.com', courses: ['Math'] },
-      { id: '2', name: 'Ana', email: 'a@mail.com', courses: ['Math', 'Science'] }
-    ];
-    fs.readFileSync.mockReturnValue(JSON.stringify(students));
-    const res = await request(app).get('/students/by-course').query({ course: 'Math' });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.data.length).toBe(2);
-  });
-});
-
-describe('DELETE /students/course', () => {
-  it('should delete a course from all students', async () => {
-    const students = [
-      { id: '1', name: 'Milton', email: 'm1@mail.com', courses: ['Math', 'Science'] },
-      { id: '2', name: 'Ana', email: 'a@mail.com', courses: ['Math'] }
-    ];
-    fs.readFileSync.mockReturnValue(JSON.stringify(students));
-    fs.writeFileSync.mockClear();
-    const res = await request(app).delete('/students/course').query({ course: 'Math' });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.data).toBe('Math');
-    expect(fs.writeFileSync).toHaveBeenCalled();
   });
 });

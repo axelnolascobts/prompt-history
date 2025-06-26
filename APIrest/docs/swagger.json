@@ -476,7 +476,8 @@
             "type": "array",
             "items": { "type": "string" }
           }
-        }
+        },
+        "required": ["id", "name", "email", "courses"]
       },
       "NewStudent": {
         "type": "object",
@@ -486,7 +487,9 @@
           "email": { "type": "string", "format": "email" },
           "courses": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "type": "string" },
+            "minItems": 1,
+            "uniqueItems": true
           }
         }
       },
@@ -497,7 +500,9 @@
           "email": { "type": "string", "format": "email" },
           "courses": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "type": "string" },
+            "minItems": 1,
+            "uniqueItems": true
           }
         }
       },
@@ -510,7 +515,8 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/Student" }
           }
-        }
+        },
+        "required": ["status", "message", "data"]
       },
       "StudentResponse": {
         "type": "object",
@@ -518,7 +524,8 @@
           "status": { "type": "integer" },
           "message": { "type": "string" },
           "data": { "$ref": "#/components/schemas/Student" }
-        }
+        },
+        "required": ["status", "message", "data"]
       },
       "CourseCreateResponse": {
         "type": "object",
@@ -529,9 +536,11 @@
             "type": "object",
             "properties": {
               "course": { "type": "string" }
-            }
+            },
+            "required": ["course"]
           }
-        }
+        },
+        "required": ["status", "message", "data"]
       },
       "CourseDeleteResponse": {
         "type": "object",
@@ -539,7 +548,8 @@
           "status": { "type": "integer" },
           "message": { "type": "string" },
           "data": { "type": "string" }
-        }
+        },
+        "required": ["status", "message", "data"]
       },
       "ErrorResponse": {
         "type": "object",
@@ -547,7 +557,8 @@
           "status": { "type": "integer" },
           "message": { "type": "string" },
           "data": {}
-        }
+        },
+        "required": ["status", "message", "data"]
       }
     }
   }

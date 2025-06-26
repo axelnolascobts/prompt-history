@@ -15,10 +15,5 @@ router.patch("/", studentController.patchStudent);
 // Eliminar estudiante por id o email (query param)
 router.delete("/", studentController.deleteStudent);
 
-// Obtener estudiantes de un curso
-router.get("/by-course", studentController.getStudentsByCourse);
-
-// Eliminar un curso de todos los estudiantes
-router.delete("/course", studentController.deleteCourseFromAllStudents);
 
 module.exports = router;

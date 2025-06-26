@@ -56,5 +56,14 @@
     "courses": [
       "Matematicas 2"
     ]
+  },
+  {
+    "id": "65e3d9b3-c4f8-47d4-b471-9a95e5493cf3",
+    "name": "Juan",
+    "email": "juan@gmail.com",
+    "courses": [
+      "history",
+      "math"
+    ]
   }
 ]
