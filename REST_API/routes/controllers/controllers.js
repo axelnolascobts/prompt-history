@@ -67,15 +67,21 @@ function readData() {
 
     }
 
-    let students = JSON.parse(data);
+    let allData = JSON.parse(data);
+    let students = allData.students;
 
     return students;
 
 }
 
-function writeData(data) {
+function writeData(students) {
 
     try {
+
+        let allData = fs.readFileSync(DATA_ROUTE, 'utf8');
+        let data = JSON.parse(allData);
+
+        data.students = students;
 
         fs.writeFileSync(DATA_ROUTE, JSON.stringify(data, null, 2));
     } catch (err) {

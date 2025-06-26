@@ -1,37 +1,80 @@
-[
-  {
-    "id": "38c786af-5a04-4fe2-ba9b-b4a877446784",
-    "name": "Francisco Villa",
-    "email": "francisco@hola.com",
-    "courses": [
-      "materia55",
-      "materia7",
-      "MATERIA1",
-      "materia3"
-    ]
-  },
-  {
-    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
-    "name": "Benito Juarez",
-    "email": "benitojuarez@hola.com",
-    "courses": [
-      "biología"
-    ]
-  },
-  {
-    "id": "543a8818-9c1f-47b7-a42c-4133effb9d43",
-    "name": "Pedro",
-    "email": "pedro02@hola.com",
-    "courses": [
-      "materia",
-      "materia1",
-      "materia3"
-    ]
-  },
-  {
-    "id": "636b7dbd-607a-48a6-8967-8bb8758bd724",
-    "name": "nonbre",
-    "email": "nombre@nombre.com",
-    "courses": []
-  }
-]
+{
+  "students": [
+    {
+      "id": "38c786af-5a04-4fe2-ba9b-b4a877446784",
+      "name": "Francisco Villa",
+      "email": "francisco@hola.com",
+      "courses": [
+        "materia55",
+        "materia7",
+        "MATERIA1",
+        "materia3"
+      ]
+    },
+    {
+      "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+      "name": "Benito Juarez",
+      "email": "benitojuarez@hola.com",
+      "courses": [
+        "biología"
+      ]
+    },
+    {
+      "id": "543a8818-9c1f-47b7-a42c-4133effb9d43",
+      "name": "Pedro",
+      "email": "pedro02@hola.com",
+      "courses": [
+        "materia",
+        "materia1",
+        "materia3"
+      ]
+    },
+    {
+      "id": "636b7dbd-607a-48a6-8967-8bb8758bd724",
+      "name": "nonbre",
+      "email": "nombre@nombre.com",
+      "courses": []
+    },
+    {
+      "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+      "name": "Isaac Gallo",
+      "email": "isaac@hola.com",
+      "courses": [
+        "foo"
+      ]
+    }
+  ],
+  "courses": [
+    {
+      "course": "historia",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "biologia",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "geografia",
+      "students": []
+    },
+    {
+      "course": "arte",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    }
+  ]
+}

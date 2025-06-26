@@ -1,6 +1,6 @@
 const express = require('express');
 const ROUTER = express.Router();
-const { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate } = require('./controllers');
+const { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate } = require('./controllers/controllers.js');
 
 ROUTER.get('/', (request, response) => {
 
