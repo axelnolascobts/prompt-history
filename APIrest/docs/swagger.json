@@ -14,44 +14,39 @@
   "paths": {
     "/students": {
       "get": {
-        "summary": "Retrieve all students",
+        "summary": "Retrieve students (filter by id, name, email, or course using query params)",
         "tags": ["Students"],
+        "parameters": [
+          { "name": "id", "in": "query", "schema": { "type": "string" }, "required": false },
+          { "name": "name", "in": "query", "schema": { "type": "string" }, "required": false },
+          { "name": "email", "in": "query", "schema": { "type": "string", "format": "email" }, "required": false },
+          { "name": "course", "in": "query", "schema": { "type": "string" }, "required": false }
+        ],
         "responses": {
           "200": {
-            "description": "List of all students",
+            "description": "Students retrieved successfully",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Student"
-                  }
-                },
-                "examples": {
-                  "sample": {
-                    "summary": "Example response",
-                    "value": [
-                      {
-                        "id": "123e4567-e89b-12d3-a456-426614174000",
-                        "name": "John Smith",
-                        "email": "john@example.com",
-                        "courses": ["Math", "Biology"]
-                      }
-                    ]
-                  }
+                "schema": { "$ref": "#/components/schemas/StudentsResponse" },
+                "example": {
+                  "status": 200,
+                  "message": "Students retrieved successfully",
+                  "data": [
+                    { "id": "1", "name": "Milton", "email": "milton@gmail.com", "courses": ["Math"] }
+                  ]
                 }
               }
             }
           },
           "404": {
-            "description": "Students not found",
+            "description": "No students found with the given query",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "example": {
-                  "message": "Students not found"
+                  "status": 404,
+                  "message": "No students found with the given query",
+                  "data": []
                 }
               }
             }
@@ -65,9 +60,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewStudent"
-              },
+              "schema": { "$ref": "#/components/schemas/NewStudent" },
               "example": {
                 "name": "Jane Doe",
                 "email": "jane@example.com",
@@ -81,8 +74,16 @@
             "description": "Student created successfully",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Student"
+                "schema": { "$ref": "#/components/schemas/StudentResponse" },
+                "example": {
+                  "status": 201,
+                  "message": "Student created successfully",
+                  "data": {
+                    "id": "2",
+                    "name": "Jane Doe",
+                    "email": "jane@example.com",
+                    "courses": ["Math", "Science"]
+                  }
                 }
               }
             }
@@ -91,37 +92,92 @@
             "description": "Invalid input or email already exists",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "emptyBody": {
+                    "summary": "Empty body",
+                    "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
+                  },
+                  "invalidInput": {
+                    "summary": "Invalid input",
+                    "value": { "status": 400, "message": "Invalid input", "data": [] }
+                  },
+                  "duplicateEmail": {
+                    "summary": "Duplicate email",
+                    "value": { "status": 400, "message": "The email already exists", "data": null }
+                  },
+                  "invalidEmailFormat": {
+                    "summary": "Invalid email format",
+                    "value": { "status": 400, "message": "Invalid email format", "data": null }
+                  },
+                  "invalidName": {
+                    "summary": "Invalid name",
+                    "value": { "status": 400, "message": "Name contains invalid characters", "data": null }
+                  },
+                  "emptyName": {
+                    "summary": "Empty name",
+                    "value": { "status": 400, "message": "Name cannot be empty", "data": null }
+                  },
+                  "invalidCourses": {
+                    "summary": "Invalid courses",
+                    "value": { "status": 400, "message": "Courses must be a non-empty array", "data": null }
+                  },
+                  "duplicateCourses": {
+                    "summary": "Duplicate courses",
+                    "value": { "status": 400, "message": "Courses must not contain duplicates", "data": null }
+                  }
                 }
               }
             }
           }
         }
-      }
-    },
-    "/students/{id}": {
-      "get": {
-        "summary": "Retrieve a student by ID",
+      },
+      "put": {
+        "summary": "Fully update a student by id or email (query param)",
         "tags": ["Students"],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
+          { "name": "id", "in": "query", "schema": { "type": "string" }, "required": false },
+          { "name": "email", "in": "query", "schema": { "type": "string", "format": "email" }, "required": false }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewStudent" }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Student found",
+            "description": "Student edited successfully",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Student"
+                "schema": { "$ref": "#/components/schemas/StudentResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or missing query param",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "missingParam": {
+                    "summary": "Missing query param",
+                    "value": { "status": 400, "message": "Query param 'id' or 'email' is required", "data": null }
+                  },
+                  "invalidInput": {
+                    "summary": "Invalid input",
+                    "value": { "status": 400, "message": "Invalid input", "data": [] }
+                  },
+                  "duplicateEmail": {
+                    "summary": "Duplicate email",
+                    "value": { "status": 400, "message": "The email already exists", "data": null }
+                  },
+                  "duplicateCourses": {
+                    "summary": "Duplicate courses",
+                    "value": { "status": 400, "message": "Courses must not contain duplicates", "data": null }
+                  }
                 }
               }
             }
@@ -130,52 +186,19 @@
             "description": "Student not found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "status": 404, "message": "Student not found", "data": null }
               }
             }
           }
         }
       },
-      "put": {
-        "summary": "Fully update a student by ID",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/NewStudent" }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "Student updated successfully" },
-          "400": { "description": "Invalid input" },
-          "404": { "description": "Student not found" }
-        }
-      },
       "patch": {
-        "summary": "Partially update a student by ID",
+        "summary": "Partially update a student by id or email (query param)",
         "tags": ["Students"],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" }
-          }
+          { "name": "id", "in": "query", "schema": { "type": "string" }, "required": false },
+          { "name": "email", "in": "query", "schema": { "type": "string", "format": "email" }, "required": false }
         ],
         "requestBody": {
           "required": false,
@@ -186,237 +209,254 @@
           }
         },
         "responses": {
-          "200": { "description": "Student partially updated" },
-          "400": { "description": "Invalid input" },
-          "404": { "description": "Student not found" }
-        }
-      },
-      "delete": {
-        "summary": "Delete a student by ID",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" }
-          }
-        ],
-        "responses": {
           "200": {
-            "description": "Student deleted successfully",
+            "description": "Student updated successfully",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string" },
-                    "deleted": { "$ref": "#/components/schemas/Student" }
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/StudentResponse" }
               }
             }
           },
-          "404": { "description": "Student not found" }
-        }
-      }
-    },
-    "/students/email/{email}": {
-      "get": {
-        "summary": "Retrieve a student by email",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "email" }
-          }
-        ],
-        "responses": {
-          "200": { "description": "Student found" },
-          "404": { "description": "Student not found" }
-        }
-      },
-      "put": {
-        "summary": "Fully update a student by email",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "email" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/NewStudent" }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "Student updated successfully" },
-          "400": { "description": "Invalid input" },
-          "404": { "description": "Student not found" }
-        }
-      },
-      "patch": {
-        "summary": "Partially update a student by email",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "email" }
-          }
-        ],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/PartialStudent" }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "Student partially updated" },
-          "400": { "description": "Invalid input" },
-          "404": { "description": "Student not found" }
-        }
-      },
-      "delete": {
-        "summary": "Delete a student by email",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string", "format": "email" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Student deleted successfully",
+          "400": {
+            "description": "Invalid input or missing query param",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string" },
-                    "deleted": { "$ref": "#/components/schemas/Student" }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "missingParam": {
+                    "summary": "Missing query param",
+                    "value": { "status": 400, "message": "Query param 'id' or 'email' is required", "data": null }
+                  },
+                  "invalidInput": {
+                    "summary": "Invalid input",
+                    "value": { "status": 400, "message": "Invalid input", "data": [] }
+                  },
+                  "duplicateEmail": {
+                    "summary": "Duplicate email",
+                    "value": { "status": 400, "message": "This email is already registered", "data": null }
+                  },
+                  "duplicateCourses": {
+                    "summary": "Duplicate courses",
+                    "value": { "status": 400, "message": "Courses must not contain duplicates", "data": null }
                   }
-                }
-              }
-            }
-          },
-          "404": { "description": "Student not found" }
-        }
-      }
-    },
-    "/students/name/{name}": {
-      "get": {
-        "summary": "Search students by partial name",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" },
-            "description": "Partial or full name of the student"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Students found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Student" }
                 }
               }
             }
           },
           "404": {
-            "description": "No students found with that name",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Operation not allowed by name",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Operations by name are forbidden",
+            "description": "Student not found",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
-                "example": { "message": "Only allowed by email or id" }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "summary": "Operation not allowed by name",
-        "tags": ["Students"],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Operations by name are forbidden",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
-                "example": { "message": "Only allowed by email or id" }
+                "example": { "status": 404, "message": "Student not found", "data": null }
               }
             }
           }
         }
       },
       "delete": {
-        "summary": "Operation not allowed by name",
+        "summary": "Delete a student by id or email (query param)",
         "tags": ["Students"],
         "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "query", "schema": { "type": "string" }, "required": false },
+          { "name": "email", "in": "query", "schema": { "type": "string", "format": "email" }, "required": false }
         ],
         "responses": {
+          "200": {
+            "description": "Student deleted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StudentResponse" }
+              }
+            }
+          },
           "400": {
-            "description": "Operations by name are forbidden",
+            "description": "Missing query param",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
-                "example": { "message": "Only allowed by email or id" }
+                "example": { "status": 400, "message": "Query param 'id' or 'email' is required", "data": null }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "status": 404, "message": "Student not found", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students/by-course": {
+      "get": {
+        "summary": "Get students by course (query param)",
+        "tags": ["Students"],
+        "parameters": [
+          { "name": "course", "in": "query", "schema": { "type": "string" }, "required": true }
+        ],
+        "responses": {
+          "200": {
+            "description": "Students retrieved for course",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StudentsResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing course query param",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": { "status": 400, "message": "Course query param is required", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses": {
+      "post": {
+        "summary": "Create a new course (just validates name, does not persist)",
+        "tags": ["Courses"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "properties": { "course": { "type": "string" } }, "required": ["course"] },
+              "example": { "course": "Math" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Course created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CourseCreateResponse" },
+                "example": {
+                  "status": 201,
+                  "message": "Course created (add to students via student endpoints)",
+                  "data": { "course": "Math" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Course name is required or invalid",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "empty": {
+                    "summary": "Empty course name",
+                    "value": { "status": 400, "message": "Course name is required", "data": null }
+                  },
+                  "invalid": {
+                    "summary": "Invalid course name",
+                    "value": { "status": 400, "message": "Course name is required", "data": null }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get students enrolled in a course (query param)",
+        "tags": ["Courses"],
+        "parameters": [
+          { "name": "course", "in": "query", "schema": { "type": "string" }, "required": true }
+        ],
+        "responses": {
+          "200": {
+            "description": "Students retrieved for course",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StudentsResponse" },
+                "example": {
+                  "status": 200,
+                  "message": "Students retrieved for course",
+                  "data": [
+                    { "id": "1", "name": "Milton", "email": "milton@gmail.com", "courses": ["Math"] }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid course query param",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "missing": {
+                    "summary": "Missing course param",
+                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                  },
+                  "invalid": {
+                    "summary": "Invalid course param",
+                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a course from all students (query param)",
+        "tags": ["Courses"],
+        "parameters": [
+          { "name": "course", "in": "query", "schema": { "type": "string" }, "required": true }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course deleted from all students",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CourseDeleteResponse" },
+                "example": {
+                  "status": 200,
+                  "message": "Course deleted from all students",
+                  "data": "Math"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid course query param",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "missing": {
+                    "summary": "Missing course param",
+                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                  },
+                  "invalid": {
+                    "summary": "Invalid course param",
+                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found in any student",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "notFound": {
+                    "summary": "Course not found",
+                    "value": { "status": 404, "message": "Course not found", "data": null }
+                  }
+                }
               }
             }
           }
@@ -429,7 +469,7 @@
       "Student": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
+          "id": { "type": "string" },
           "name": { "type": "string" },
           "email": { "type": "string", "format": "email" },
           "courses": {
@@ -461,20 +501,52 @@
           }
         }
       },
+      "StudentsResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Student" }
+          }
+        }
+      },
+      "StudentResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/Student" }
+        }
+      },
+      "CourseCreateResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "course": { "type": "string" }
+            }
+          }
+        }
+      },
+      "CourseDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "integer" },
+          "message": { "type": "string" },
+          "data": { "type": "string" }
+        }
+      },
       "ErrorResponse": {
         "type": "object",
         "properties": {
+          "status": { "type": "integer" },
           "message": { "type": "string" },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "field": { "type": "string" },
-                "error": { "type": "string" }
-              }
-            }
-          }
+          "data": {}
         }
       }
     }

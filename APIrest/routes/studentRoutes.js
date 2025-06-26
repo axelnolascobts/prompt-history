@@ -2,30 +2,23 @@ const express = require("express");
 const router = express.Router();
 const studentController = require("../controllers/studentController");
 
-router.get("/", studentController.getAllStudents);
+// Todas las búsquedas y filtros por query params
+router.get("/", studentController.getStudents);
 
-router.get("/name/:name", studentController.getStudentByName);
-
-router.get("/email/:email", studentController.getStudentByEmail);
-
-router.get("/:id", studentController.getStudentsById);
-
+// Crear estudiante
 router.post("/", studentController.createStudent);
 
-router.put("/:id", studentController.updateStudent);
+// Actualizar estudiante por id o email (query param)
+router.put("/", studentController.updateStudent);
+router.patch("/", studentController.patchStudent);
 
-router.patch("/:id", studentController.patchStudent);
+// Eliminar estudiante por id o email (query param)
+router.delete("/", studentController.deleteStudent);
 
-router.delete("/:id", studentController.deleteStudent);
+// Obtener estudiantes de un curso
+router.get("/by-course", studentController.getStudentsByCourse);
 
-
-router.put("/email/:email", studentController.updateStudentByEmail);
-router.patch("/email/:email", studentController.patchStudentByEmail);
-router.delete("/email/:email", studentController.deleteStudentByEmail);
-
-
-router.put("/name/:name", studentController.forbidOperationByName);
-router.patch("/name/:name", studentController.forbidOperationByName);
-router.delete("/name/:name", studentController.forbidOperationByName);
+// Eliminar un curso de todos los estudiantes
+router.delete("/course", studentController.deleteCourseFromAllStudents);
 
 module.exports = router;

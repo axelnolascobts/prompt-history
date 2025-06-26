@@ -4,9 +4,12 @@ const app = express();
 const PORT = 3000;
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
+const courseRoutes = require("./routes/courseRoutes");
+
 
 app.use(express.json());
 app.use('/students', studentRoutes);
+app.use("/courses", courseRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {

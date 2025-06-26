@@ -45,83 +45,70 @@ function WriteData(data) {
   fs.writeFileSync(DBPATH, JSON.stringify(data, null, 2));
 }
 
-// GET todos
-exports.getAllStudents = (req, res) => {
+// GET estudiantes (filtros por query params: id, name, email, course)
+exports.getStudents = (req, res) => {
   const students = ReadData();
-  res.status(200).json({
-  status: 200,
-  message: "Students retrieved successfully",
-  data: students
-});
-};
+  const { id, name, email, course } = req.query;
 
-// GET por ID
-exports.getStudentsById = (req, res) => {
-  const students = ReadData();
-  const student = students.find((s) => s.id === req.params.id);
-  if (!student) {
-    return res.status(404).json({ message: "Student not found" });
+  let filtered = students;
+
+  if (id) {
+    filtered = filtered.filter(s => s.id === id);
   }
-  res.status(200).json({
-  status: 200,
-  message: "Student retrieved successfully",
-  data: student
-});
-};
+  if (name) {
+    filtered = filtered.filter(s => s.name.toLowerCase().includes(name.toLowerCase()));
+  }
+  if (email) {
+    filtered = filtered.filter(s => s.email.toLowerCase() === email.toLowerCase());
+  }
+  if (course) {
+    filtered = filtered.filter(s =>
+      s.courses.map(c => c.trim().toLowerCase()).includes(course.trim().toLowerCase())
+    );
+  }
 
-// GET por name
-exports.getStudentByName = (req, res) => {
-  const students = ReadData();
-  const nameParam = req.params.name.toLowerCase();
-
-  const matches = students.filter((s) =>
-    s.name.toLowerCase().includes(nameParam)
-  );
-
-  if (matches.length === 0) {
-    return res.status(404).json({ message: "No students found with that name" });
+  if (filtered.length === 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "No students found with the given query",
+      data: []
+    });
   }
 
   res.status(200).json({
-  status: 200,
-  message: "Student(s) retrieved successfully",
-  data: matches
-});
+    status: 200,
+    message: "Students retrieved successfully",
+    data: filtered
+  });
 };
 
-// GET por email
-exports.getStudentByEmail = (req, res) => {
-  const students = ReadData();
-  const emailParam = req.params.email.toLowerCase();
-
-  const match = students.find((s) => s.email.toLowerCase() === emailParam);
-
-  if (!match) {
-    return res.status(404).json({ message: "No student found with that email" });
-  }
-
-  res.status(200).json({
-  status: 200,
-  message: "Student retrieved successfully",
-  data: match
-});
-};
-
-// POST crear
+// POST crear estudiante
 exports.createStudent = (req, res) => {
   const students = ReadData();
   const data = req.body;
 
   if (!data || Object.keys(data).length === 0) {
-    return res.status(400).json({ message: "Request body cannot be empty" });
+    return res.status(400).json({
+      status: 400,
+      message: "Request body cannot be empty",
+      data: null
+    });
   }
 
   if (!validateStudent(data)) {
-    return res.status(400).json({ message: "Invalid input", errors: validateStudent.errors });
+    return res.status(400).json({
+      status: 400,
+      message: "Invalid input",
+      data: validateStudent.errors
+    });
   }
 
   if (students.some((s) => s.email.toLowerCase() === data.email.trim().toLowerCase())) {
-    return res.status(400).json({ message: "The email already exists" });
+    return res.status(400).json({
+      status: 400,
+      message: "The email already exists",
+      data: null
+    });
   }
 
   const trimmedName = data.name.trim();
@@ -129,31 +116,59 @@ exports.createStudent = (req, res) => {
   const courses = data.courses;
 
   if (trimmedName === "") {
-    return res.status(400).json({ message: "Name cannot be empty" });
+    return res.status(400).json({
+      status: 400,
+      message: "Name cannot be empty",
+      data: null
+    });
   }
 
   if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
-    return res.status(400).json({ message: "Name contains invalid characters" });
+    return res.status(400).json({
+      status: 400,
+      message: "Name contains invalid characters",
+      data: null
+    });
   }
 
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: "Invalid email format" });
+    return res.status(400).json({
+      status: 400,
+      message: "Invalid email format",
+      data: null
+    });
   }
 
   if (!Array.isArray(courses) || courses.length === 0) {
-    return res.status(400).json({ message: "Courses must be a non-empty array" });
+    return res.status(400).json({
+      status: 400,
+      message: "Courses must be a non-empty array",
+      data: null
+    });
   }
 
   if (!courses.every(c => typeof c === "string" && c.trim() !== "")) {
-    return res.status(400).json({ message: "All courses must be non-empty strings" });
+    return res.status(400).json({
+      status: 400,
+      message: "All courses must be non-empty strings",
+      data: null
+    });
   }
 
   if (!courses.every(c => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
-    return res.status(400).json({ message: "Courses contain invalid characters" });
+    return res.status(400).json({
+      status: 400,
+      message: "Courses contain invalid characters",
+      data: null
+    });
   }
 
   if (hasDuplicateCourses(courses)) {
-    return res.status(400).json({ message: "Courses must not contain duplicates" });
+    return res.status(400).json({
+      status: 400,
+      message: "Courses must not contain duplicates",
+      data: null
+    });
   }
 
   const newStudent = {
@@ -165,29 +180,57 @@ exports.createStudent = (req, res) => {
 
   students.push(newStudent);
   WriteData(students);
-  
+
   res.status(201).json({
-  status: 201,
-  message: "Student created successfully",
-  data: newStudent
-});
+    status: 201,
+    message: "Student created successfully",
+    data: newStudent
+  });
 };
 
-// PUT actualizar
+// PUT actualizar estudiante por id o email (query param)
 exports.updateStudent = (req, res) => {
   const students = ReadData();
-  const index = students.findIndex((s) => s.id === req.params.id);
+  const { id, email } = req.query;
+
+  if (!id && !email) {
+    return res.status(400).json({
+      status: 400,
+      message: "Query param 'id' or 'email' is required",
+      data: null
+    });
+  }
+
+  let index = -1;
+  if (id) {
+    index = students.findIndex(s => s.id === id);
+  } else if (email) {
+    index = students.findIndex(s => s.email.toLowerCase() === email.toLowerCase());
+  }
+
   if (index === -1) {
-    return res.status(404).json({ message: "Student not found" });
+    return res.status(404).json({
+      status: 404,
+      message: "Student not found",
+      data: null
+    });
   }
 
   const data = req.body;
   if (!data || Object.keys(data).length === 0) {
-    return res.status(400).json({ message: "Request body cannot be empty" });
+    return res.status(400).json({
+      status: 400,
+      message: "Request body cannot be empty",
+      data: null
+    });
   }
 
   if (!validateStudent(data)) {
-    return res.status(400).json({ message: "Invalid input", errors: validateStudent.errors });
+    return res.status(400).json({
+      status: 400,
+      message: "Invalid input",
+      data: validateStudent.errors
+    });
   }
 
   const trimmedName = data.name.trim();
@@ -195,35 +238,59 @@ exports.updateStudent = (req, res) => {
   const courses = data.courses;
 
   if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
-    return res.status(400).json({ message: "Name contains invalid characters" });
+    return res.status(400).json({
+      status: 400,
+      message: "Name contains invalid characters",
+      data: null
+    });
   }
 
   if (!emailRegex.test(trimmedEmail)) {
-    return res.status(400).json({ message: "Invalid email format" });
+    return res.status(400).json({
+      status: 400,
+      message: "Invalid email format",
+      data: null
+    });
   }
 
   if (!Array.isArray(courses) || courses.length === 0 || !courses.every(c => typeof c === "string"
-  && c.trim() !== "")) {
-    return res.status(400).json({ message: "Courses must be a non-empty array of non-empty strings" });
+    && c.trim() !== "")) {
+    return res.status(400).json({
+      status: 400,
+      message: "Courses must be a non-empty array of non-empty strings",
+      data: null
+    });
   }
 
   if (!courses.every(c => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
-    return res.status(400).json({ message: "Courses contain invalid characters" });
+    return res.status(400).json({
+      status: 400,
+      message: "Courses contain invalid characters",
+      data: null
+    });
   }
 
   if (hasDuplicateCourses(courses)) {
-    return res.status(400).json({ message: "Courses must not contain duplicates" });
+    return res.status(400).json({
+      status: 400,
+      message: "Courses must not contain duplicates",
+      data: null
+    });
   }
 
   const emailUsedByAnother = students.some(
-    (s) => s.email.toLowerCase() === trimmedEmail && s.id !== req.params.id
+    (s, i) => s.email.toLowerCase() === trimmedEmail && i !== index
   );
   if (emailUsedByAnother) {
-    return res.status(400).json({ message: "The email already exists" });
+    return res.status(400).json({
+      status: 400,
+      message: "The email already exists",
+      data: null
+    });
   }
 
   students[index] = {
-    id: req.params.id,
+    id: students[index].id,
     name: trimmedName,
     email: trimmedEmail,
     courses,
@@ -231,223 +298,225 @@ exports.updateStudent = (req, res) => {
 
   WriteData(students);
   res.status(200).json({
-  status: 200,
-  message: "Student edited successfully",
-  data: students[index]
-});
+    status: 200,
+    message: "Student edited successfully",
+    data: students[index]
+  });
 };
 
-// PATCH actualizar parcialmente
+// PATCH actualizar parcialmente por id o email (query param)
 exports.patchStudent = (req, res) => {
   const students = ReadData();
-  const student = students.find((s) => s.id === req.params.id);
+  const { id, email } = req.query;
+
+  if (!id && !email) {
+    return res.status(400).json({
+      status: 400,
+      message: "Query param 'id' or 'email' is required",
+      data: null
+    });
+  }
+
+  let student;
+  if (id) {
+    student = students.find(s => s.id === id);
+  } else if (email) {
+    student = students.find(s => s.email.toLowerCase() === email.toLowerCase());
+  }
+
   if (!student) {
-    return res.status(404).json({ message: "Student not found" });
+    return res.status(404).json({
+      status: 404,
+      message: "Student not found",
+      data: null
+    });
   }
 
   const data = req.body;
   if (!data || Object.keys(data).length === 0) {
-    return res.status(400).json({ message: "Request body cannot be empty" });
+    return res.status(400).json({
+      status: 400,
+      message: "Request body cannot be empty",
+      data: null
+    });
   }
 
-  let { name, email, courses } = data;
+  let { name, email: newEmail, courses } = data;
 
   if (name !== undefined) {
     name = name.trim();
     if (name === "") {
-      return res.status(400).json({ message: "Name cannot be empty" });
+      return res.status(400).json({
+        status: 400,
+        message: "Name cannot be empty",
+        data: null
+      });
     }
     if (!/^[\p{L} .'-]+$/u.test(name)) {
-      return res.status(400).json({ message: "Name contains invalid characters" });
+      return res.status(400).json({
+        status: 400,
+        message: "Name contains invalid characters",
+        data: null
+      });
     }
     student.name = name;
   }
 
-  if (email !== undefined) {
-    email = email.trim().toLowerCase();
-    if (email === "") {
-      return res.status(400).json({ message: "Email cannot be empty" });
+  if (newEmail !== undefined) {
+    newEmail = newEmail.trim().toLowerCase();
+    if (newEmail === "") {
+      return res.status(400).json({
+        status: 400,
+        message: "Email cannot be empty",
+        data: null
+      });
     }
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email format" });
+    if (!emailRegex.test(newEmail)) {
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid email format",
+        data: null
+      });
     }
-    if (students.some((s) => s.email === email && s.id !== student.id)) {
-      return res.status(400).json({ message: "This email is already registered" });
+    if (students.some(s => s.email.toLowerCase() === newEmail && s.id !== student.id)) {
+      return res.status(400).json({
+        status: 400,
+        message: "This email is already registered",
+        data: null
+      });
     }
-    student.email = email;
+    student.email = newEmail;
   }
 
   if (courses !== undefined) {
     if (!Array.isArray(courses)) {
-      return res.status(400).json({ message: "Courses must be an array of strings" });
+      return res.status(400).json({
+        status: 400,
+        message: "Courses must be an array of strings",
+        data: null
+      });
     }
     if (!courses.every(c => typeof c === "string" && c.trim() !== "")) {
-      return res.status(400).json({ message: "All courses must be non-empty strings" });
+      return res.status(400).json({
+        status: 400,
+        message: "All courses must be non-empty strings",
+        data: null
+      });
     }
     if (!courses.every(c => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
-      return res.status(400).json({ message: "Courses contain invalid characters" });
+      return res.status(400).json({
+        status: 400,
+        message: "Courses contain invalid characters",
+        data: null
+      });
     }
     if (hasDuplicateCourses(courses)) {
-      return res.status(400).json({ message: "Courses must not contain duplicates" });
+      return res.status(400).json({
+        status: 400,
+        message: "Courses must not contain duplicates",
+        data: null
+      });
     }
     student.courses = courses;
   }
 
   WriteData(students);
-  res.json(student);
+  res.status(200).json({
+    status: 200,
+    message: "Student updated successfully",
+    data: student
+  });
 };
 
-// DELETE
+// DELETE estudiante por id o email (query param)
 exports.deleteStudent = (req, res) => {
-  const students = ReadData();
-  const index = students.findIndex((s) => s.id === req.params.id);
-  if (index === -1) {
-    return res.status(404).json({ message: "Student not found" });
+  let students = ReadData();
+  const { id, email } = req.query;
+
+  if (!id && !email) {
+    return res.status(400).json({
+      status: 400,
+      message: "Query param 'id' or 'email' is required",
+      data: null
+    });
   }
+
+  let index = -1;
+  if (id) {
+    index = students.findIndex(s => s.id === id);
+  } else if (email) {
+    index = students.findIndex(s => s.email.toLowerCase() === email.toLowerCase());
+  }
+
+  if (index === -1) {
+    return res.status(404).json({
+      status: 404,
+      message: "Student not found",
+      data: null
+    });
+  }
+
   const deleted = students.splice(index, 1);
   WriteData(students);
-  res.status(200).json({ message: "Student deleted", deleted: deleted[0] });
+  res.status(200).json({
+    status: 200,
+    message: "Student deleted",
+    data: deleted[0]
+  });
 };
 
-// UPDATE completo por email
-exports.updateStudentByEmail = (req, res) => {
+// GET estudiantes de un curso (por query param)
+exports.getStudentsByCourse = (req, res) => {
+  const course = req.query.course;
+  if (!course || typeof course !== "string" || course.trim() === "") {
+    return res.status(400).json({
+      status: 400,
+      message: "Course query param is required",
+      data: null
+    });
+  }
   const students = ReadData();
-  const emailParam = req.params.email.toLowerCase();
-
-  const index = students.findIndex(s => s.email.toLowerCase() === emailParam);
-  if (index === -1) {
-    return res.status(404).json({ message: "Student not found" });
-  }
-
-  const data = req.body;
-  if (!data || Object.keys(data).length === 0) {
-    return res.status(400).json({ message: "Request body cannot be empty" });
-  }
-
-  if (!validateStudent(data)) {
-    return res.status(400).json({ message: "Invalid input", errors: validateStudent.errors });
-  }
-
-  const trimmedName = data.name.trim();
-  const trimmedEmail = data.email.trim().toLowerCase();
-  const courses = data.courses;
-
-  if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
-    return res.status(400).json({ message: "Name contains invalid characters" });
-  }
-
-  if (!emailRegex.test(trimmedEmail)) {
-    return res.status(400).json({ message: "Invalid email format" });
-  }
-
-  if (!Array.isArray(courses) || courses.length === 0 || !courses.every(c => typeof c === "string" && c.trim() !== "")) {
-    return res.status(400).json({ message: "Courses must be a non-empty array of non-empty strings" });
-  }
-
-  if (!courses.every(c => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
-    return res.status(400).json({ message: "Courses contain invalid characters" });
-  }
-
-  if (hasDuplicateCourses(courses)) {
-    return res.status(400).json({ message: "Courses must not contain duplicates" });
-  }
-
-  const emailUsedByAnother = students.some(
-    (s, i) => s.email.toLowerCase() === trimmedEmail && i !== index
+  const normalized = course.trim().toLowerCase();
+  const enrolled = students.filter(s =>
+    s.courses.map(c => c.trim().toLowerCase()).includes(normalized)
   );
-  if (emailUsedByAnother) {
-    return res.status(400).json({ message: "The email already exists" });
-  }
-
-  students[index] = {
-    ...students[index],
-    name: trimmedName,
-    email: trimmedEmail,
-    courses,
-  };
-
-  WriteData(students);
-  res.json(students[index]);
+  res.status(200).json({
+    status: 200,
+    message: "Students retrieved for course",
+    data: enrolled
+  });
 };
 
-// PATCH parcial por email
-exports.patchStudentByEmail = (req, res) => {
-  const students = ReadData();
-  const emailParam = req.params.email.toLowerCase();
-
-  const student = students.find(s => s.email.toLowerCase() === emailParam);
-  if (!student) {
-    return res.status(404).json({ message: "Student not found" });
+// DELETE un curso de todos los estudiantes (por query param)
+exports.deleteCourseFromAllStudents = (req, res) => {
+  const course = req.query.course;
+  if (!course || typeof course !== "string" || course.trim() === "") {
+    return res.status(400).json({
+      status: 400,
+      message: "Course query param is required",
+      data: null
+    });
   }
-
-  const data = req.body;
-  if (!data || Object.keys(data).length === 0) {
-    return res.status(400).json({ message: "Request body cannot be empty" });
+  let students = ReadData();
+  const normalized = course.trim().toLowerCase();
+  let found = false;
+  students = students.map(s => {
+    const before = s.courses.length;
+    s.courses = s.courses.filter(c => c.trim().toLowerCase() !== normalized);
+    if (s.courses.length < before) found = true;
+    return s;
+  });
+  if (!found) {
+    return res.status(404).json({
+      status: 404,
+      message: "Course not found in any student",
+      data: null
+    });
   }
-
-  let { name, email, courses } = data;
-
-  if (name !== undefined) {
-    name = name.trim();
-    if (name === "") {
-      return res.status(400).json({ message: "Name cannot be empty" });
-    }
-    if (!/^[\p{L} .'-]+$/u.test(name)) {
-      return res.status(400).json({ message: "Name contains invalid characters" });
-    }
-    student.name = name;
-  }
-
-  if (email !== undefined) {
-    email = email.trim().toLowerCase();
-    if (email === "") {
-      return res.status(400).json({ message: "Email cannot be empty" });
-    }
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email format" });
-    }
-    if (students.some(s => s.email.toLowerCase() === email && s.id !== student.id)) {
-      return res.status(400).json({ message: "This email is already registered" });
-    }
-    student.email = email;
-  }
-
-  if (courses !== undefined) {
-    if (!Array.isArray(courses)) {
-      return res.status(400).json({ message: "Courses must be an array of strings" });
-    }
-    if (!courses.every(c => typeof c === "string" && c.trim() !== "")) {
-      return res.status(400).json({ message: "All courses must be non-empty strings" });
-    }
-    if (!courses.every(c => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
-      return res.status(400).json({ message: "Courses contain invalid characters" });
-    }
-    if (hasDuplicateCourses(courses)) {
-      return res.status(400).json({ message: "Courses must not contain duplicates" });
-    }
-    student.courses = courses;
-  }
-
   WriteData(students);
-  res.json(student);
-};
-
-// DELETE por email
-exports.deleteStudentByEmail = (req, res) => {
-  const students = ReadData();
-  const emailParam = req.params.email.toLowerCase();
-
-  const index = students.findIndex(s => s.email.toLowerCase() === emailParam);
-  if (index === -1) {
-    return res.status(404).json({ message: "Student not found" });
-  }
-
-  const deleted = students.splice(index, 1);
-  WriteData(students);
-  res.json({ message: "Student deleted", deleted: deleted[0] });
-};
-
-// Métodos para bloquear operaciones por nombre
-exports.forbidOperationByName = (req, res) => {
-  return res.status(400).json({ message: "This operation is only allowed by email or id" });
+  res.status(200).json({
+    status: 200,
+    message: "Course deleted from all students",
+    data: course
+  });
 };
