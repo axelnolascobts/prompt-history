@@ -46,7 +46,7 @@ describe('GET /courses?course=...', () => {
     fs.existsSync.mockReturnValue(true);
     fs.readFileSync
       .mockReturnValueOnce(JSON.stringify(mockCourses))
-      .mockReturnValueOnce(JSON.stringify(mockStudents)); // readStudents()
+      .mockReturnValueOnce(JSON.stringify(mockStudents)); 
     
     const res = await request(app).get('/courses').query({ course: 'math' });
     expect(res.statusCode).toBe(200);
@@ -77,7 +77,7 @@ describe('DELETE /courses?course=...', () => {
     fs.existsSync.mockReturnValue(true);
     fs.readFileSync
       .mockReturnValueOnce(JSON.stringify(mockCourses))
-      .mockReturnValueOnce(JSON.stringify(mockStudents)); // readStudents()
+      .mockReturnValueOnce(JSON.stringify(mockStudents)); 
     
     const res = await request(app).delete('/courses').query({ course: 'math' });
     expect(res.statusCode).toBe(200);

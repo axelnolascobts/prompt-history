@@ -50,6 +50,13 @@ exports.createCourse = (req, res) => {
       data: null
     });
   }
+  if (!/^[\p{L}\d .'-]+$/u.test(normalized)) {
+    return res.status(400).json({
+      status: 400,
+      message: "Course name contains invalid characters",
+      data: null
+    });
+  }
 
   courses.push({ name: normalized, students: [] });
   writeCourses(courses);

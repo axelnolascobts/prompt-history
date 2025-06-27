@@ -164,7 +164,7 @@
                 "examples": {
                   "missingParam": {
                     "summary": "Missing query param",
-                    "value": { "status": 400, "message": "Query param 'id' or 'email' is required", "data": null }
+                    "value": { "status": 400, "message": "'id' or 'email' is required", "data": null }
                   },
                   "invalidInput": {
                     "summary": "Invalid input",
@@ -225,7 +225,7 @@
                 "examples": {
                   "missingParam": {
                     "summary": "Missing query param",
-                    "value": { "status": 400, "message": "Query param 'id' or 'email' is required", "data": null }
+                    "value": { "status": 400, "message": "'id' or 'email' is required", "data": null }
                   },
                   "invalidInput": {
                     "summary": "Invalid input",
@@ -275,7 +275,7 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
-                "example": { "status": 400, "message": "Query param 'id' or 'email' is required", "data": null }
+                "example": { "status": 400, "message": "'id' or 'email' is required", "data": null }
               }
             }
           },
@@ -312,7 +312,7 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
-                "example": { "status": 400, "message": "Course query param is required", "data": null }
+                "example": { "status": 400, "message": "Course required", "data": null }
               }
             }
           }
@@ -396,11 +396,11 @@
                 "examples": {
                   "missing": {
                     "summary": "Missing course param",
-                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                    "value": { "status": 400, "message": "Course is required", "data": null }
                   },
                   "invalid": {
                     "summary": "Invalid course param",
-                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                    "value": { "status": 400, "message": "Course is required", "data": null }
                   }
                 }
               }
@@ -436,11 +436,11 @@
                 "examples": {
                   "missing": {
                     "summary": "Missing course param",
-                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                    "value": { "status": 400, "message": "Course is required", "data": null }
                   },
                   "invalid": {
                     "summary": "Invalid course param",
-                    "value": { "status": 400, "message": "Course query param is required", "data": null }
+                    "value": { "status": 400, "message": "Course is required", "data": null }
                   }
                 }
               }

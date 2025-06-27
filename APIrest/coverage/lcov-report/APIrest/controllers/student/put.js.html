@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for APIrest/controllers/courseController.js</title>
+    <title>Code coverage report for APIrest/controllers/student/put.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../prettify.css" />
-    <link rel="stylesheet" href="../../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../../sort-arrow-sprite.png);
+            background-image: url(../../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">APIrest/controllers</a> courseController.js</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">APIrest/controllers/student</a> put.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.55% </span>
+                <span class="strong">79.71% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>56/58</span>
+                <span class='fraction'>55/69</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.59% </span>
+                <span class="strong">67.34% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>25/27</span>
+                <span class='fraction'>33/49</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>14/14</span>
+                <span class='fraction'>12/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.22% </span>
+                <span class="strong">82.75% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>51/53</span>
+                <span class='fraction'>48/58</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -204,41 +204,57 @@
 <a name='L139'></a><a href='#L139'>139</a>
 <a name='L140'></a><a href='#L140'>140</a>
 <a name='L141'></a><a href='#L141'>141</a>
-<a name='L142'></a><a href='#L142'>142</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -246,68 +262,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -315,11 +270,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -327,166 +282,277 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const fs = require("fs");
-const path = require("path");
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const {
+  ReadData, WriteData, readCourses, writeCourses,
+  checkCoursesExist, hasDuplicateCourses, validateStudent, emailRegex
+} = require("./utils");
 &nbsp;
-const DBPATH = path.join(__dirname, "../data/db.json");
-const COURSEPATH = path.join(__dirname, "../data/courses.json");
-&nbsp;
-// Leer datos de estudiantes
-function readStudents() {
-  const data = fs.readFileSync(DBPATH, "utf8");
-  return JSON.parse(data);
-}
-&nbsp;
-// Escribir datos de estudiantes
-function writeStudents(data) {
-  fs.writeFileSync(DBPATH, JSON.stringify(data, null, 2));
-}
-&nbsp;
-// Leer lista global de cursos
-function readCourses() {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!fs.existsSync(COURSEPATH)) {
-<span class="cstat-no" title="statement not covered" >    fs.writeFileSync(COURSEPATH, JSON.stringify([]));</span>
-  }
-  const data = fs.readFileSync(COURSEPATH, "utf8");
-  return JSON.parse(data);
-}
-&nbsp;
-// Escribir lista global de cursos
-function writeCourses(courses) {
-  fs.writeFileSync(COURSEPATH, JSON.stringify(courses, null, 2));
-}
-&nbsp;
-// Crear un nuevo curso y guardarlo en courses.json
-exports.createCourse = (req, res) =&gt; {
-  const { course } = req.body;
-  if (!course || typeof course !== "string" || course.trim() === "") {
-    return res.status(400).json({
-      status: 400,
-      message: "Course name is required",
-      data: null
-    });
-  }
-&nbsp;
-  const normalized = course.trim().toLowerCase();
+exports.updateStudent = (req, res) =&gt; {
+  const students = ReadData();
   const courses = readCourses();
+  const { id, email } = req.query;
 &nbsp;
-  if (courses.some(c =&gt; c.name.toLowerCase() === normalized)) {
-    return res.status(409).json({
-      status: 409,
-      message: "Course already exists",
-      data: null
-    });
-  }
-&nbsp;
-  courses.push({ name: normalized, students: [] });
-  writeCourses(courses);
-&nbsp;
-  return res.status(201).json({
-    status: 201,
-    message: "Course created successfully",
-    data: { course: normalized }
-  });
-};
-&nbsp;
-// Obtener alumnos de un curso
-exports.getCourseStudents = (req, res) =&gt; {
-  const course = req.params.course || req.query.course;
-  if (!course || typeof course !== "string" || course.trim() === "") {
-    return res.status(400).json({
-      status: 400,
-      message: "Course param is required",
-      data: null
-    });
-  }
-&nbsp;
-  const normalized = course.trim().toLowerCase();
-  const courses = readCourses();
-&nbsp;
-  const courseObj = courses.find(c =&gt; c.name.toLowerCase() === normalized);
-  if (!courseObj) {
-    return res.status(404).json({
-      status: 404,
-      message: `Course '${normalized}' does not exist`,
-      data: null
-    });
-  }
-&nbsp;
-  const students = readStudents();
-&nbsp;
-  // Filtrar estudiantes inscritos en el curso
-  const enrolled = students.filter(s =&gt;
-    s.courses.some(cName =&gt; cName.trim().toLowerCase() === normalized)
-  );
-&nbsp;
-  return res.status(200).json({
-    status: 200,
-    message: `Students retrieved for course '${normalized}'`,
-    data: enrolled
-  });
-};
-&nbsp;
-// Eliminar un curso de todos los alumnos y de courses.json
-exports.deleteCourse = (req, res) =&gt; {
-  const course = req.params.course || req.query.course;
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!course || typeof course !== "string" || course.trim() === "") {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!id &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!email)</span> {
 <span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
       status: 400,
-      message: "Course param is required",
-      data: null
+      message: "'id' or 'email' is required",
+      data: null,
     });
   }
 &nbsp;
-  const normalized = course.trim().toLowerCase();
-  let courses = readCourses();
+  let index = -1;
+  if (id) index = students.findIndex(s =&gt; s.id === id);
+  else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>if (email) <span class="cstat-no" title="statement not covered" >index = students.findIndex(<span class="fstat-no" title="function not covered" >s </span>=&gt; <span class="cstat-no" title="statement not covered" >s.email.toLowerCase() === email.toLowerCase())</span>;</span></span>
 &nbsp;
-  const courseIndex = courses.findIndex(c =&gt; c.name.toLowerCase() === normalized);
-  if (courseIndex === -1) {
-    return res.status(404).json({
-      status: 404,
-      message: `Course '${normalized}' not found`,
-      data: null
+  if (index === -1) {
+    return res.status(404).json({ status: 404, message: "Student not found", data: null });
+  }
+&nbsp;
+  const data = req.body;
+&nbsp;
+  if (!data || Object.keys(data).length === 0) {
+    return res.status(400).json({
+      status: 400,
+      message: "Request body cannot be empty",
+      data: null,
     });
   }
 &nbsp;
-  // Eliminar el curso de todos los estudiantes inscritos
-  let students = readStudents();
-  students = students.map(s =&gt; {
-    s.courses = s.courses.filter(c =&gt; c.trim().toLowerCase() !== normalized);
-    return s;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!validateStudent(data)) {
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+      status: 400,
+      message: "Invalid input",
+      data: validateStudent.errors,
+    });
+  }
+&nbsp;
+  const trimmedName = data.name.trim();
+  const trimmedEmail = data.email.trim().toLowerCase();
+  const coursesInput = data.courses;
+&nbsp;
+  if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
+    return res.status(400).json({
+      status: 400,
+      message: "Name contains invalid characters",
+      data: null,
+    });
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!emailRegex.test(trimmedEmail)) {
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+      status: 400,
+      message: "Invalid email format",
+      data: null,
+    });
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (
+    !Array.isArray(coursesInput) ||
+    coursesInput.length === 0 ||
+    !coursesInput.every(c =&gt; typeof c === "string" &amp;&amp; c.trim() !== "")
+  ) {
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+      status: 400,
+      message: "Courses must be a non-empty array of non-empty strings",
+      data: null,
+    });
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!coursesInput.every(c =&gt; /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+      status: 400,
+      message: "Courses contain invalid characters",
+      data: null,
+    });
+  }
+&nbsp;
+  if (hasDuplicateCourses(coursesInput)) {
+    return res.status(400).json({
+      status: 400,
+      message: "Courses must not contain duplicates",
+      data: null,
+    });
+  }
+&nbsp;
+  // Validar que los cursos existan en courses.json
+  const normalizedCourses = coursesInput.map(c =&gt; c.trim().toLowerCase());
+  const invalidCourses = normalizedCourses.filter(
+    c =&gt; !courses.some(course =&gt; course.name.toLowerCase() === c)
+  );
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (invalidCourses.length &gt; 0) {
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+      status: 400,
+      message: `This course does not exist`,
+      data: null,
+    });
+  }
+&nbsp;
+  // Validar email duplicado con otro estudiante
+  const emailUsedByAnother = students.some(
+    (s, i) =&gt; s.email.toLowerCase() === trimmedEmail &amp;&amp; i !== index
+  );
+  if (emailUsedByAnother) {
+    return res.status(400).json({
+      status: 400,
+      message: "The email already exists",
+      data: null,
+    });
+  }
+&nbsp;
+  // Guardar email y cursos antiguos para sincronizar
+  const oldEmail = students[index].email;
+  const oldCourses = students[index].courses;
+&nbsp;
+  // Actualizar estudiante
+  students[index] = {
+    id: students[index].id,
+    name: trimmedName,
+    email: trimmedEmail,
+    courses: normalizedCourses,
+  };
+&nbsp;
+  WriteData(students);
+&nbsp;
+  // Quitar email del estudiante de cursos antiguos no incluidos ahora
+  oldCourses.forEach(cName =&gt; {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!normalizedCourses.includes(cName)) {
+      const course = courses.find(c =&gt; c.name.toLowerCase() === cName);
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (course) {
+<span class="cstat-no" title="statement not covered" >        course.students = course.students.filter(<span class="fstat-no" title="function not covered" >e </span>=&gt; <span class="cstat-no" title="statement not covered" >e !== oldEmail)</span>;</span>
+      }
+    }
   });
-  writeStudents(students);
 &nbsp;
-  // Eliminar curso de la lista global
-  courses.splice(courseIndex, 1);
+  // Añadir email del estudiante a cursos nuevos o existentes
+  normalizedCourses.forEach(cName =&gt; {
+    const course = courses.find(c =&gt; c.name.toLowerCase() === cName);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (course &amp;&amp; !course.students.includes(trimmedEmail)) {
+      course.students.push(trimmedEmail);
+    }
+  });
+&nbsp;
+  // Si cambió email, actualizarlo en todos los cursos donde estaba antes
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (oldEmail !== trimmedEmail) {
+<span class="cstat-no" title="statement not covered" >    courses.forEach(<span class="fstat-no" title="function not covered" >co</span>urse =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      course.students = course.students.map(<span class="fstat-no" title="function not covered" >e </span>=&gt; (<span class="cstat-no" title="statement not covered" >e === oldEmail ? trimmedEmail : e)</span>);</span>
+    });
+  }
+&nbsp;
   writeCourses(courses);
 &nbsp;
-  return res.status(200).json({
+  res.status(200).json({
     status: 200,
-    message: `Course '${normalized}' deleted from system and all students`,
-    data: normalized
+    message: "Student edited successfully and courses updated",
+    data: students[index],
   });
-};
-&nbsp;</pre></td></tr></table></pre>
+};</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
@@ -495,14 +561,14 @@ exports.deleteCourse = (req, res) =&gt; {
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
                 at 2025-06-27T16:48:02.505Z
             </div>
-        <script src="../../prettify.js"></script>
+        <script src="../../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../../sorter.js"></script>
-        <script src="../../block-navigation.js"></script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
     </body>
 </html>
     
