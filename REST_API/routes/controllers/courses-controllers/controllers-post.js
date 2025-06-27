@@ -60,16 +60,16 @@ function writeData(courses) {
 function writeStudentsData(students) {
 
     try {
-
+    
         let allData = fs.readFileSync(DATA_ROUTE, 'utf8');
         let data = JSON.parse(allData);
 
         data.students = students;
-
+    
         fs.writeFileSync(DATA_ROUTE, JSON.stringify(data, null, 2));
     } catch (err) {
-
-        return {status: 500, message: "Failed to save course" };
+    
+        return {status: 500, message: "Failed to save student" };
     }
 };
 
@@ -137,7 +137,7 @@ function createNewCourse(body) {
 }
 
 function validateStudents(courseName, studentsList) {
-    const UUID_PATTERN = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+    const UUID_PATTERN = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     let studentsData = readStudentsData();
     let finalStudentsList = [];
 
@@ -145,16 +145,29 @@ function validateStudents(courseName, studentsList) {
         return finalStudentsList;
     }
 
-    for (let studentId of studentsList) {
-        let uuidMatch = studentId.match(UUID_PATTERN);
-        if (!uuidMatch) return false;
 
-        let studentData = studentsData.find(s => s.id === studentId);
-        if (!studentData) return false;
+    for (let student of studentsList) {
+
+        let uuidMatch = student.match(UUID_PATTERN);
+
+        if (!uuidMatch) {
+
+            return false;
+
+        } else {
+
+            let studentData = studentsData.find(studentData => studentData.id === student);
+
+            if (!studentData) {
+
+                return false;
+            }
+        }
     }
 
-    for (let studentId of studentsList) {
-        let studentData = studentsData.find(s => s.id === studentId);
+    for (let student of studentsList) {
+
+        let studentData = studentsData.find(studentData => studentData.id === student);
         let studentCourses = studentData.courses;
 
         if (!studentCourses.includes(courseName)) {

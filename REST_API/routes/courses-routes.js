@@ -4,8 +4,7 @@ const { getAllCourses, getOneCourse } = require('./controllers/courses-controlle
 const { createNewCourse } = require('./controllers/courses-controllers/controllers-post.js');
 const { updateCourse } = require('./controllers/courses-controllers/controllers-put.js');
 const { partialUpdateCourse } = require('./controllers/courses-controllers/controllers-patch.js');
-const { deleteCourse } = require('./controllers/courses-controllers/controllers-delete.js')
-const { request, response } = require('../app.js');
+const { deleteCourse } = require('./controllers/courses-controllers/controllers-delete.js');
 
 
 ROUTER.get('/', (request, response) => {

@@ -1,12 +1,23 @@
 const express = require('express');
 const ROUTER = express.Router();
-const { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate } = require('./controllers/controllers.js');
+const { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate, getStudentCourses, patchCourses } = require('./controllers/controllers.js');
+const { request } = require('../app.js');
 
 ROUTER.get('/', (request, response) => {
 
     let studentsData = getAllStudents();
 
     response.status(200).json(studentsData);
+
+});
+
+ROUTER.get('/:id/courses', (request, response) => {
+
+    let id = request.params.id;
+
+    let student = getStudentCourses(id)
+
+    response.status(student.status).json(student);
 
 });
 
@@ -57,6 +68,17 @@ ROUTER.patch('/:searchParam', (request, response) => {
     let updatedStudent = partialStudentUpdate(searchParam, body);
 
     response.status(updatedStudent.status).json(updatedStudent);
+
+});
+
+ROUTER.patch('/:id/courses', (request, response) => {
+
+    let id = request.params.id;
+    let body = request.body;
+
+    let result = patchCourses(id, body);
+
+    response.status(result.status).json(result);
 
 });
 

@@ -16,7 +16,8 @@
       "name": "Benito Juarez",
       "email": "benitojuarez@hola.com",
       "courses": [
-        "biología"
+        "curso1",
+        "curso20"
       ]
     },
     {
@@ -40,7 +41,21 @@
       "name": "Isaac Gallo",
       "email": "isaac@hola.com",
       "courses": [
-        "foo"
+        "foo",
+        "arte",
+        "gramatica",
+        "logica",
+        "computacion",
+        "hola3"
+      ]
+    },
+    {
+      "id": "26f5101b-bc69-474c-85b5-b05f4cd4e7aa",
+      "name": "Martin",
+      "email": "martin1@gmail.com",
+      "courses": [
+        "filetes3",
+        "mat2"
       ]
     }
   ],
@@ -64,15 +79,137 @@
       ]
     },
     {
-      "course": "geografia",
-      "students": []
-    },
-    {
       "course": "arte",
       "students": [
         {
           "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
           "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "gramatica",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "logica",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "computacion",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "hola2",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "hola3",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "pozole",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "pozole2",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "ayuda",
+      "students": [
+        {
+          "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+          "studentName": "Isaac Gallo"
+        }
+      ]
+    },
+    {
+      "course": "coursex",
+      "students": [
+        {
+          "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+          "studentName": "Benito Juarez"
+        }
+      ]
+    },
+    {
+      "course": "anothercourse",
+      "students": [
+        {
+          "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+          "studentName": "Benito Juarez"
+        }
+      ]
+    },
+    {
+      "course": "porquefallas?",
+      "students": [
+        {
+          "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+          "studentName": "Benito Juarez"
+        }
+      ]
+    },
+    {
+      "course": "loool",
+      "students": [
+        {
+          "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+          "studentName": "Benito Juarez"
+        }
+      ]
+    },
+    {
+      "course": "palas3",
+      "students": [
+        {
+          "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+          "studentName": "Benito Juarez"
+        }
+      ]
+    },
+    {
+      "course": "nether1",
+      "students": [
+        {
+          "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+          "studentName": "Benito Juarez"
         }
       ]
     }

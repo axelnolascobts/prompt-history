@@ -49,6 +49,16 @@ const UPDATE_PARTIAL_STUDENT_DATA_SCHEMA = {
   additionalProperties: false
 };
 
+const COURSES_SCHEMA = {
+    type: "object",
+    properties: {
+        courses: { type: "array", items: { "type": "string" } }
+
+    },
+    additionalProperties: false
+};
+
+const VALIDATE_COURSES = AJV_VALIDATOR.compile(COURSES_SCHEMA);
 const VALIDATE_NEW_STUDENT = AJV_VALIDATOR.compile(NEW_STUDENT_SCHEMA);
 const VALIDATE_UPDATE_EVERY_STUDENT = AJV_VALIDATOR.compile(UPDATE_EVERY_STUDENT_DATA_SCHEMA);
 const VALIDATE_UPDATE_PARTIAL_STUDENT = AJV_VALIDATOR.compile(UPDATE_PARTIAL_STUDENT_DATA_SCHEMA);
@@ -546,6 +556,49 @@ function searchStudents(searchParam) {
 
 }
 
+function getStudentCourses(id) {
+
+    let searchResult = searchStudents(id);
+
+    if (!searchResult) {
+        
+        return {status: 404, message: "Student not found or not exist"};
+    }
+
+    return {status: 200, data: searchResult.student.courses};
+
+}
+
+function patchCourses(id, body) {
+
+    const VALIDATE_SCHEMA = VALIDATE_COURSES(body);
+
+    if (!VALIDATE_SCHEMA) {
+
+        return { status: 400, message: "invalid input format" };   
+    }
+
+    let searchResult = searchStudents(id);
+
+    if (!searchResult) {
+
+        return { status: 404, message: "Student not foun or not exist" };  
+    }
+
+    let studentsData = readData();
+
+    let studentIndex = searchResult.studentIndex
+    //let courses = searchResult.student.courses;
+
+    studentsData[studentIndex].courses = body.courses;
+
+    writeData(studentsData);
+
+    return { status: 200, data: studentsData[studentIndex] };
+
+
+}
+
 /*function validateNameAndEmail(name, email) {
 
     if(typeof name === 'string' && typeof email === 'string') {
@@ -558,4 +611,4 @@ function searchStudents(searchParam) {
 
 }*/
 
-module.exports = { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate };
+module.exports = { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate, getStudentCourses, patchCourses };
