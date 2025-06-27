@@ -14,7 +14,7 @@ function deleteCourse(courseName) {
 
         coursesData.splice(courseIndex, 1);
 
-        writeData(courseIndex);
+        writeData(coursesData);
 
         return {status: 204, message: "Course was deleted"};
     } 

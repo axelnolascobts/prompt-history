@@ -137,58 +137,41 @@ function createNewCourse(body) {
 }
 
 function validateStudents(courseName, studentsList) {
-
-    const UUID_PATTERN =  /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+    const UUID_PATTERN = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
     let studentsData = readStudentsData();
     let finalStudentsList = [];
 
-    if (studentsList.lenght === 0) {
-
+    if (studentsList.length === 0) {
         return finalStudentsList;
     }
 
-    for (let student of studentsList) {
+    for (let studentId of studentsList) {
+        let uuidMatch = studentId.match(UUID_PATTERN);
+        if (!uuidMatch) return false;
 
-        let uuidMatch = student.match(UUID_PATTERN);
-
-        if (!uuidMatch) {
-
-            return false;
-
-        } else {
-
-            let studentData = studentsData.find(studentData => studentData.id === student);
-            let studentIndex = studentsData.findIndex(studentData => studentData.id === student);
-
-            if (!studentData) {
-
-                return false;
-            }
-
-            let studentInList = {
-
-                id: studentData.id,
-                studentName: studentData.name
-            };
-
-            let studentCourses = studentData.courses;
-            let course = studentCourses.findIndex(course => course.trim().toLowerCase() === courseName.trim().toLowerCase());
-
-            if ( course === -1 ) {
-
-                studentCourses.push(courseName);
-
-            }
-
-            finalStudentsList.push(studentInList);
-        }
+        let studentData = studentsData.find(s => s.id === studentId);
+        if (!studentData) return false;
     }
 
-    //writeStudentsData(studentsData);
+    for (let studentId of studentsList) {
+        let studentData = studentsData.find(s => s.id === studentId);
+        let studentCourses = studentData.courses;
+
+        if (!studentCourses.includes(courseName)) {
+            studentCourses.push(courseName);
+        }
+
+        finalStudentsList.push({
+            id: studentData.id,
+            studentName: studentData.name
+        });
+    }
+
+    writeStudentsData(studentsData);
 
     return finalStudentsList;
-
 }
+
 
 function nonDuplicateStudents(studentsList) {
 
