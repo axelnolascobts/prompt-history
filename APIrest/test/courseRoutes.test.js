@@ -95,3 +95,41 @@ describe('DELETE /courses?course=...', () => {
     expect(res.body.message).toBe("Course 'math' not found");
   });
 });
+
+describe('API Basic Routes', () => {
+  // Prueba para la ruta raíz
+  describe('GET /', () => {
+    it('should return "The api is running"', async () => {
+      const response = await request(app).get('/');
+      expect(response.status).toBe(200);
+      expect(response.text).toBe('The api is running');
+    });
+  });
+
+  // Prueba para rutas no encontradas
+  describe('Non-existent routes', () => {
+    it('should return 404 for non-existent routes', async () => {
+      const response = await request(app).get('/non-existent-route');
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        status: 404,
+        message: "Route not found",
+        data: []
+      });
+    });
+
+    it('should return 404 for different HTTP methods on non-existent routes', async () => {
+      const methods = ['post', 'put', 'patch', 'delete'];
+      
+      for (const method of methods) {
+        const response = await request(app)[method]('/non-existent-route');
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({
+          status: 404,
+          message: "Route not found",
+          data: []
+        });
+      }
+    });
+  });
+});

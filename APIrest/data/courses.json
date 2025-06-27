@@ -10,5 +10,13 @@
     "students": [
       "juan@gmail.com"
     ]
+  },
+  {
+    "name": "spanish",
+    "students": []
+  },
+  {
+    "name": "maths",
+    "students": []
   }
 ]

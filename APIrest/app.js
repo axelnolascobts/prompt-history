@@ -16,8 +16,19 @@ app.get('/', (req, res) => {
   res.send('The api is running');
 });
 
+//rutas no encontradas
+app.use((req, res, next) => {
+return res.status(404).json({
+      status: 404,
+      message: "Route not found",
+      data: []
+    });
+  });
+
 app.listen(PORT, () => {
     console.log(`Server is running at: http://localhost:${PORT}`);
   });
+
+
 
   module.exports = app;
