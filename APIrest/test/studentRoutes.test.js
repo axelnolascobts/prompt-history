@@ -18,7 +18,17 @@ const mockCourses = [
 describe("GET /students", () => {
   beforeEach(() => {
     fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockReturnValue(JSON.stringify(mockStudents));
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('courses.json')) {
+        return JSON.stringify([
+          { name: "Math", students: [] },
+          { name: "Science", students: [] }
+        ]);
+      }
+      return JSON.stringify([
+        { id: "123", name: "Milton", email: "milton@gmail.com", courses: ["Math"] }
+      ]);
+    });
   });
 
   it("should filter by email", async () => {
@@ -238,5 +248,63 @@ describe("Student Validation", () => {
       email: "milton@mail.com",
       courses: []
     })).toBe(false);
+  });
+});
+
+describe("Extra controller edge cases", () => {
+  beforeEach(() => {
+    fs.existsSync.mockReturnValue(true);
+    fs.readFileSync.mockReset();
+    fs.writeFileSync.mockReset();
+  });
+
+  it("GET /students should return 404 if students file is empty", async () => {
+    fs.readFileSync.mockReturnValueOnce(JSON.stringify([]));
+    const res = await request(app).get("/students");
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toMatch(/No students found/);
+  });
+
+  it("POST /students should reject if query params are present", async () => {
+    fs.readFileSync
+      .mockReturnValueOnce(JSON.stringify([]))
+      .mockReturnValueOnce(JSON.stringify(mockCourses));
+    const res = await request(app).post("/students?foo=bar").send({
+      name: "Test",
+      email: "test@mail.com",
+      courses: ["Math"]
+    });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/does not accept query parameters/);
+  });
+
+  it("PATCH /students should return 400 if no id or email", async () => {
+    const res = await request(app).patch("/students").send({ name: "X" });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/'id' or 'email' is required/);
+  });
+
+  it("PATCH /students should return 404 if student not found", async () => {
+    fs.readFileSync
+      .mockReturnValueOnce(JSON.stringify([]))
+      .mockReturnValueOnce(JSON.stringify(mockCourses));
+    const res = await request(app).patch("/students").query({ id: "999" }).send({ name: "X" });
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toMatch(/Student not found/);
+  });
+
+  it("DELETE /students should return 400 if no id or email", async () => {
+    const res = await request(app).delete("/students");
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/'id' or 'email' is required/);
+  });
+
+  it("DELETE /students should return 404 if student not found", async () => {
+    fs.readFileSync
+      .mockReturnValueOnce(JSON.stringify([]))
+      .mockReturnValueOnce(JSON.stringify(mockCourses));
+    const res = await request(app).delete("/students").query({ id: "999" });
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toMatch(/Student not found/);
   });
 });

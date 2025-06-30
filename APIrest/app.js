@@ -16,6 +16,18 @@ app.get('/', (req, res) => {
   res.send('The api is running');
 });
 
+// Middleware para capturar errores de JSON malformado
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      status: 400,
+      message: "Malformed JSON in request body",
+      data: null
+    });
+  }
+  next(err);
+});
+
 //rutas no encontradas
 app.use((req, res, next) => {
 return res.status(404).json({

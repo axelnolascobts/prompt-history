@@ -167,3 +167,53 @@ describe('Student Validation', () => {
     })).toBe(false);
   });
 });
+
+describe('Extra Course Edge Cases', () => {
+  beforeEach(() => {
+    fs.existsSync.mockReturnValue(true);
+    fs.readFileSync.mockReset();
+    fs.writeFileSync.mockReset();
+  });
+
+  it('should reject POST /courses with missing name field', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+    const res = await request(app).post('/courses').send({});
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Course name is required');
+  });
+
+  it('should reject POST /courses with non-string name', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+    const res = await request(app).post('/courses').send({ name: 123 });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Course name is required');
+  });
+
+  it('should reject POST /courses with name only spaces', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+    const res = await request(app).post('/courses').send({ name: '   ' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Course name is required');
+  });
+
+  it('should reject DELETE /courses with missing name param', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+    const res = await request(app).delete('/courses');
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/Course name is required as query param/);
+  });
+
+  it('should reject DELETE /courses with invalid name', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+    const res = await request(app).delete('/courses').query({ name: 'Math@123' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Course name contains invalid characters');
+  });
+
+  it('should reject POST /courses with invalid characters (unicode)', async () => {
+    fs.readFileSync.mockReturnValue(JSON.stringify([]));
+    const res = await request(app).post('/courses').send({ name: 'Curso💥' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Course name contains invalid characters');
+  });
+});

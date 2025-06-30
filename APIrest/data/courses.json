@@ -2,13 +2,16 @@
   {
     "name": "spanish",
     "students": [
-      "juan@gmail.com"
+      "juan@gmail.com",
+      "pepe@gmail.com",
+      "pepe1@gmail.com"
     ]
   },
   {
     "name": "spanish 2",
     "students": [
-      "juan@gmail.com"
+      "juan@gmail.com",
+      "mejia3@gmail.com"
     ]
   }
 ]

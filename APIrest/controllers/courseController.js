@@ -5,7 +5,6 @@ const DATA_DIR = path.join(__dirname, "../data");
 const COURSE_PATH = path.join(DATA_DIR, "courses.json");
 const STUDENT_PATH = path.join(DATA_DIR, "db.json");
 
-// Función para leer datos de un archivo JSON
 function readData(filePath, defaultValue = []) {
   try {
     if (!fs.existsSync(filePath)) return defaultValue;
@@ -16,15 +15,22 @@ function readData(filePath, defaultValue = []) {
   }
 }
 
-// Función para escribir datos a un archivo JSON
 function writeData(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
 }
 
-// Obtener todos los cursos
+// Obtener todos los cursos o uno por nombre (por query param)
 function getAllCourses(req, res) {
   try {
     const courses = readData(COURSE_PATH, []);
+    const { name } = req.query;
+    if (name) {
+      const course = courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
+      if (!course) {
+        return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
+      }
+      return res.status(200).json({ status: 200, data: course });
+    }
     res.status(200).json({ status: 200, data: courses });
   } catch (error) {
     res.status(500).json({
@@ -35,20 +41,9 @@ function getAllCourses(req, res) {
   }
 }
 
-// Obtener un curso por nombre
-function getCourse(req, res) {
-  const { name } = req.params;
-  const courses = readData(COURSE_PATH, []);
-  const course = courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
-  if (!course) {
-    return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
-  }
-  res.status(200).json({ status: 200, data: course });
-}
-
-// Crear un nuevo curso
+// Crear un nuevo curso (por query param)
 function createCourse(req, res) {
-  const { name } = req.body;
+  const { name } = req.query;
   if (!name || typeof name !== "string" || name.trim() === "") {
     return res
       .status(400)
@@ -71,51 +66,7 @@ function createCourse(req, res) {
   res.status(201).json({ status: 201, message: "Course created successfully", data: newCourse });
 }
 
-// Agregar estudiante a un curso
-function addStudentToCourse(req, res) {
-  const { name } = req.params;
-  const { student } = req.body;
-  if (!student) {
-    return res
-      .status(400)
-      .json({ status: 400, message: "Student email is required" });
-  }
-  const courses = readData(COURSE_PATH, []);
-  const course = courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
-  if (!course) {
-    return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
-  }
-  if (course.students.includes(student)) {
-    return res
-      .status(409)
-      .json({ status: 409, message: "Student already in course" });
-  }
-  course.students.push(student);
-  writeData(COURSE_PATH, courses);
-  res.status(200).json({ status: 200, data: course });
-}
-
-// Eliminar estudiante de un curso
-function removeStudentFromCourse(req, res) {
-  const { name } = req.params;
-  const { student } = req.body;
-  const courses = readData(COURSE_PATH, []);
-  const course = courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
-  if (!course) {
-    return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
-  }
-  const index = course.students.indexOf(student);
-  if (index === -1) {
-    return res
-      .status(404)
-      .json({ status: 404, message: "Student not found in course" });
-  }
-  course.students.splice(index, 1);
-  writeData(COURSE_PATH, courses);
-  res.status(200).json({ status: 200, data: course });
-}
-
-// Eliminar un curso usando query param (?name=math)
+// Eliminar un curso (por query param)
 function deleteCourse(req, res) {
   const name = req.query.name;
   if (!name || typeof name !== "string" || name.trim() === "") {
@@ -157,9 +108,6 @@ function deleteCourse(req, res) {
 
 module.exports = {
   getAllCourses,
-  getCourse,
   createCourse,
-  addStudentToCourse,
-  removeStudentFromCourse,
   deleteCourse,
 };

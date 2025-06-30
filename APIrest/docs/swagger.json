@@ -60,9 +60,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewStudent"
-              },
+              "schema": { "$ref": "#/components/schemas/NewStudent" },
               "example": {
                 "name": "Jane Doe",
                 "email": "jane@example.com",
@@ -96,17 +94,33 @@
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "examples": {
-                  "invalidField": {
-                    "summary": "Invalid field",
-                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
+                  "malformedJson": {
+                    "summary": "Malformed JSON",
+                    "value": { "status": 400, "message": "Malformed JSON in request body", "data": null }
                   },
-                  "missingRequired": {
-                    "summary": "Missing required field",
-                    "value": { "status": 400, "message": "Invalid body: check required fields and field names", "data": null }
+                  "emptyBody": {
+                    "summary": "Empty body",
+                    "value": { "status": 400, "message": "Request body is required and must be a JSON object", "data": null }
                   },
-                  "invalidEmail": {
-                    "summary": "Invalid email format",
+                  "nameEmpty": {
+                    "summary": "Name empty",
+                    "value": { "status": 400, "message": "Name cannot be empty", "data": null }
+                  },
+                  "nameInvalid": {
+                    "summary": "Name invalid",
+                    "value": { "status": 400, "message": "Name must contain only letters and spaces", "data": null }
+                  },
+                  "emailEmpty": {
+                    "summary": "Email empty",
+                    "value": { "status": 400, "message": "Email is required", "data": null }
+                  },
+                  "emailInvalid": {
+                    "summary": "Email invalid",
                     "value": { "status": 400, "message": "Invalid email format", "data": null }
+                  },
+                  "coursesInvalid": {
+                    "summary": "Courses invalid",
+                    "value": { "status": 400, "message": "Invalid courses format", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
@@ -116,9 +130,9 @@
                     "summary": "Non-existent courses",
                     "value": { "status": 400, "message": "These courses do not exist: maths 2", "data": null }
                   },
-                  "queryParamsNotAllowed": {
-                    "summary": "Query params not allowed",
-                    "value": { "status": 400, "message": "POST /students does not accept query parameters", "data": null }
+                  "invalidField": {
+                    "summary": "Invalid field",
+                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   }
                 }
               }
@@ -182,13 +196,37 @@
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "examples": {
-                  "invalidField": {
-                    "summary": "Invalid field",
-                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
+                  "malformedJson": {
+                    "summary": "Malformed JSON",
+                    "value": { "status": 400, "message": "Malformed JSON in request body", "data": null }
                   },
-                  "missingRequired": {
-                    "summary": "Missing required field",
-                    "value": { "status": 400, "message": "Invalid body: check required fields and field names", "data": null }
+                  "missingQuery": {
+                    "summary": "Missing query param",
+                    "value": { "status": 400, "message": "'id' or 'email' is required", "data": null }
+                  },
+                  "emptyBody": {
+                    "summary": "Empty body",
+                    "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
+                  },
+                  "nameEmpty": {
+                    "summary": "Name empty",
+                    "value": { "status": 400, "message": "Name cannot be empty", "data": null }
+                  },
+                  "nameInvalid": {
+                    "summary": "Name invalid",
+                    "value": { "status": 400, "message": "Name must contain only letters and spaces", "data": null }
+                  },
+                  "emailEmpty": {
+                    "summary": "Email empty",
+                    "value": { "status": 400, "message": "Email is required", "data": null }
+                  },
+                  "emailInvalid": {
+                    "summary": "Email invalid",
+                    "value": { "status": 400, "message": "Invalid email format", "data": null }
+                  },
+                  "coursesInvalid": {
+                    "summary": "Courses invalid",
+                    "value": { "status": 400, "message": "Courses must be a non-empty array of non-empty strings", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
@@ -198,9 +236,9 @@
                     "summary": "Non-existent courses",
                     "value": { "status": 400, "message": "These courses do not exist: maths 2", "data": null }
                   },
-                  "emptyBody": {
-                    "summary": "Empty body",
-                    "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
+                  "invalidField": {
+                    "summary": "Invalid field",
+                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   }
                 }
               }
@@ -294,17 +332,37 @@
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "examples": {
-                  "invalidField": {
-                    "summary": "Invalid field",
-                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
+                  "malformedJson": {
+                    "summary": "Malformed JSON",
+                    "value": { "status": 400, "message": "Malformed JSON in request body", "data": null }
                   },
-                  "missingRequired": {
-                    "summary": "Missing required field",
-                    "value": { "status": 400, "message": "Invalid body: check required fields and field names", "data": null }
+                  "missingQuery": {
+                    "summary": "Missing query param",
+                    "value": { "status": 400, "message": "'id' or 'email' is required", "data": null }
                   },
-                  "invalidEmail": {
-                    "summary": "Invalid email format",
+                  "emptyBody": {
+                    "summary": "Empty body",
+                    "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
+                  },
+                  "nameEmpty": {
+                    "summary": "Name empty",
+                    "value": { "status": 400, "message": "Name cannot be empty", "data": null }
+                  },
+                  "nameInvalid": {
+                    "summary": "Name invalid",
+                    "value": { "status": 400, "message": "Name must contain only letters and spaces", "data": null }
+                  },
+                  "emailEmpty": {
+                    "summary": "Email empty",
+                    "value": { "status": 400, "message": "Email is required", "data": null }
+                  },
+                  "emailInvalid": {
+                    "summary": "Email invalid",
                     "value": { "status": 400, "message": "Invalid email format", "data": null }
+                  },
+                  "coursesInvalid": {
+                    "summary": "Courses invalid",
+                    "value": { "status": 400, "message": "Invalid courses format", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
@@ -313,6 +371,10 @@
                   "nonExistentCourses": {
                     "summary": "Non-existent courses",
                     "value": { "status": 400, "message": "These courses do not exist: maths 2", "data": null }
+                  },
+                  "invalidField": {
+                    "summary": "Invalid field",
+                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   }
                 }
               }
