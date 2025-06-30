@@ -20,8 +20,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Student" }
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Student" }
+                    }
+                  }
                 }
               }
             }
@@ -53,14 +59,23 @@
         }
       }
     },
-    "/students/{id}": {
+    "/students/search": {
       "get": {
-        "summary": "Get a student by ID",
+        "summary": "Search for a student by id, email or name",
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "name",
+            "in": "query",
             "schema": { "type": "string" }
           }
         ],
@@ -69,7 +84,21 @@
             "description": "Student found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Student" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "oneOf": [
+                        { "$ref": "#/components/schemas/Student" },
+                        {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Student" }
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             }
           },
@@ -79,12 +108,16 @@
         }
       },
       "put": {
-        "summary": "Fully update a student",
+        "summary": "Fully update a student by id or email",
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "email",
+            "in": "query",
             "schema": { "type": "string" }
           }
         ],
@@ -114,12 +147,16 @@
         }
       },
       "patch": {
-        "summary": "Partially update a student",
+        "summary": "Partially update a student by id or email",
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "email",
+            "in": "query",
             "schema": { "type": "string" }
           }
         ],
@@ -149,7 +186,32 @@
         }
       },
       "delete": {
-        "summary": "Delete a student",
+        "summary": "Delete a student by id or email",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Student deleted successfully"
+          },
+          "404": {
+            "description": "Student not found"
+          }
+        }
+      }
+    },
+    "/students/{id}/courses": {
+      "get": {
+        "summary": "Get courses of a student by ID",
         "parameters": [
           {
             "name": "id",
@@ -160,7 +222,65 @@
         ],
         "responses": {
           "200": {
-            "description": "Student deleted successfully"
+            "description": "List of courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update the courses of a student by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "courses": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                },
+                "required": ["courses"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Courses updated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Student" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data sent"
           },
           "404": {
             "description": "Student not found"

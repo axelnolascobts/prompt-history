@@ -21,9 +21,11 @@ ROUTER.get('/:id/courses', (request, response) => {
 
 });
 
-ROUTER.get('/:searchParam', (request, response) => {
+ROUTER.get('/search', (request, response) => {
+    const { id, email, name } = request.query;
 
-    let searchParam = request.params.searchParam;
+    let searchParam = id || email || name;
+
     let student = getStudentBySearchParam(searchParam);
 
     response.status(student.status).json(student);
@@ -43,12 +45,11 @@ ROUTER.post('/', (request, response) => {
 
 });
 
-ROUTER.put('/:searchParam', (request, response) => {
+ROUTER.put('/search', (request, response) => {
 
-    let searchParam = request.params.searchParam;
-    /*let name = request.body.name;
-    let email = request.body.email;
-    let courses = request.body.courses;*/
+    const { id, email } = request.query;
+
+    let searchParam = id || email;
     let body = request.body;
 
     let updatedStudent = completeStudentUpdate(searchParam, body);
@@ -57,12 +58,11 @@ ROUTER.put('/:searchParam', (request, response) => {
 
 });
 
-ROUTER.patch('/:searchParam', (request, response) => {
+ROUTER.patch('/search', (request, response) => {
 
-    let searchParam = request.params.searchParam;
-    /*let name = request.body.name;
-    let email = request.body.email;
-    let courses = request.body.courses;*/
+    const { id, email } = request.query;
+
+    let searchParam = id || email;
     let body = request.body;
 
     let updatedStudent = partialStudentUpdate(searchParam, body);
@@ -82,9 +82,11 @@ ROUTER.patch('/:id/courses', (request, response) => {
 
 });
 
-ROUTER.delete('/:searchParam', (request, response) => {
+ROUTER.delete('/search', (request, response) => {
 
-    let searchParam = request.params.searchParam;
+    const { id, email } = request.query;
+    
+    let searchParam = id || email;
     let resultOfOperation = deleteStudent(searchParam);
 
     response.status(resultOfOperation.status).json(resultOfOperation);
