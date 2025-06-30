@@ -43,7 +43,7 @@ function getAllCourses(req, res) {
 
 // Crear un nuevo curso (por query param)
 function createCourse(req, res) {
-  const { name } = req.query;
+  const name = req.body.name || req.query.name;
   if (!name || typeof name !== "string" || name.trim() === "") {
     return res
       .status(400)

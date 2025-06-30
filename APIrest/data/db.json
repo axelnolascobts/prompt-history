@@ -4,7 +4,7 @@
     "name": "Milton",
     "email": "milton@gmail1.com",
     "courses": [
-      "maths 2"
+      "spanish 2"
     ]
   },
   {
@@ -24,28 +24,12 @@
     ]
   },
   {
-    "id": "30a8bfc3-fdbb-42b2-a458-821749aacff1",
-    "name": "",
-    "email": "hdjsa1@gmail.com",
-    "courses": [
-      "matematicas2"
-    ]
-  },
-  {
-    "id": "32d850c1-b141-41dc-8c12-8999a1e62f62",
-    "name": "",
-    "email": "fdss2@gmail2.com",
-    "courses": [
-      "",
-      ""
-    ]
-  },
-  {
     "id": "08da2261-f243-4820-aab3-700945a1bafb",
-    "name": "juan",
-    "email": "juan@gmail43.com",
+    "name": "juan perez",
+    "email": "juan@gmail42.com",
     "courses": [
-      "Matematicas 2"
+      "spanish 2",
+      "maths"
     ]
   },
   {
@@ -77,6 +61,14 @@
     "email": "pepe1@gmail.com",
     "courses": [
       "spanish"
+    ]
+  },
+  {
+    "id": "c861b44b-61dd-4a01-bfea-816bbd963941",
+    "name": "juan perez",
+    "email": "juan@gmail1.com",
+    "courses": [
+      "spanish 2"
     ]
   }
 ]

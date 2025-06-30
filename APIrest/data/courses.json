@@ -11,7 +11,18 @@
     "name": "spanish 2",
     "students": [
       "juan@gmail.com",
-      "mejia3@gmail.com"
+      "mejia3@gmail.com",
+      "milton@gmail1.com",
+      "juan@gmail1.com",
+      "juan@gmail42.com",
+      "juan@gmail42.com"
+    ]
+  },
+  {
+    "name": "maths",
+    "students": [
+      "juan@gmail42.com",
+      "juan@gmail42.com"
     ]
   }
 ]

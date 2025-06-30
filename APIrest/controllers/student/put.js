@@ -11,32 +11,36 @@ const {
 
 const nameRegex = /^[\p{L} ]+$/u;
 
+
 exports.updateStudent = (req, res) => {
   try {
     const students = ReadData();
-    const coursesData = readCourses();
+    const coursesDataRaw = readCourses();
+    const coursesData = Array.isArray(coursesDataRaw) ? coursesDataRaw : [];
     const { id, email } = req.query;
 
     if (!id && !email) {
       return res.status(400).json({
         status: 400,
-        message: "'id' or 'email' is required",
+        message: "cannot delete with name",
         data: null,
       });
     }
 
     let index = -1;
-    if (id) index = students.findIndex((s) => s.id === id);
-    else if (email)
-      index = students.findIndex(
-        (s) => s.email.toLowerCase() === email.toLowerCase()
-      );
+    if (id) {
+      index = students.findIndex((s) => s.id === id);
+    } else if (email) {
+      index = students.findIndex((s) => s.email === email);
+    }
 
     if (index === -1) {
       return res
         .status(404)
         .json({ status: 404, message: "Student not found", data: null });
     }
+
+    const student = students[index];
 
     const data = req.body;
 
@@ -65,6 +69,19 @@ exports.updateStudent = (req, res) => {
         data: null,
       });
     }
+        const validation = validateStudent(
+      { name, email: bodyEmail, courses },
+      students,
+      coursesData,
+      student.id
+    );
+    if (!validation.valid) {
+      return res.status(400).json({
+        status: 400,
+        message: validation.message,
+        data: null,
+      });
+    }
 
     // Validar email
     if (!bodyEmail || typeof bodyEmail !== "string" || bodyEmail.trim() === "") {
@@ -90,16 +107,7 @@ exports.updateStudent = (req, res) => {
     ) {
       return res.status(400).json({
         status: 400,
-        message: "Courses must be a non-empty array of non-empty strings",
-        data: null,
-      });
-    }
-
-    // Ahora sí, validación general
-    if (!validateStudent(req.body)) {
-      return res.status(400).json({
-        status: 400,
-        message: "Invalid body: check required fields and field names",
+        message: "Courses cannot be empty and must be an array of strings",
         data: null,
       });
     }
@@ -153,12 +161,21 @@ exports.updateStudent = (req, res) => {
       });
     }
 
-    // Validar existencia de cursos
-    const notExist = checkCoursesExist(coursesInput, coursesData);
-    if (notExist && notExist.length > 0) {
+    // Antes de usar .some()
+    if (!Array.isArray(courses)) {
       return res.status(400).json({
         status: 400,
-        message: `These courses do not exist: ${notExist.join(", ")}`,
+        message: "Courses must be an array",
+        data: null,
+      });
+    }
+
+    // Validar existencia de cursos
+    const missingCourses = checkCoursesExist(courses, coursesData) || [];
+    if (missingCourses.length > 0) {
+      return res.status(400).json({
+        status: 400,
+        message: `Course(s) not found: ${missingCourses.join(", ")}`,
         data: null,
       });
     }
@@ -194,7 +211,7 @@ exports.updateStudent = (req, res) => {
     oldCourses.forEach((cName) => {
       if (!updatedStudent.courses.includes(cName)) {
         const course = coursesData.find(
-          (c) => c.name.toLowerCase() === cName.toLowerCase()
+          (c) => typeof c.name === "string" && c.name.toLowerCase() === cName.toLowerCase()
         );
         if (course) {
           course.students = course.students.filter((e) => e !== oldEmail);
@@ -205,7 +222,7 @@ exports.updateStudent = (req, res) => {
     // Añadir email del estudiante a cursos nuevos o existentes
     updatedStudent.courses.forEach((cName) => {
       const course = coursesData.find(
-        (c) => c.name.toLowerCase() === cName.toLowerCase()
+        (c) => typeof c.name === "string" && c.name.toLowerCase() === cName.toLowerCase()
       );
       if (course && !course.students.includes(trimmedEmail)) {
         course.students.push(trimmedEmail);
@@ -229,6 +246,7 @@ exports.updateStudent = (req, res) => {
       data: updatedStudent,
     });
   } catch (err) {
+    console.error("PUT /students error:", err);
     res.status(500).json({
       status: 500,
       message: "Internal server error",

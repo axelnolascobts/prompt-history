@@ -5,7 +5,7 @@ exports.deleteStudent = (req, res) => {
   if (!id && !email) {
     return res.status(400).json({
       status: 400,
-      message: "'id' or 'email' is required",
+      message: "cannot delete with name",
       data: null,
     });
   }

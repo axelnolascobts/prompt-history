@@ -20,7 +20,12 @@ function WriteData(data) {
 }
 
 function readCourses() {
-  return JSON.parse(fs.readFileSync(COURSE_PATH, "utf8"));
+  try {
+    const data = fs.readFileSync(COURSE_PATH, "utf8");
+    return JSON.parse(data);
+  } catch (err) {
+    return [];
+  }
 }
 
 function writeCourses(data) {
@@ -32,13 +37,18 @@ function hasDuplicateCourses(courses) {
 }
 
 function checkCoursesExist(coursesArray, coursesData) {
+  if (!Array.isArray(coursesArray)) return [];
+  if (!Array.isArray(coursesData)) coursesData = [];
   const missing = coursesArray.filter(
     (c) =>
       !coursesData.some(
-        (course) => course.name.trim().toLowerCase() === c.trim().toLowerCase()
+        (course) =>
+          course &&
+          typeof course.name === "string" &&
+          course.name.toLowerCase() === c.trim().toLowerCase()
       )
   );
-  return missing.length === 0 ? false : missing;
+  return missing;
 }
 
 const studentSchema = {
@@ -58,6 +68,43 @@ const studentSchema = {
 
 const validateStudent = ajv.compile(studentSchema);
 
+function validateStudentData(student, students, coursesData, currentId = null) {
+  // AJV validation
+  const valid = validateStudent(student);
+  if (!valid) {
+    return { valid: false, message: ajv.errorsText(validateStudent.errors) };
+  }
+
+  // Email duplicado
+  if (
+    students.some(
+      s =>
+        s.email.toLowerCase() === student.email.trim().toLowerCase() &&
+        s.id !== currentId
+    )
+  ) {
+    return { valid: false, message: "The email already exists" };
+  }
+
+  // Duplicados en cursos
+  if (hasDuplicateCourses(student.courses)) {
+    return { valid: false, message: "Courses must not contain duplicates" };
+  }
+
+  // Cursos vacíos or no string
+  if (student.courses.some(c => typeof c !== "string" || c.trim() === "")) {
+    return { valid: false, message: "All courses must be non-empty strings" };
+  }
+
+  // Cursos inexistentes
+  const missing = checkCoursesExist(student.courses, coursesData);
+  if (missing.length > 0) {
+    return { valid: false, message: `Course(s) not found: ${missing.join(", ")}` };
+  }
+
+  return { valid: true };
+}
+
 module.exports = {
   ReadData,
   WriteData,
@@ -65,7 +112,7 @@ module.exports = {
   writeCourses,
   hasDuplicateCourses,
   checkCoursesExist,
-  validateStudent,
+  validateStudent: validateStudentData,
   emailRegex,
   uuidv4,
 };

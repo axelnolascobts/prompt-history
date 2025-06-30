@@ -15,7 +15,7 @@ exports.patchStudent = (req, res) => {
   if (!id && !email) {
     return res.status(400).json({
       status: 400,
-      message: "'id' or 'email' is required",
+      message: "cannot edit with name",
       data: null,
     });
   }
@@ -60,7 +60,7 @@ exports.patchStudent = (req, res) => {
       });
     }
 
-    const { name, email, courses } = req.body;
+    const { name, email: newEmail, courses } = req.body;
 
     // Validación de campos permitidos
     const allowedFields = ["name", "email", "courses"];
@@ -95,11 +95,11 @@ exports.patchStudent = (req, res) => {
     }
 
     // Validar y actualizar email
-    if (data.email !== undefined) {
+    if (newEmail !== undefined) {
       if (
-        typeof data.email !== "string" ||
-        data.email.trim() === "" ||
-        !emailRegex.test(data.email.trim())
+        typeof newEmail !== "string" ||
+        newEmail.trim() === "" ||
+        !emailRegex.test(newEmail.trim())
       ) {
         return res.status(400).json({
           status: 400,
@@ -111,7 +111,7 @@ exports.patchStudent = (req, res) => {
       if (
         students.some(
           (s, i) =>
-            s.email.toLowerCase() === data.email.trim().toLowerCase() &&
+            s.email.toLowerCase() === newEmail.trim().toLowerCase() &&
             i !== studentIndex
         )
       ) {
@@ -124,10 +124,10 @@ exports.patchStudent = (req, res) => {
       // Si cambia el email, actualizarlo en los cursos
       coursesData.forEach((course) => {
         course.students = course.students.map((e) =>
-          e === student.email ? data.email.trim().toLowerCase() : e
+          e === student.email ? newEmail.trim().toLowerCase() : e
         );
       });
-      student.email = data.email.trim().toLowerCase();
+      student.email = newEmail.trim().toLowerCase();
     }
 
     // Validar y actualizar cursos
