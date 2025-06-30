@@ -1,11 +1,17 @@
 const {
-  ReadData, WriteData, readCourses, writeCourses,
-  checkCoursesExist, hasDuplicateCourses, validateStudent, emailRegex
+  ReadData,
+  WriteData,
+  readCourses,
+  writeCourses,
+  checkCoursesExist,
+  hasDuplicateCourses,
+  validateStudent,
+  emailRegex,
 } = require("./utils");
 
 exports.updateStudent = (req, res) => {
   const students = ReadData();
-  const courses = readCourses();
+  const coursesData = readCourses();
   const { id, email } = req.query;
 
   if (!id && !email) {
@@ -17,11 +23,16 @@ exports.updateStudent = (req, res) => {
   }
 
   let index = -1;
-  if (id) index = students.findIndex(s => s.id === id);
-  else if (email) index = students.findIndex(s => s.email.toLowerCase() === email.toLowerCase());
+  if (id) index = students.findIndex((s) => s.id === id);
+  else if (email)
+    index = students.findIndex(
+      (s) => s.email.toLowerCase() === email.toLowerCase()
+    );
 
   if (index === -1) {
-    return res.status(404).json({ status: 404, message: "Student not found", data: null });
+    return res
+      .status(404)
+      .json({ status: 404, message: "Student not found", data: null });
   }
 
   const data = req.body;
@@ -34,11 +45,12 @@ exports.updateStudent = (req, res) => {
     });
   }
 
+  // Validar body completo con AJV
   if (!validateStudent(data)) {
     return res.status(400).json({
       status: 400,
-      message: "Invalid input",
-      data: validateStudent.errors,
+      message: "Invalid body: check required fields and field names",
+      errors: validateStudent.errors,
     });
   }
 
@@ -65,7 +77,7 @@ exports.updateStudent = (req, res) => {
   if (
     !Array.isArray(coursesInput) ||
     coursesInput.length === 0 ||
-    !coursesInput.every(c => typeof c === "string" && c.trim() !== "")
+    !coursesInput.every((c) => typeof c === "string" && c.trim() !== "")
   ) {
     return res.status(400).json({
       status: 400,
@@ -74,7 +86,7 @@ exports.updateStudent = (req, res) => {
     });
   }
 
-  if (!coursesInput.every(c => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
+  if (!coursesInput.every((c) => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
     return res.status(400).json({
       status: 400,
       message: "Courses contain invalid characters",
@@ -82,24 +94,20 @@ exports.updateStudent = (req, res) => {
     });
   }
 
-  if (hasDuplicateCourses(coursesInput)) {
+  // Validar cursos duplicados
+  if (hasDuplicateCourses(data.courses)) {
     return res.status(400).json({
       status: 400,
-      message: "Courses must not contain duplicates",
-      data: null,
+      message: "Duplicate courses are not allowed",
     });
   }
 
-  // Validar que los cursos existan en courses.json
-  const normalizedCourses = coursesInput.map(c => c.trim().toLowerCase());
-  const invalidCourses = normalizedCourses.filter(
-    c => !courses.some(course => course.name.toLowerCase() === c)
-  );
-  if (invalidCourses.length > 0) {
+  // Validar existencia de cursos
+  const notExist = checkCoursesExist(data.courses, coursesData);
+  if (notExist && notExist.length > 0) {
     return res.status(400).json({
       status: 400,
-      message: `This course does not exist`,
-      data: null,
+      message: `These courses do not exist: ${notExist.join(", ")}`,
     });
   }
 
@@ -108,10 +116,9 @@ exports.updateStudent = (req, res) => {
     (s, i) => s.email.toLowerCase() === trimmedEmail && i !== index
   );
   if (emailUsedByAnother) {
-    return res.status(400).json({
-      status: 400,
-      message: "The email already exists",
-      data: null,
+    return res.status(409).json({
+      status: 409,
+      message: "Student with this email already exists",
     });
   }
 
@@ -124,24 +131,24 @@ exports.updateStudent = (req, res) => {
     id: students[index].id,
     name: trimmedName,
     email: trimmedEmail,
-    courses: normalizedCourses,
+    courses: data.courses,
   };
 
   WriteData(students);
 
   // Quitar email del estudiante de cursos antiguos no incluidos ahora
-  oldCourses.forEach(cName => {
-    if (!normalizedCourses.includes(cName)) {
-      const course = courses.find(c => c.name.toLowerCase() === cName);
+  oldCourses.forEach((cName) => {
+    if (!data.courses.includes(cName)) {
+      const course = courses.find((c) => c.name.toLowerCase() === cName);
       if (course) {
-        course.students = course.students.filter(e => e !== oldEmail);
+        course.students = course.students.filter((e) => e !== oldEmail);
       }
     }
   });
 
   // Añadir email del estudiante a cursos nuevos o existentes
-  normalizedCourses.forEach(cName => {
-    const course = courses.find(c => c.name.toLowerCase() === cName);
+  data.courses.forEach((cName) => {
+    const course = courses.find((c) => c.name.toLowerCase() === cName);
     if (course && !course.students.includes(trimmedEmail)) {
       course.students.push(trimmedEmail);
     }
@@ -149,8 +156,10 @@ exports.updateStudent = (req, res) => {
 
   // Si cambió email, actualizarlo en todos los cursos donde estaba antes
   if (oldEmail !== trimmedEmail) {
-    courses.forEach(course => {
-      course.students = course.students.map(e => (e === oldEmail ? trimmedEmail : e));
+    courses.forEach((course) => {
+      course.students = course.students.map((e) =>
+        e === oldEmail ? trimmedEmail : e
+      );
     });
   }
 
@@ -159,6 +168,6 @@ exports.updateStudent = (req, res) => {
   res.status(200).json({
     status: 200,
     message: "Student edited successfully and courses updated",
-    data: students[index],
+    data: updatedStudent,
   });
 };

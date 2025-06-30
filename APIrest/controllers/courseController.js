@@ -1,160 +1,165 @@
-const fs = require('fs');
-const path = require('path');
-const Ajv = require('ajv');
-const ajv = new Ajv();
+const fs = require("fs");
+const path = require("path");
 
-// Configuración de paths
-const DATA_DIR = path.join(__dirname, '../data');
-const COURSE_PATH = path.join(DATA_DIR, 'courses.json');
-const STUDENT_DB_PATH = path.join(DATA_DIR, 'db.json');
+const DATA_DIR = path.join(__dirname, "../data");
+const COURSE_PATH = path.join(DATA_DIR, "courses.json");
+const STUDENT_PATH = path.join(DATA_DIR, "db.json");
 
-// Esquemas de validación (se mantienen igual)
-const courseSchemas = {
-  create: {
-    type: 'object',
-    properties: {
-      course: { 
-        type: 'string',
-        pattern: '^[\\p{L}\\d .\'-]+$',
-        minLength: 2
-      }
-    },
-    required: ['course'],
-    additionalProperties: false
-  },
-  get: {
-    type: 'object',
-    properties: {
-      name: { 
-        type: 'string',
-        minLength: 1
-      }
-    },
-    required: ['name'],
-    additionalProperties: false
+// Función para leer datos de un archivo JSON
+function readData(filePath, defaultValue = []) {
+  try {
+    if (!fs.existsSync(filePath)) return defaultValue;
+    const data = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(data);
+  } catch (err) {
+    return defaultValue;
   }
-};
-
-// Compilar esquemas
-const validateCreateCourse = ajv.compile(courseSchemas.create);
-const validateGetCourse = ajv.compile(courseSchemas.get);
-
-// Asegurar que exista el directorio data
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR);
 }
 
-// Funciones de utilidad mejoradas
-const readData = (filePath, defaultData) => {
-  try {
-    if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, JSON.stringify(defaultData, null, 2));
-      return defaultData;
-    }
-    const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    throw new Error(`Error reading ${filePath}: ${error.message}`);
-  }
-};
+// Función para escribir datos a un archivo JSON
+function writeData(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+}
 
-const writeData = (filePath, data) => {
+// Obtener todos los cursos
+function getAllCourses(req, res) {
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    const courses = readData(COURSE_PATH, []);
+    res.status(200).json({ status: 200, data: courses });
   } catch (error) {
-    throw new Error(`Error writing to ${filePath}: ${error.message}`);
+    res.status(500).json({
+      status: 500,
+      message: "Error reading courses",
+      error: error.message,
+    });
   }
-};
+}
 
-// Controlador deleteCourse mejorado
-const deleteCourse = (req, res) => {
-  if (!validateGetCourse(req.query)) {
+// Obtener un curso por nombre
+function getCourse(req, res) {
+  const { name } = req.params;
+  const courses = readData(COURSE_PATH, []);
+  const course = courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
+  if (!course) {
+    return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
+  }
+  res.status(200).json({ status: 200, data: course });
+}
+
+// Crear un nuevo curso
+function createCourse(req, res) {
+  const { name } = req.body;
+  if (!name || typeof name !== "string" || name.trim() === "") {
+    return res
+      .status(400)
+      .json({ status: 400, message: "Course name is required" });
+  }
+  if (!/^[\p{L}\d .'-]+$/u.test(name)) {
+    return res
+      .status(400)
+      .json({ message: "Course name contains invalid characters" });
+  }
+  const courses = readData(COURSE_PATH, []);
+  if (courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase())) {
+    return res
+      .status(409)
+      .json({ status: 409, message: "Course already exists" });
+  }
+  const newCourse = { name: name.trim(), students: [] };
+  courses.push(newCourse);
+  writeData(COURSE_PATH, courses);
+  res.status(201).json({ status: 201, message: "Course created successfully", data: newCourse });
+}
+
+// Agregar estudiante a un curso
+function addStudentToCourse(req, res) {
+  const { name } = req.params;
+  const { student } = req.body;
+  if (!student) {
+    return res
+      .status(400)
+      .json({ status: 400, message: "Student email is required" });
+  }
+  const courses = readData(COURSE_PATH, []);
+  const course = courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
+  if (!course) {
+    return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
+  }
+  if (course.students.includes(student)) {
+    return res
+      .status(409)
+      .json({ status: 409, message: "Student already in course" });
+  }
+  course.students.push(student);
+  writeData(COURSE_PATH, courses);
+  res.status(200).json({ status: 200, data: course });
+}
+
+// Eliminar estudiante de un curso
+function removeStudentFromCourse(req, res) {
+  const { name } = req.params;
+  const { student } = req.body;
+  const courses = readData(COURSE_PATH, []);
+  const course = courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase());
+  if (!course) {
+    return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
+  }
+  const index = course.students.indexOf(student);
+  if (index === -1) {
+    return res
+      .status(404)
+      .json({ status: 404, message: "Student not found in course" });
+  }
+  course.students.splice(index, 1);
+  writeData(COURSE_PATH, courses);
+  res.status(200).json({ status: 200, data: course });
+}
+
+// Eliminar un curso usando query param (?name=math)
+function deleteCourse(req, res) {
+  const name = req.query.name;
+  if (!name || typeof name !== "string" || name.trim() === "") {
     return res.status(400).json({
       status: 400,
-      message: 'Invalid parameters',
-      errors: validateGetCourse.errors
+      message: "Course name is required as query param",
     });
   }
-
-  try {
-    const { name } = req.query;
-    const normalizedName = name.trim().toLowerCase();
-    
-    // 1. Leer y actualizar courses.json
-    const courses = readData(COURSE_PATH, []);
-    const courseIndex = courses.findIndex(c => c.name.toLowerCase() === normalizedName);
-
-    if (courseIndex === -1) {
-      return res.status(404).json({
-        status: 404,
-        message: 'Course not found in courses.json'
-      });
-    }
-
-    // Eliminar el curso
-    const deletedCourse = courses.splice(courseIndex, 1)[0];
-    writeData(COURSE_PATH, courses);
-
-    // 2. Actualizar estudiantes en db.json
-    const studentsData = readData(STUDENT_DB_PATH, []);
-    let studentsUpdated = 0;
-
-    // Verificar que studentsData es un array (según tu estructura)
-    if (!Array.isArray(studentsData)) {
-      throw new Error('Invalid student data structure in db.json');
-    }
-
-    // Eliminar el curso de cada estudiante
-    const updatedStudents = studentsData.map(student => {
-      if (student.courses && Array.isArray(student.courses)) {
-        const originalLength = student.courses.length;
-        student.courses = student.courses.filter(c => c.toLowerCase() !== normalizedName);
-        if (student.courses.length !== originalLength) {
-          studentsUpdated++;
-        }
-      }
-      return student;
-    });
-
-    writeData(STUDENT_DB_PATH, updatedStudents);
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Course deleted successfully',
-      data: {
-        course: deletedCourse.name,
-        studentsAffected: studentsUpdated
-      }
-    });
-
-  } catch (error) {
-    console.error('Delete course error:', error);
-    return res.status(500).json({
-      status: 500,
-      message: 'Error deleting course',
-      error: error.message,
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
-    });
+  if (!/^[\p{L}\d .'-]+$/u.test(name)) {
+    return res
+      .status(400)
+      .json({ message: "Course name contains invalid characters" });
   }
-};
+  let courses = readData(COURSE_PATH, []);
+  const index = courses.findIndex((c) => c.name.toLowerCase() === name.trim().toLowerCase());
+  if (index === -1) {
+    return res.status(404).json({ status: 404, message: `Course '${name}' not found` });
+  }
+  const deleted = courses.splice(index, 1)[0];
+  writeData(COURSE_PATH, courses);
 
-// Exportar todos los controladores (manteniendo los originales)
+  // Eliminar el curso de todos los estudiantes en db.json
+  let students = readData(STUDENT_PATH, []);
+  for (let i = 0; i < students.length; i++) {
+    if (Array.isArray(students[i].courses)) {
+      students[i].courses = students[i].courses.filter(
+        (c) => c.trim().toLowerCase() !== name.trim().toLowerCase()
+      );
+    }
+  }
+  writeData(STUDENT_PATH, students);
+
+  res.status(200).json({
+    status: 200,
+    message: `Course '${name}' deleted from system and all students`,
+    data: deleted
+  });
+}
+
 module.exports = {
-  createCourse: (req, res) => {
-    // ... (mantener implementación original)
-  },
-
-  getAllCourses: (req, res) => {
-    // ... (mantener implementación original)
-  },
-
-  getCourse: (req, res) => {
-    // ... (mantener implementación original)
-  },
-
-  getCourseStudents: (req, res) => {
-    // ... (mantener implementación original)
-  },
-
-  deleteCourse // Usar la nueva implementación mejorada
+  getAllCourses,
+  getCourse,
+  createCourse,
+  addStudentToCourse,
+  removeStudentFromCourse,
+  deleteCourse,
 };

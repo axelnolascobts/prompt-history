@@ -1,22 +1,14 @@
 [
   {
-    "name": "history",
-    "students": [
-      "juan@gmail.com"
-    ]
-  },
-  {
-    "name": "math",
-    "students": [
-      "juan@gmail.com"
-    ]
-  },
-  {
     "name": "spanish",
-    "students": []
+    "students": [
+      "juan@gmail.com"
+    ]
   },
   {
-    "name": "maths",
-    "students": []
+    "name": "spanish 2",
+    "students": [
+      "juan@gmail.com"
+    ]
   }
 ]

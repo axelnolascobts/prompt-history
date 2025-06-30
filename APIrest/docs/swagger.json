@@ -60,7 +60,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/NewStudent" },
+              "schema": {
+                "$ref": "#/components/schemas/NewStudent"
+              },
               "example": {
                 "name": "Jane Doe",
                 "email": "jane@example.com",
@@ -89,43 +91,61 @@
             }
           },
           "400": {
-            "description": "Invalid input or email already exists",
+            "description": "Invalid input",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "examples": {
-                  "emptyBody": {
-                    "summary": "Empty body",
-                    "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
+                  "invalidField": {
+                    "summary": "Invalid field",
+                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   },
-                  "invalidInput": {
-                    "summary": "Invalid input",
-                    "value": { "status": 400, "message": "Invalid input", "data": [] }
+                  "missingRequired": {
+                    "summary": "Missing required field",
+                    "value": { "status": 400, "message": "Invalid body: check required fields and field names", "data": null }
                   },
-                  "duplicateEmail": {
-                    "summary": "Duplicate email",
-                    "value": { "status": 400, "message": "The email already exists", "data": null }
-                  },
-                  "invalidEmailFormat": {
+                  "invalidEmail": {
                     "summary": "Invalid email format",
                     "value": { "status": 400, "message": "Invalid email format", "data": null }
                   },
-                  "invalidName": {
-                    "summary": "Invalid name",
-                    "value": { "status": 400, "message": "Name contains invalid characters", "data": null }
-                  },
-                  "emptyName": {
-                    "summary": "Empty name",
-                    "value": { "status": 400, "message": "Name cannot be empty", "data": null }
-                  },
-                  "invalidCourses": {
-                    "summary": "Invalid courses",
-                    "value": { "status": 400, "message": "Courses must be a non-empty array", "data": null }
-                  },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
-                    "value": { "status": 400, "message": "Courses must not contain duplicates", "data": null }
+                    "value": { "status": 400, "message": "Duplicate courses are not allowed", "data": null }
+                  },
+                  "nonExistentCourses": {
+                    "summary": "Non-existent courses",
+                    "value": { "status": 400, "message": "These courses do not exist: maths 2", "data": null }
+                  },
+                  "queryParamsNotAllowed": {
+                    "summary": "Query params not allowed",
+                    "value": { "status": 400, "message": "POST /students does not accept query parameters", "data": null }
                   }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict (student already exists)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "status": 409,
+                  "message": "Student with this email already exists",
+                  "data": null
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "status": 500,
+                  "message": "Internal server error",
+                  "data": null
                 }
               }
             }
@@ -149,7 +169,7 @@
         },
         "responses": {
           "200": {
-            "description": "Student edited successfully",
+            "description": "Student updated successfully",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/StudentResponse" }
@@ -162,21 +182,25 @@
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "examples": {
-                  "missingParam": {
-                    "summary": "Missing query param",
-                    "value": { "status": 400, "message": "'id' or 'email' is required", "data": null }
+                  "invalidField": {
+                    "summary": "Invalid field",
+                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   },
-                  "invalidInput": {
-                    "summary": "Invalid input",
-                    "value": { "status": 400, "message": "Invalid input", "data": [] }
-                  },
-                  "duplicateEmail": {
-                    "summary": "Duplicate email",
-                    "value": { "status": 400, "message": "The email already exists", "data": null }
+                  "missingRequired": {
+                    "summary": "Missing required field",
+                    "value": { "status": 400, "message": "Invalid body: check required fields and field names", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
-                    "value": { "status": 400, "message": "Courses must not contain duplicates", "data": null }
+                    "value": { "status": 400, "message": "Duplicate courses are not allowed", "data": null }
+                  },
+                  "nonExistentCourses": {
+                    "summary": "Non-existent courses",
+                    "value": { "status": 400, "message": "These courses do not exist: maths 2", "data": null }
+                  },
+                  "emptyBody": {
+                    "summary": "Empty body",
+                    "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
                   }
                 }
               }
@@ -188,6 +212,32 @@
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "example": { "status": 404, "message": "Student not found", "data": null }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict (student already exists)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "status": 409,
+                  "message": "Student with this email already exists",
+                  "data": null
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "status": 500,
+                  "message": "Internal server error",
+                  "data": null
+                }
               }
             }
           }
@@ -204,7 +254,7 @@
           "required": false,
           "content": {
             "application/json": {
-              "schema": { 
+              "schema": {
                 "type": "object",
                 "properties": {
                   "name": { "type": "string" },
@@ -215,7 +265,8 @@
                     "minItems": 1,
                     "uniqueItems": true
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -225,7 +276,7 @@
             "description": "Student updated successfully",
             "content": {
               "application/json": {
-                "schema": { 
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": { "type": "integer" },
@@ -241,31 +292,27 @@
             "description": "Invalid input or missing query param",
             "content": {
               "application/json": {
-                "schema": { 
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "integer" },
-                    "message": { "type": "string" },
-                    "data": {}
-                  },
-                  "required": ["status", "message", "data"]
-                },
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "examples": {
-                  "missingParam": {
-                    "summary": "Missing query param",
-                    "value": { "status": 400, "message": "'id' or 'email' is required", "data": null }
+                  "invalidField": {
+                    "summary": "Invalid field",
+                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   },
-                  "invalidInput": {
-                    "summary": "Invalid input",
-                    "value": { "status": 400, "message": "Invalid input", "data": [] }
+                  "missingRequired": {
+                    "summary": "Missing required field",
+                    "value": { "status": 400, "message": "Invalid body: check required fields and field names", "data": null }
                   },
-                  "duplicateEmail": {
-                    "summary": "Duplicate email",
-                    "value": { "status": 400, "message": "This email is already registered", "data": null }
+                  "invalidEmail": {
+                    "summary": "Invalid email format",
+                    "value": { "status": 400, "message": "Invalid email format", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
-                    "value": { "status": 400, "message": "Courses must not contain duplicates", "data": null }
+                    "value": { "status": 400, "message": "Duplicate courses are not allowed", "data": null }
+                  },
+                  "nonExistentCourses": {
+                    "summary": "Non-existent courses",
+                    "value": { "status": 400, "message": "These courses do not exist: maths 2", "data": null }
                   }
                 }
               }
@@ -275,7 +322,7 @@
             "description": "Student not found",
             "content": {
               "application/json": {
-                "schema": { 
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": { "type": "integer" },
@@ -302,7 +349,7 @@
             "description": "Student deleted",
             "content": {
               "application/json": {
-                "schema": { 
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": { "type": "integer" },
@@ -318,7 +365,7 @@
             "description": "Missing query param",
             "content": {
               "application/json": {
-                "schema": { 
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": { "type": "integer" },
@@ -335,7 +382,7 @@
             "description": "Student not found",
             "content": {
               "application/json": {
-                "schema": { 
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": { "type": "integer" },
@@ -363,7 +410,7 @@
             "description": "Students retrieved for course",
             "content": {
               "application/json": {
-                "schema": { 
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": { "type": "integer" },
@@ -382,7 +429,7 @@
             "description": "Missing course query param",
             "content": {
               "application/json": {
-                "schema": { 
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": { "type": "integer" },
@@ -409,14 +456,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "course": {
+                  "name": {
                     "type": "string",
                     "pattern": "^[\\p{L}\\d .'-]+$",
                     "minLength": 2,
                     "example": "Mathematics"
                   }
                 },
-                "required": ["course"]
+                "required": ["name"],
+                "additionalProperties": false
               }
             }
           }
@@ -718,7 +766,8 @@
             "minItems": 1,
             "uniqueItems": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "StudentsResponse": {
         "type": "object",

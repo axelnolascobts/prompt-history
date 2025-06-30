@@ -32,15 +32,6 @@
     ]
   },
   {
-    "id": "8306fde2-b857-4bb4-bbbb-04ceff213843",
-    "name": "fdsf",
-    "email": "fdss1@gmail2.com",
-    "courses": [
-      "",
-      ""
-    ]
-  },
-  {
     "id": "32d850c1-b141-41dc-8c12-8999a1e62f62",
     "name": "",
     "email": "fdss2@gmail2.com",
@@ -59,11 +50,17 @@
   },
   {
     "id": "65e3d9b3-c4f8-47d4-b471-9a95e5493cf3",
-    "name": "Juan",
+    "name": "juan",
     "email": "juan@gmail.com",
     "courses": [
-      "history",
-      "math"
+      "spanish 2",
+      "spanish"
     ]
+  },
+  {
+    "id": "864f1a87-0d77-4617-a76c-98f8b4eb81cc",
+    "name": "juan perez",
+    "email": "juan1@gmail.com",
+    "courses": []
   }
 ]

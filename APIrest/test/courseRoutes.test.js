@@ -2,97 +2,97 @@ jest.mock('fs');
 const fs = require('fs');
 const request = require('supertest');
 const app = require('../app');
+const { validateStudent } = require("../controllers/student/utils");
 
-const mockCourses = [{ name: 'math', students: [] }, { name: 'science', students: [] }];
-const mockStudents = [
-  { id: '1', name: 'Milton', email: 'm1@mail.com', courses: ['math', 'science'] },
-  { id: '2', name: 'Ana', email: 'a@mail.com', courses: ['math'] }
+const mockCourses = [
+  { name: 'Math', students: ['milton@gmail.com', 'ana@gmail.com'] },
+  { name: 'Science', students: ['ana@gmail.com'] }
 ];
 
-beforeEach(() => {
-  jest.clearAllMocks();
-});
+const mockStudents = [
+  { id: "123", name: "Milton", email: "milton@gmail.com", courses: ["Math"] },
+  { id: "456", name: "Ana", email: "ana@gmail.com", courses: ["Math", "Science"] }
+];
 
 describe('POST /courses', () => {
-  it('should create a course', async () => {
+  beforeEach(() => {
     fs.existsSync.mockReturnValue(true);
     fs.readFileSync.mockReturnValue(JSON.stringify(mockCourses));
-    const res = await request(app).post('/courses').send({ course: 'History' });
+  });
+
+  it('should create a course', async () => {
+    const res = await request(app).post('/courses').send({ name: 'History' });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(201);
     expect(res.body.message).toBe('Course created successfully');
-    expect(res.body.data.course).toBe('history');
-  });
-
-  it('should reject empty course', async () => {
-    const res = await request(app).post('/courses').send({ course: '' });
-    expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(400);
-    expect(res.body.message).toBe('Course name is required');
+    expect(res.body.data.name).toBe('History');
   });
 
   it('should reject duplicate course', async () => {
-    fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockReturnValue(JSON.stringify(mockCourses));
-    const res = await request(app).post('/courses').send({ course: 'Math' });
+    const res = await request(app).post('/courses').send({ name: 'Math' });
     expect(res.statusCode).toBe(409);
     expect(res.body.status).toBe(409);
     expect(res.body.message).toBe('Course already exists');
   });
-});
 
-describe('GET /courses?course=...', () => {
-  it('should get students for a course', async () => {
-    fs.existsSync.mockReturnValue(true);
-    fs.readFileSync
-      .mockReturnValueOnce(JSON.stringify(mockCourses))
-      .mockReturnValueOnce(JSON.stringify(mockStudents)); 
-    
-    const res = await request(app).get('/courses').query({ course: 'math' });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(200);
-    expect(res.body.message).toBe("Students retrieved for course 'math'");
-    expect(res.body.data.length).toBe(2);
-  });
-
-  it('should return 400 if course param missing', async () => {
-    const res = await request(app).get('/courses');
+  it('should reject empty name', async () => {
+    const res = await request(app).post('/courses').send({ name: '' });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(400);
-    expect(res.body.message).toBe('Course param is required');
+    expect(res.body.message).toBe('Course name is required');
   });
 
-  it('should return 404 if course not found', async () => {
-    fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockReturnValue(JSON.stringify([{ name: 'science', students: [] }]));
-    const res = await request(app).get('/courses').query({ course: 'math' });
-    expect(res.statusCode).toBe(404);
-    expect(res.body.status).toBe(404);
-    expect(res.body.message).toBe("Course 'math' does not exist");
+  it('should reject invalid name', async () => {
+    const res = await request(app).post('/courses').send({ name: 'Math@123' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toBe('Course name contains invalid characters');
   });
 });
 
-describe('DELETE /courses?course=...', () => {
-  it('should delete a course from system and all students', async () => {
+describe('GET /courses', () => {
+  beforeEach(() => {
     fs.existsSync.mockReturnValue(true);
-    fs.readFileSync
-      .mockReturnValueOnce(JSON.stringify(mockCourses))
-      .mockReturnValueOnce(JSON.stringify(mockStudents)); 
-    
-    const res = await request(app).delete('/courses').query({ course: 'math' });
+    fs.readFileSync.mockReturnValue(JSON.stringify(mockCourses));
+  });
+
+  it('should get all courses', async () => {
+    const res = await request(app).get('/courses');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(200);
-    expect(res.body.message).toBe("Course 'math' deleted from system and all students");
-    expect(res.body.data).toBe('math');
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBeGreaterThan(0);
+  });
+
+  it('should get a course by name', async () => {
+    const res = await request(app).get('/courses/Math');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.data.name).toBe('Math');
   });
 
   it('should return 404 if course not found', async () => {
-    fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockReturnValue(JSON.stringify([{ name: 'science', students: [] }]));
-    const res = await request(app).delete('/courses').query({ course: 'math' });
+    const res = await request(app).get('/courses/Unknown');
     expect(res.statusCode).toBe(404);
-    expect(res.body.status).toBe(404);
-    expect(res.body.message).toBe("Course 'math' not found");
+    expect(res.body.message).toBe("Course 'Unknown' not found");
+  });
+});
+
+describe('DELETE /courses', () => {
+  beforeEach(() => {
+    fs.existsSync.mockReturnValue(true);
+    fs.readFileSync
+      .mockReturnValueOnce(JSON.stringify(mockCourses))
+      .mockReturnValueOnce(JSON.stringify(mockStudents));
+  });
+
+  it('should delete a course from system and all students', async () => {
+    const res = await request(app).delete('/courses').query({ name: 'Math' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(200);
+    expect(res.body.data.name).toBe('Math');
+  });
+
+  it('should return 404 if course not found', async () => {
+    const res = await request(app).delete('/courses').query({ name: 'Unknown' });
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toBe("Course 'Unknown' not found");
   });
 });
 
@@ -131,5 +131,39 @@ describe('API Basic Routes', () => {
         });
       }
     });
+  });
+});
+
+describe('Student Validation', () => {
+  it('should validate student data', () => {
+    expect(validateStudent({
+      name: "Milton",
+      email: "milton@mail.com",
+      courses: ["Math"]
+    })).toBe(true);
+  });
+
+  it('should invalidate student with empty name', () => {
+    expect(validateStudent({
+      name: "",
+      email: "milton@mail.com",
+      courses: ["Math"]
+    })).toBe(false);
+  });
+
+  it('should invalidate student with invalid email', () => {
+    expect(validateStudent({
+      name: "Milton",
+      email: "miltonmail.com",
+      courses: ["Math"]
+    })).toBe(false);
+  });
+
+  it('should invalidate student with empty courses', () => {
+    expect(validateStudent({
+      name: "Milton",
+      email: "milton@mail.com",
+      courses: []
+    })).toBe(false);
   });
 });

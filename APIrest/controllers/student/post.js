@@ -1,132 +1,96 @@
 const {
-  ReadData, WriteData, readCourses, writeCourses,
-  checkCoursesExist, hasDuplicateCourses, validateStudent, emailRegex, uuidv4
+  ReadData,
+  WriteData,
+  readCourses,
+  writeCourses,
+  checkCoursesExist,
+  hasDuplicateCourses,
+  validateStudent,
+  emailRegex,
+  uuidv4,
 } = require("./utils");
 
 exports.createStudent = (req, res) => {
+  // Rechaza si hay query params
+  if (Object.keys(req.query).length > 0) {
+    return res.status(400).json({
+      status: 400,
+      message: "POST /students does not accept query parameters",
+    });
+  }
+
   const students = ReadData();
-  const courses = readCourses();
-  const data = req.body;
+  const coursesData = readCourses();
+  const { name, email, courses } = req.body;
 
-  if (!data || Object.keys(data).length === 0) {
+  // Validar body completo con AJV
+  if (!validateStudent(req.body)) {
     return res.status(400).json({
       status: 400,
-      message: "Request body cannot be empty",
-      data: null
+      message: "Invalid body: check required fields and field names",
+      errors: validateStudent.errors,
     });
   }
 
-  if (!validateStudent(data)) {
+  // No permitir duplicados
+  if (
+    students.some((s) => s.email.toLowerCase() === email.trim().toLowerCase())
+  ) {
+    return res.status(409).json({ status: 409, message: "Student with this email already exists" });
+  }
+
+  // Validar cursos duplicados
+  if (hasDuplicateCourses(courses)) {
     return res.status(400).json({
       status: 400,
-      message: "Invalid input",
-      data: validateStudent.errors
+      message: "Duplicate courses are not allowed",
     });
   }
 
-  if (students.some((s) => s.email.toLowerCase() === data.email.trim().toLowerCase())) {
+  // Validar existencia de cursos
+  const notExist = checkCoursesExist(courses, coursesData);
+  if (notExist && notExist.length > 0) {
     return res.status(400).json({
       status: 400,
-      message: "The email already exists",
-      data: null
+      message: `These courses do not exist: ${notExist.join(", ")}`,
     });
   }
 
-  const trimmedName = data.name.trim();
-  const email = data.email.trim().toLowerCase();
-  const coursesInput = data.courses;
-
-  if (trimmedName === "") {
-    return res.status(400).json({
-      status: 400,
-      message: "Name cannot be empty",
-      data: null
-    });
+  // Validar formato de cursos
+  if (!Array.isArray(courses) || courses.some(c => typeof c !== 'string' || c.trim() === '')) {
+    return res.status(400).json({ status: 400, message: "Invalid courses format" });
   }
 
-  if (!/^[\p{L} .'-]+$/u.test(trimmedName)) {
-    return res.status(400).json({
-      status: 400,
-      message: "Name contains invalid characters",
-      data: null
-    });
+  // Validar nombre
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return res.status(400).json({ message: "Course name is required" });
+  }
+  if (!/^[\p{L}\d .'-]+$/u.test(name)) {
+    return res.status(400).json({ message: "Course name contains invalid characters" });
   }
 
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      status: 400,
-      message: "Invalid email format",
-      data: null
-    });
-  }
-
-  if (!Array.isArray(coursesInput) || coursesInput.length === 0) {
-    return res.status(400).json({
-      status: 400,
-      message: "Courses must be a non-empty array",
-      data: null
-    });
-  }
-
-  if (!coursesInput.every(c => typeof c === "string" && c.trim() !== "")) {
-    return res.status(400).json({
-      status: 400,
-      message: "All courses must be non-empty strings",
-      data: null
-    });
-  }
-
-  if (!coursesInput.every(c => /^[\p{L}\d .'-]+$/u.test(c.trim()))) {
-    return res.status(400).json({
-      status: 400,
-      message: "Courses contain invalid characters",
-      data: null
-    });
-  }
-
-  if (hasDuplicateCourses(coursesInput)) {
-    return res.status(400).json({
-      status: 400,
-      message: "Courses must not contain duplicates",
-      data: null
-    });
-  }
-
-  // Validar que los cursos existan en courses.json
-  const normalizedCourses = coursesInput.map(c => c.trim().toLowerCase());
-  const invalidCourses = normalizedCourses.filter(
-    c => !courses.some(course => course.name.toLowerCase() === c)
-  );
-  if (invalidCourses.length > 0) {
-    return res.status(400).json({
-      status: 400,
-      message: `This course does not exist`,
-      data: null,
-    });
-  }
-
+  // Crear estudiante
   const newStudent = {
     id: uuidv4(),
-    name: trimmedName,
-    email,
-    courses: normalizedCourses,
+    name: name.trim(),
+    email: email.trim().toLowerCase(),
+    courses: courses,
   };
-
   students.push(newStudent);
   WriteData(students);
 
-  // Añadir email del estudiante a los cursos correspondientes en courses.json
-  normalizedCourses.forEach(cName => {
-    const course = courses.find(c => c.name.toLowerCase() === cName);
-    if (course && !course.students.includes(email)) {
-      course.students.push(email);
+  // Agregar email del estudiante a cada curso correspondiente
+  for (const courseName of courses) {
+    const course = coursesData.find((c) => c.name === courseName);
+    if (course && !course.students.includes(newStudent.email)) {
+      course.students.push(newStudent.email);
     }
-  });
-  writeCourses(courses);
+  }
+  writeCourses(coursesData);
 
-  res.status(201).json({
+  return res.status(201).json({
     status: 201,
-    message: "Student created successfully and courses updated",
+    message: "Student created successfully",
     data: newStudent,
   });
 };

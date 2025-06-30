@@ -5,65 +5,79 @@ exports.getStudents = (req, res) => {
   const { id, name, email, course } = req.query;
 
   // Validación especial para email vacío (debe devolver array vacío)
-  if (email !== undefined && email.trim() === '') {
+  if (email !== undefined && email.trim() === "") {
     return res.status(200).json({
       status: 200,
       message: "Students retrieved successfully",
-      data: []
+      data: [],
     });
   }
 
-   if (id !== undefined && id.trim() === '') {
+  if (id !== undefined && id.trim() === "") {
     return res.status(200).json({
       status: 200,
       message: "Students retrieved successfully",
-      data: []
+      data: [],
     });
   }
 
-   if (name !== undefined && name.trim() === '') {
+  if (name !== undefined && name.trim() === "") {
     return res.status(200).json({
       status: 200,
       message: "Students retrieved successfully",
-      data: []
+      data: [],
     });
   }
 
-  let filtered = [...students]; // Copia del array original
+  let filtered = [...students];
 
-  // Filtrado secuencial
   if (id) {
-    filtered = filtered.filter(s => s.id === id);
+    filtered = filtered.filter((s) => s.id === id);
   }
   if (name) {
-    filtered = filtered.filter(s => 
+    filtered = filtered.filter((s) =>
       s.name.toLowerCase().includes(name.toLowerCase())
     );
   }
   if (email) {
-    filtered = filtered.filter(s => 
-      s.email.toLowerCase() === email.toLowerCase()
+    filtered = filtered.filter(
+      (s) => s.email.toLowerCase() === email.toLowerCase()
     );
   }
   if (course) {
-    filtered = filtered.filter(s =>
-      s.courses.map(c => c.trim().toLowerCase())
+    filtered = filtered.filter((s) =>
+      s.courses
+        .map((c) => c.trim().toLowerCase())
         .includes(course.trim().toLowerCase())
     );
   }
 
-  // Manejo de resultados
+  if (email) {
+    if (filtered.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        message: "No students found with the given query",
+        data: null,
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: "Student retrieved successfully",
+      data: filtered[0],
+    });
+  }
+
   if (filtered.length === 0) {
     return res.status(404).json({
       status: 404,
       message: "No students found with the given query",
-      data: []
+      data: [],
     });
   }
 
   return res.status(200).json({
     status: 200,
     message: "Students retrieved successfully",
-    data: filtered
+    data: filtered,
   });
 };

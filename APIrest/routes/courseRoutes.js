@@ -2,19 +2,22 @@ const express = require("express");
 const router = express.Router();
 const courseController = require("../controllers/courseController");
 
-// Crear un nuevo curso
-router.post("/", courseController.createCourse);
-
 // Obtener todos los cursos (resumen)
 router.get("/", courseController.getAllCourses);
 
 // Obtener información de un curso específico
-router.get("/search", courseController.getCourse);
+router.get("/:name", courseController.getCourse);
 
-// Obtener estudiantes de un curso específico
-router.get("/students", courseController.getCourseStudents);
+// Crear un nuevo curso
+router.post("/", courseController.createCourse);
 
-// Eliminar un curso
+// Agregar estudiante a un curso
+router.post("/:name/student", courseController.addStudentToCourse);
+
+// Eliminar estudiante de un curso
+router.delete("/:name/student", courseController.removeStudentFromCourse);
+
+// Eliminar un curso usando query param
 router.delete("/", courseController.deleteCourse);
 
 module.exports = router;
