@@ -1,6 +1,6 @@
 const express = require('express');
 const ROUTER = express.Router();
-const { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate, getStudentCourses, patchCourses } = require('./controllers/controllers.js');
+const { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate, getStudentCourses, patchCourses, deleteCourses, putCourses } = require('./controllers/controllers.js');
 const { request } = require('../app.js');
 
 ROUTER.get('/', (request, response) => {
@@ -11,22 +11,33 @@ ROUTER.get('/', (request, response) => {
 
 });
 
-ROUTER.get('/:id/courses', (request, response) => {
+ROUTER.get('/search', (request, response) => {
 
-    let id = request.params.id;
+    const { id, email, name } = request.query;
 
-    let student = getStudentCourses(id)
+    let searchParam = id || email || name;
+    
+    let student = getStudentBySearchParam(searchParam);
 
     response.status(student.status).json(student);
 
 });
 
-ROUTER.get('/search', (request, response) => {
-    const { id, email, name } = request.query;
+ROUTER.get('/:id', (request, response) => {
 
-    let searchParam = id || email || name;
+    let id = request.params.id;
 
-    let student = getStudentBySearchParam(searchParam);
+    let student = getStudentBySearchParam(id);
+
+    response.status(student.status).json(student);
+
+});
+
+ROUTER.get('/:id/courses', (request, response) => {
+
+    let id = request.params.id;
+
+    let student = getStudentCourses(id)
 
     response.status(student.status).json(student);
 
@@ -45,27 +56,23 @@ ROUTER.post('/', (request, response) => {
 
 });
 
-ROUTER.put('/search', (request, response) => {
+ROUTER.put('/:id', (request, response) => {
 
-    const { id, email } = request.query;
-
-    let searchParam = id || email;
+    let id = request.params.id;
     let body = request.body;
 
-    let updatedStudent = completeStudentUpdate(searchParam, body);
+    let updatedStudent = completeStudentUpdate(id, body);
 
     response.status(updatedStudent.status).json(updatedStudent);
 
 });
 
-ROUTER.patch('/search', (request, response) => {
+ROUTER.patch('/:id', (request, response) => {
 
-    const { id, email } = request.query;
-
-    let searchParam = id || email;
+    let id = request.params.id;
     let body = request.body;
 
-    let updatedStudent = partialStudentUpdate(searchParam, body);
+    let updatedStudent = partialStudentUpdate(id, body);
 
     response.status(updatedStudent.status).json(updatedStudent);
 
@@ -82,12 +89,32 @@ ROUTER.patch('/:id/courses', (request, response) => {
 
 });
 
-ROUTER.delete('/search', (request, response) => {
+ROUTER.put('/:id/courses', (request, response) => {
 
-    const { id, email } = request.query;
-    
-    let searchParam = id || email;
-    let resultOfOperation = deleteStudent(searchParam);
+    let id = request.params.id;
+    let body = request.body;
+
+    let result = putCourses(id, body);
+
+    response.status(result.status).json(result);
+
+});
+
+ROUTER.delete('/:id', (request, response) => {
+
+    let id = request.params.id;
+
+    let resultOfOperation = deleteStudent(id);
+
+    response.status(resultOfOperation.status).json(resultOfOperation);
+
+});
+
+ROUTER.delete('/:id/courses', (request, response) => {
+
+    let id = request.params.id;
+
+    let resultOfOperation = deleteCourses(id);
 
     response.status(resultOfOperation.status).json(resultOfOperation);
 

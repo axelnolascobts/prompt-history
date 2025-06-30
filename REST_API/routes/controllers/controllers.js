@@ -58,6 +58,18 @@ const COURSES_SCHEMA = {
     additionalProperties: false
 };
 
+const DELETE_COURSES_SCHEMA = {
+    type: "object",
+    properties: {
+        courses: { type: "array", items: { "type": "string" } }
+
+    },
+    required: ["courses"],
+    additionalProperties: false
+};
+
+
+const VALIDATE_PUT_COURSES = AJV_VALIDATOR.compile(DELETE_COURSES_SCHEMA);
 const VALIDATE_COURSES = AJV_VALIDATOR.compile(COURSES_SCHEMA);
 const VALIDATE_NEW_STUDENT = AJV_VALIDATOR.compile(NEW_STUDENT_SCHEMA);
 const VALIDATE_UPDATE_EVERY_STUDENT = AJV_VALIDATOR.compile(UPDATE_EVERY_STUDENT_DATA_SCHEMA);
@@ -110,6 +122,8 @@ function getAllStudents() {
 }
 
 function getStudentBySearchParam(searchParam) {
+
+    console.log(searchParam);
 
     let searchResult = searchStudents(searchParam);
     let student = searchResult.student;
@@ -268,13 +282,13 @@ function completeStudentUpdate(searchParam, body) {
 
                 }
 
-                let compareCourses = comparateCourses(student.courses, coursesList);
+                // let compareCourses = comparateCourses(student.courses, coursesList);
 
-                if (!compareCourses ) {
+                // if (!compareCourses ) {
 
-                    return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change user data"};
+                //     return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change user data"};
 
-                }
+                // }
 
                 let updatedStudent = {
 
@@ -351,9 +365,9 @@ function partialStudentUpdate(searchParam, body) {
 
                 }
 
-                let compareCourses = comparateCourses(student.courses, coursesList);
+                //let compareCourses = comparateCourses(student.courses, coursesList);
 
-                if (student.name === body.name && student.email === body.email && !compareCourses) {
+                if (!uniqueCourses/*student.name === body.name && student.email === body.email && !compareCourses*/) {
 
                     return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change something"};
 
@@ -481,29 +495,29 @@ function nonDuplicateCourses(courses) {
     return true;
 }
 
-function comparateCourses(courses1, courses2) {
+// function comparateCourses(courses1, courses2) {
 
-    if (courses1.length === courses2.length) {
+//     if (courses1.length === courses2.length) {
 
-        let countSameCourses = 0;
+//         let countSameCourses = 0;
 
-        for (let i = 0; i <= courses1.length -1; i++) {
+//         for (let i = 0; i <= courses1.length -1; i++) {
 
-            if (courses1[i] === courses2[i]){
+//             if (courses1[i] === courses2[i]){
 
-                countSameCourses++;
-            }
-        }
+//                 countSameCourses++;
+//             }
+//         }
 
-        if (countSameCourses === courses1.length) {
+//         if (countSameCourses === courses1.length) {
 
-            return false;
+//             return false;
             
-        }
-    }
+//         }
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 function searchStudents(searchParam) {
     
@@ -585,30 +599,75 @@ function patchCourses(id, body) {
         return { status: 404, message: "Student not foun or not exist" };  
     }
 
+    let courses = body.courses ? body.courses : [];
+
+    if (!nonDuplicateCourses(courses)) {
+
+        return { status: 400, message: "Check the courses, there cannot be repeated or empty courses" }
+    }
+
     let studentsData = readData();
 
     let studentIndex = searchResult.studentIndex
     //let courses = searchResult.student.courses;
 
-    studentsData[studentIndex].courses = body.courses;
+    studentsData[studentIndex].courses = courses;
 
     writeData(studentsData);
 
     return { status: 200, data: studentsData[studentIndex] };
-
-
 }
 
-/*function validateNameAndEmail(name, email) {
+function putCourses(id, body) {
 
-    if(typeof name === 'string' && typeof email === 'string') {
+    const VALIDATE_SCHEMA = VALIDATE_PUT_COURSES(body);
 
-        return true;
-    } else {
+    if (!VALIDATE_SCHEMA) {
 
-        return false;
+        return { status: 400, message: "invalid input format" };   
     }
 
-}*/
+    let searchResult = searchStudents(id);
 
-module.exports = { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate, getStudentCourses, patchCourses };
+    if (!searchResult) {
+
+        return { status: 404, message: "Student not foun or not exist" };  
+    }
+
+    if (!nonDuplicateCourses(courses)) {
+
+        return { status: 400, message: "Check the courses, there cannot be repeated or empty courses" }
+    }
+
+    let studentsData = readData();
+
+    let studentIndex = searchResult.studentIndex
+
+    studentsData[studentIndex].courses = courses;
+
+    writeData(studentsData);
+
+    return { status: 200, data: studentsData[studentIndex] };
+}
+
+function deleteCourses(id) {
+
+    let searchResult = searchStudents(id);
+
+    if (!searchResult) {
+
+        return { status: 404, message: "Student not foun or not exist" };  
+    }
+
+    let studentsData = readData();
+
+    let studentIndex = searchResult.studentIndex
+
+    studentsData[studentIndex].courses = [];
+
+    writeData(studentsData);
+
+    return { status: 200, data: studentsData[studentIndex] };
+}
+
+module.exports = { getAllStudents, getStudentBySearchParam, createNewStudent, deleteStudent, completeStudentUpdate, partialStudentUpdate, getStudentCourses, patchCourses, deleteCourses, putCourses };

@@ -49,12 +49,96 @@
             "description": "Student created successfully",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Student" }
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Student" }
+                    }
+                  }
+                }
               }
             }
           },
           "400": {
-            "description": "Invalid data sent"
+            "description": "Invalid data sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidFormat": {
+                    "summary": "Invalid input format",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Invalid input format" }
+                      ]
+                    }
+                  },
+                  "studentExists": {
+                    "summary": "If email alredy in use",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "This student already exists, use other data" }
+                      ]
+                    }
+                  },
+                  "emptyFild": {
+                    "summary": "Empy name",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Name is required and obligatory data, please fill it" }
+                      ]
+                    }
+                  },
+                  "repeatedCourses": {
+                    "summary": "Repeated Courses",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Check the courses, there cannot be repeated courses or in this case empty courses" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to save student",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 500,
+                  "data": [
+                    { "message": "Failed to save student" }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -103,7 +187,27 @@
             }
           },
           "404": {
-            "description": "Student not found"
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -139,10 +243,91 @@
             }
           },
           "400": {
-            "description": "Invalid data sent"
+            "description": "Invalid data sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidFormat": {
+                    "summary": "Invalid input format",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Invalid input format" }
+                      ]
+                    }
+                  },
+                  "studentExists": {
+                    "summary": "If email alredy in use",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "This student already exists, use other data" }
+                      ]
+                    }
+                  },
+                  "emptyFild": {
+                    "summary": "Empy name",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Name is required and obligatory data, please fill it" }
+                      ]
+                    }
+                  },
+                  "repeatedCourses": {
+                    "summary": "Repeated Courses",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Check the courses, there cannot be repeated courses or in this case empty courses" }
+                      ]
+                    }
+                  },
+                  "serachParamIncorrect": {
+                    "summary": "User try to find a student with his/her name",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "To edit a student, search by ID or email, please" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Student not found"
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -170,7 +355,7 @@
         },
         "responses": {
           "200": {
-            "description": "Student partially updated",
+            "description": "Student updated successfully",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Student" }
@@ -178,10 +363,100 @@
             }
           },
           "400": {
-            "description": "Invalid data sent"
+            "description": "Invalid data sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidFormat": {
+                    "summary": "Invalid input format",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Invalid input format" }
+                      ]
+                    }
+                  },
+                  "studentExists": {
+                    "summary": "If email alredy in use",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "This student already exists, use other data" }
+                      ]
+                    }
+                  },
+                  "emptyFild": {
+                    "summary": "Empy name",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Name is required and obligatory data, please fill it" }
+                      ]
+                    }
+                  },
+                  "repeatedCourses": {
+                    "summary": "Repeated Courses",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Check the courses, there cannot be repeated courses or in this case empty courses" }
+                      ]
+                    }
+                  },
+                  "serachParamIncorrect": {
+                    "summary": "User try to find a student with his/her name",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "To edit a student, search by ID or email, please" }
+                      ]
+                    }
+                  },
+                  "everythingAreUndefined": {
+                    "summary": "Every data are undefined",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "The entire user cannot be updated because some data did not change. Please change something" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Student not found"
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -203,8 +478,51 @@
           "204": {
             "description": "Student deleted successfully"
           },
+          "400": {
+            "description": "Incorrect search parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 400,
+                  "data": [
+                    { "message": "To delete a student, search by ID or email, please" }
+                  ]
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Student not found"
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -239,7 +557,27 @@
             }
           },
           "404": {
-            "description": "Student not found"
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -280,10 +618,64 @@
             }
           },
           "400": {
-            "description": "Invalid data sent"
+            "description": "Invalid data format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidFormat": {
+                    "summary": "Invalid input format",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Invalid input format" }
+                      ]
+                    }
+                  },
+                  "studentExists": {
+                    "summary": "Repeated courses",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "TCheck the courses, there cannot be repeated or empty courses" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Student not found"
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -326,6 +718,13 @@
             "items": { "type": "string" }
           }
         }
+      },
+      "ErrorMessage": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        },
+        "required": ["message"]
       }
     }
   }
