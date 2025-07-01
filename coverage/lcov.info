@@ -1,5 +1,5 @@
 TN:
-SF:app.js
+SF:APIrest/app.js
 FN:15,(anonymous_0)
 FN:20,(anonymous_1)
 FN:32,(anonymous_2)
@@ -43,7 +43,7 @@ BRF:5
 BRH:0
 end_of_record
 TN:
-SF:controllers/courseController.js
+SF:APIrest/controllers/courseController.js
 FN:8,readData
 FN:18,writeData
 FN:23,getAllCourses
@@ -161,7 +161,7 @@ BRF:31
 BRH:26
 end_of_record
 TN:
-SF:controllers/student/delete.js
+SF:APIrest/controllers/student/delete.js
 FN:3,(anonymous_0)
 FN:16,(anonymous_1)
 FN:30,(anonymous_2)
@@ -210,7 +210,7 @@ BRF:12
 BRH:10
 end_of_record
 TN:
-SF:controllers/student/get.js
+SF:APIrest/controllers/student/get.js
 FN:3,(anonymous_0)
 FN:35,(anonymous_1)
 FN:38,(anonymous_2)
@@ -287,7 +287,7 @@ BRF:26
 BRH:25
 end_of_record
 TN:
-SF:controllers/student/index.js
+SF:APIrest/controllers/student/index.js
 FNF:0
 FNH:0
 DA:1,2
@@ -297,7 +297,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:controllers/student/patch.js
+SF:APIrest/controllers/student/patch.js
 FN:13,(anonymous_0)
 FN:29,(anonymous_1)
 FN:32,(anonymous_2)
@@ -453,7 +453,7 @@ BRF:60
 BRH:48
 end_of_record
 TN:
-SF:controllers/student/post.js
+SF:APIrest/controllers/student/post.js
 FN:15,(anonymous_0)
 FN:52,(anonymous_1)
 FN:59,(anonymous_2)
@@ -506,7 +506,7 @@ BRF:12
 BRH:10
 end_of_record
 TN:
-SF:controllers/student/put.js
+SF:APIrest/controllers/student/put.js
 FN:15,(anonymous_0)
 FN:32,(anonymous_1)
 FN:34,(anonymous_2)
@@ -709,7 +709,7 @@ BRF:80
 BRH:61
 end_of_record
 TN:
-SF:controllers/student/utils.js
+SF:APIrest/controllers/student/utils.js
 FN:14,ReadData
 FN:18,WriteData
 FN:22,readCourses
@@ -805,7 +805,7 @@ BRF:22
 BRH:20
 end_of_record
 TN:
-SF:routes/courseRoutes.js
+SF:APIrest/routes/courseRoutes.js
 FNF:0
 FNH:0
 DA:1,2
@@ -821,7 +821,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:routes/studentRoutes.js
+SF:APIrest/routes/studentRoutes.js
 FNF:0
 FNH:0
 DA:1,2

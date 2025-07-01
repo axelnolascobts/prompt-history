@@ -17,8 +17,8 @@ describe("Utils", () => {
 
   describe("checkCoursesExist", () => {
     const coursesData = [{ name: "Math" }, { name: "Science" }];
-    it("returns false if all courses exist", () => {
-      expect(checkCoursesExist(["Math", "Science"], coursesData)).toBe(false);
+    it("returns [] if all courses exist", () => {
+      expect(checkCoursesExist(["Math", "Science"], coursesData)).toEqual([]);
     });
     it("returns array of missing courses if some do not exist", () => {
       expect(checkCoursesExist(["Math", "Biology"], coursesData)).toEqual([
@@ -37,40 +37,36 @@ describe("Utils", () => {
   });
 
   describe("validateStudent", () => {
-    const schema = {
-      type: "object",
-      properties: {
-        name: { type: "string" },
-        email: { type: "string", format: "email" },
-        courses: {
-          type: "array",
-          items: { type: "string" },
-          minItems: 1,
-        },
-      },
-      required: ["name", "email", "courses"],
-      additionalProperties: false,
-    };
+    const students = [];
+    const coursesData = [{ name: "Math" }, { name: "Science" }];
 
     it("validates a correct student object", () => {
       expect(
-        validateStudent({
-          name: "Milton",
-          email: "milton@mail.com",
-          courses: ["Math"],
-        })
-      ).toBe(true);
+        validateStudent(
+          {
+            name: "Milton",
+            email: "milton@mail.com",
+            courses: ["Math"],
+          },
+          students,
+          coursesData
+        )
+      ).toEqual({ valid: true });
     });
 
     it("invalidates an object with extra fields", () => {
       expect(
-        validateStudent(schema, {
-          name: "Milton",
-          email: "milton@mail.com",
-          courses: ["Math"],
-          foo: "bar",
-        })
-      ).toBe(false);
+        validateStudent(
+          {
+            name: "Milton",
+            email: "milton@mail.com",
+            courses: ["Math"],
+            foo: "bar",
+          },
+          students,
+          coursesData
+        )
+      ).toEqual({ valid: false, message: "data must NOT have additional properties" });
     });
   });
 });

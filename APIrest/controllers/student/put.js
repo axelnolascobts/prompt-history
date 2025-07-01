@@ -161,7 +161,7 @@ exports.updateStudent = (req, res) => {
       });
     }
 
-    // Antes de usar .some()
+
     if (!Array.isArray(courses)) {
       return res.status(400).json({
         status: 400,

@@ -62,13 +62,13 @@ describe('GET /courses', () => {
   });
 
   it('should get a course by name', async () => {
-    const res = await request(app).get('/courses/Math');
+    const res = await request(app).get('/courses').query({ name: 'Math' });
     expect(res.statusCode).toBe(200);
     expect(res.body.data.name).toBe('Math');
   });
 
   it('should return 404 if course not found', async () => {
-    const res = await request(app).get('/courses/Unknown');
+    const res = await request(app).get('/courses').query({ name: 'Unknown' });
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toBe("Course 'Unknown' not found");
   });
@@ -140,7 +140,7 @@ describe('Student Validation', () => {
       name: "Milton",
       email: "milton@mail.com",
       courses: ["Math"]
-    })).toBe(true);
+    }, [], mockCourses)).toEqual({ valid: true });
   });
 
   it('should invalidate student with empty name', () => {
@@ -148,7 +148,7 @@ describe('Student Validation', () => {
       name: "",
       email: "milton@mail.com",
       courses: ["Math"]
-    })).toBe(false);
+    }, [], mockCourses)).toEqual({ valid: false, message: "data/name must NOT have fewer than 1 characters" });
   });
 
   it('should invalidate student with invalid email', () => {
@@ -156,7 +156,7 @@ describe('Student Validation', () => {
       name: "Milton",
       email: "miltonmail.com",
       courses: ["Math"]
-    })).toBe(false);
+    }, [], mockCourses)).toEqual({ valid: false, message: 'data/email must match format "email"' });
   });
 
   it('should invalidate student with empty courses', () => {
@@ -164,7 +164,7 @@ describe('Student Validation', () => {
       name: "Milton",
       email: "milton@mail.com",
       courses: []
-    })).toBe(false);
+    }, [], mockCourses)).toEqual({ valid: false, message: "data/courses must NOT have fewer than 1 items" });
   });
 });
 

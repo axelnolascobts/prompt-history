@@ -106,8 +106,18 @@ function deleteCourse(req, res) {
   });
 }
 
+// Validar estudiante
+function validateStudent(student, courses, mockCourses) {
+  const courseExists = mockCourses.some(course => course.name === student.course);
+  if (!courseExists) {
+    return { valid: false, message: "Course does not exist" };
+  }
+  return { valid: true };
+}
+
 module.exports = {
   getAllCourses,
   createCourse,
   deleteCourse,
+  validateStudent,
 };

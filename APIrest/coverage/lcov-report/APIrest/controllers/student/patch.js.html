@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.12% </span>
+                <span class="strong">82.6% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>53/63</span>
+                <span class='fraction'>57/69</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.19% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>44/57</span>
+                <span class='fraction'>48/60</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.05% </span>
+                <span class="strong">81.53% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>49/59</span>
+                <span class='fraction'>53/65</span>
             </div>
         
             
@@ -242,13 +242,27 @@
 <a name='L177'></a><a href='#L177'>177</a>
 <a name='L178'></a><a href='#L178'>178</a>
 <a name='L179'></a><a href='#L179'>179</a>
-<a name='L180'></a><a href='#L180'>180</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -294,6 +308,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -310,14 +334,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -431,12 +455,14 @@
   emailRegex,
 } = require("./utils");
 &nbsp;
+const nameRegex = /^[\p{L} ]+$/u;
+&nbsp;
 exports.patchStudent = (req, res) =&gt; {
   const { id, email } = req.query;
   if (!id &amp;&amp; !email) {
     return res.status(400).json({
       status: 400,
-      message: "'id' or 'email' is required",
+      message: "cannot edit with name",
       data: null,
     });
   }
@@ -473,6 +499,16 @@ exports.patchStudent = (req, res) =&gt; {
       });
     }
 &nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.body || typeof req.body !== "object") {
+<span class="cstat-no" title="statement not covered" >      return res.status(400).json({</span>
+        status: 400,
+        message: "Request body is required and must be a JSON object",
+        data: null,
+      });
+    }
+&nbsp;
+    const { name, email: newEmail, courses } = req.body;
+&nbsp;
     // Validación de campos permitidos
     const allowedFields = ["name", "email", "courses"];
     const invalidFields = Object.keys(data).filter(
@@ -487,30 +523,30 @@ exports.patchStudent = (req, res) =&gt; {
     }
 &nbsp;
     // Validar y actualizar nombre
-    if (data.name !== undefined) {
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (
-        typeof data.name !== "string" ||
-        data.name.trim() === "" ||
-        !/^[\p{L}\d .'-]+$/u.test(data.name.trim())
-      ) {
+    if (name !== undefined) {
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof name !== "string" || name.trim() === "") {
 <span class="cstat-no" title="statement not covered" >        return res.status(400).json({</span>
           status: 400,
-          message:
-            data.name.trim() === ""
-              ? "Name cannot be empty"
-              : "Name contains invalid characters",
+          message: "Name cannot be empty",
           data: null,
         });
       }
-      student.name = data.name.trim();
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!nameRegex.test(name.trim())) {
+<span class="cstat-no" title="statement not covered" >        return res.status(400).json({</span>
+          status: 400,
+          message: "Name must contain only letters and spaces",
+          data: null,
+        });
+      }
+      student.name = name.trim();
     }
 &nbsp;
     // Validar y actualizar email
-    if (data.email !== undefined) {
+    if (newEmail !== undefined) {
       <span class="missing-if-branch" title="if path not taken" >I</span>if (
-        typeof data.email !== "string" ||
-        data.email.trim() === "" ||
-        !emailRegex.test(data.email.trim())
+        typeof newEmail !== "string" ||
+        newEmail.trim() === "" ||
+        !emailRegex.test(newEmail.trim())
       ) {
 <span class="cstat-no" title="statement not covered" >        return res.status(400).json({</span>
           status: 400,
@@ -522,7 +558,7 @@ exports.patchStudent = (req, res) =&gt; {
       if (
         students.some(
           (s, i) =&gt;
-            s.email.toLowerCase() === data.email.trim().toLowerCase() &amp;&amp;
+            s.email.toLowerCase() === newEmail.trim().toLowerCase() &amp;&amp;
             i !== studentIndex
         )
       ) {
@@ -535,10 +571,10 @@ exports.patchStudent = (req, res) =&gt; {
       // Si cambia el email, actualizarlo en los cursos
       coursesData.forEach((course) =&gt; {
         course.students = course.students.map((e) =&gt;
-          e === student.email ? data.email.trim().toLowerCase() : e
+          e === student.email ? newEmail.trim().toLowerCase() : e
         );
       });
-      student.email = data.email.trim().toLowerCase();
+      student.email = newEmail.trim().toLowerCase();
     }
 &nbsp;
     // Validar y actualizar cursos
@@ -562,7 +598,7 @@ exports.patchStudent = (req, res) =&gt; {
         });
       }
       const notExist = checkCoursesExist(data.courses, coursesData);
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (notExist &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >notExist.length &gt; 0)</span> {
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (notExist &amp;&amp; notExist.length &gt; 0) {
 <span class="cstat-no" title="statement not covered" >        return res.status(400).json({</span>
           status: 400,
           message: `These courses do not exist: ${notExist.join(", ")}`,
@@ -607,7 +643,7 @@ exports.patchStudent = (req, res) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-30T16:34:45.887Z
+                at 2025-07-01T22:56:00.131Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
