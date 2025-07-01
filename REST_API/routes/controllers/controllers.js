@@ -122,9 +122,7 @@ function getAllStudents() {
 }
 
 function getStudentBySearchParam(searchParam) {
-
-    console.log(searchParam);
-
+    
     let searchResult = searchStudents(searchParam);
     let student = searchResult.student;
 
@@ -355,7 +353,7 @@ function partialStudentUpdate(searchParam, body) {
 
                 }
 
-                let coursesAuxiliar = body.courses ? body.courses : [];
+                let coursesAuxiliar = body.courses ? body.courses : student.courses;
                 let coursesList = reviewCourses(coursesAuxiliar);
                 let uniqueCourses = nonDuplicateCourses(coursesList);
 
@@ -440,28 +438,28 @@ function reviewCourses(courses) {
 
     let coursesArray = [];
 
-    if (!Array.isArray(courses)) {
+    // if (!Array.isArray(courses)) {
 
-        if (typeof courses === 'string') {
+    //     if (typeof courses === 'string') {
 
-            if (courses.includes(",")) {
+    //         if (courses.includes(",")) {
 
-                let auxiliarArray = courses.split(",");
-                auxiliarArray.sort();
+    //             let auxiliarArray = courses.split(",");
+    //             auxiliarArray.sort();
 
-                for (let course of auxiliarArray) {
+    //             for (let course of auxiliarArray) {
 
-                    coursesArray.push(course.trim());
-                }
+    //                 coursesArray.push(course.trim());
+    //             }
 
-            } else {
+    //         } else {
 
-                coursesArray.push(courses.trim());
+    //             coursesArray.push(courses.trim());
 
-            }
-        }
+    //         }
+    //     }
 
-    } else {
+    //} else {
 
         for (let course of courses) {
 
@@ -469,7 +467,7 @@ function reviewCourses(courses) {
         }
 
         coursesArray.sort();
-    }
+    //}
 
     return coursesArray;
 }

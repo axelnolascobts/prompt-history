@@ -22,11 +22,11 @@
     },
     {
       "id": "543a8818-9c1f-47b7-a42c-4133effb9d43",
-      "name": "Panchin",
+      "name": "Pedro otro",
       "email": "otrocorreodepedro@hola.com",
       "courses": [
-        "curso1",
-        "curso2"
+        "curso",
+        "otrocurso"
       ]
     },
     {

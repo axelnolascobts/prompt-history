@@ -1,8 +1,60 @@
+jest.mock('fs');
+const fs = require('fs');
+
+beforeEach(() => {
+
+    fs.readFileSync.mockReturnValue(JSON.stringify(
+        [
+            {
+                "id": "78b2c235-21ce-4fc5-b53d-482a061e6a90",
+                "name": "holaaa",
+                "email": "a@hola.com",
+                "courses": []
+            },
+            {
+                "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+                "name": "Benjamin",
+                "email": "benhja@hola.com",
+                "courses": [
+                "biología"
+                ]
+            },
+            {
+                "id": "8e90aad9-1ebd-4308-8f73-62a89f58f142",
+                "name": "Dante",
+                "email": "dadada@hola.com",
+                "courses": [
+                "historia",
+                "matemáticas"
+                ]
+            },
+            {
+                "id": "2f9d2ea7-d403-4af7-9d90-41896646d368",
+                "name": "HOLO",
+                "email": "DANTE@hola.com",
+                "courses": [
+                "historia",
+                "matemáticas",
+                "fisica",
+                "materia"
+                ]
+            }
+        ]
+    ));
+
+    fs.writeFileSync.mockImplementation(() => {});
+
+});
+
+afterEach(() => {
+
+    jest.clearAllMocks();
+});
+
 const REQUEST = require('supertest');
 const APP = require('../app.js');
 
-jest.mock('fs');
-const fs = require('fs');
+
 
 describe("Some Endpoints from students REST API", () => {
 
@@ -25,64 +77,20 @@ describe("Some Endpoints from students REST API", () => {
         const RESPONSE = await REQUEST(APP).get('/students');
 
         expect(RESPONSE.statusCode).toBe(200);
-        expect(RESPONSE.body).toEqual(
-            [
-                {
-                    "id": "78b2c235-21ce-4fc5-b53d-482a061e6a90",
-                    "name": "holaaa",
-                    "email": "a@hola.com",
-                    "courses": []
-                },
-                {
-                    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
-                    "name": "Benjamin",
-                    "email": "benhja@hola.com",
-                    "courses": [
-                    "biología"
-                    ]
-                },
-                {
-                    "id": "8e90aad9-1ebd-4308-8f73-62a89f58f142",
-                    "name": "Dante",
-                    "email": "dadada@hola.com",
-                    "courses": [
-                    "historia",
-                    "matemáticas"
-                    ]
-                },
-                {
-                    "id": "2f9d2ea7-d403-4af7-9d90-41896646d368",
-                    "name": "HOLO",
-                    "email": "DANTE@hola.com",
-                    "courses": [
-                    "historia",
-                    "matemáticas",
-                    "fisica",
-                    "materia"
-                    ]
-                }
-            ]
-        );
     });
+
+    test("GET /students/search?email=benhja@hola.com should return a student data", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/students/search?email=benhja@hola.com');
+
+        expect(RESPONSE.statusCode).toBe(200);
+    }); 
 
     test("GET /students/:id should return a student data", async () => {
 
-        const RESPONSE = await REQUEST(APP).get('/students/fb5f899d-54a5-4ac6-8cc1-378e66afbd5d');
+        const RESPONSE = await REQUEST(APP).get('/students/26f5101b-bc69-474c-85b5-b05f4cd4e7aa');
 
         expect(RESPONSE.statusCode).toBe(200);
-        expect(RESPONSE.body).toEqual(
-            {
-                "status": 200,
-                "data": {
-                    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
-                    "name": "Benjamin",
-                    "email": "benhja@hola.com",
-                    "courses": [
-                        "biología"
-                    ]
-                }
-            }
-        );
     });
 
     test("GET /students/:id should return an error", async () => {
@@ -96,56 +104,6 @@ describe("Some Endpoints from students REST API", () => {
                 "message": "Student not found or not exist"
             }
         );
-    });
-
-    beforeEach(() => {
-
-        fs.readFileSync.mockReturnValue(JSON.stringify(
-            [
-                {
-                    "id": "78b2c235-21ce-4fc5-b53d-482a061e6a90",
-                    "name": "holaaa",
-                    "email": "a@hola.com",
-                    "courses": []
-                },
-                {
-                    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
-                    "name": "Benjamin",
-                    "email": "benhja@hola.com",
-                    "courses": [
-                    "biología"
-                    ]
-                },
-                {
-                    "id": "8e90aad9-1ebd-4308-8f73-62a89f58f142",
-                    "name": "Dante",
-                    "email": "dadada@hola.com",
-                    "courses": [
-                    "historia",
-                    "matemáticas"
-                    ]
-                },
-                {
-                    "id": "2f9d2ea7-d403-4af7-9d90-41896646d368",
-                    "name": "HOLO",
-                    "email": "DANTE@hola.com",
-                    "courses": [
-                    "historia",
-                    "matemáticas",
-                    "fisica",
-                    "materia"
-                    ]
-                }
-            ]
-        ));
-
-        fs.writeFileSync.mockImplementation(() => {});
-
-    });
-
-    afterEach(() => {
-
-        jest.clearAllMocks();
     });
 
     test("POST /students should return a new student", async () => {

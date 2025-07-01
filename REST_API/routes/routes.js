@@ -8,7 +8,6 @@ ROUTER.get('/', (request, response) => {
     let studentsData = getAllStudents();
 
     response.status(200).json(studentsData);
-
 });
 
 ROUTER.get('/search', (request, response) => {
@@ -20,7 +19,6 @@ ROUTER.get('/search', (request, response) => {
     let student = getStudentBySearchParam(searchParam);
 
     response.status(student.status).json(student);
-
 });
 
 ROUTER.get('/:id', (request, response) => {
@@ -30,7 +28,6 @@ ROUTER.get('/:id', (request, response) => {
     let student = getStudentBySearchParam(id);
 
     response.status(student.status).json(student);
-
 });
 
 ROUTER.get('/:id/courses', (request, response) => {
@@ -40,7 +37,6 @@ ROUTER.get('/:id/courses', (request, response) => {
     let student = getStudentCourses(id)
 
     response.status(student.status).json(student);
-
 });
 
 ROUTER.post('/', (request, response) => {
@@ -53,7 +49,6 @@ ROUTER.post('/', (request, response) => {
     let newStudent = createNewStudent(body);
 
     response.status(newStudent.status).json(newStudent);
-
 });
 
 ROUTER.put('/:id', (request, response) => {
@@ -64,7 +59,6 @@ ROUTER.put('/:id', (request, response) => {
     let updatedStudent = completeStudentUpdate(id, body);
 
     response.status(updatedStudent.status).json(updatedStudent);
-
 });
 
 ROUTER.patch('/:id', (request, response) => {
@@ -75,7 +69,6 @@ ROUTER.patch('/:id', (request, response) => {
     let updatedStudent = partialStudentUpdate(id, body);
 
     response.status(updatedStudent.status).json(updatedStudent);
-
 });
 
 ROUTER.patch('/:id/courses', (request, response) => {
@@ -86,7 +79,6 @@ ROUTER.patch('/:id/courses', (request, response) => {
     let result = patchCourses(id, body);
 
     response.status(result.status).json(result);
-
 });
 
 ROUTER.put('/:id/courses', (request, response) => {
@@ -97,7 +89,6 @@ ROUTER.put('/:id/courses', (request, response) => {
     let result = putCourses(id, body);
 
     response.status(result.status).json(result);
-
 });
 
 ROUTER.delete('/:id', (request, response) => {
@@ -107,7 +98,6 @@ ROUTER.delete('/:id', (request, response) => {
     let resultOfOperation = deleteStudent(id);
 
     response.status(resultOfOperation.status).json(resultOfOperation);
-
 });
 
 ROUTER.delete('/:id/courses', (request, response) => {
@@ -117,7 +107,6 @@ ROUTER.delete('/:id/courses', (request, response) => {
     let resultOfOperation = deleteCourses(id);
 
     response.status(resultOfOperation.status).json(resultOfOperation);
-
 });
 
 module.exports = ROUTER;

@@ -51,4 +51,3 @@ function updateCourse(courseName, body) {
 }
 
 module.exports = { updateCourse };
-
