@@ -48,7 +48,7 @@ function searchCourses(name) {
 
     let coursesData = readData();
 
-    let course = coursesData.filter(courseData => courseData.course.trim().toLowerCase() === name.trim().toLowerCase());
+    let course = coursesData.find(courseData => courseData.course.trim().toLowerCase() === name.trim().toLowerCase());
 
     return course;
 }

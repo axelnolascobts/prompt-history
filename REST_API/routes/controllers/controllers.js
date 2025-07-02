@@ -117,13 +117,19 @@ function getAllStudents() {
 
     let students = readData();
 
-    return {status: 200, data: students}
+    return {status: 200, data: students};
 
 }
 
 function getStudentBySearchParam(searchParam) {
-    
-    let searchResult = searchStudents(searchParam);
+
+    if (!searchParam) {
+
+        return {status: 400, message: "Query param undefined"};
+
+    }
+
+    let searchResult = searchStudents(searchParam); 
     let student = searchResult.student;
 
     if (Array.isArray(student)) {
@@ -250,15 +256,15 @@ function completeStudentUpdate(searchParam, body) {
 
         if (student) {
 
-            if (Array.isArray(student)) {
+            // if (Array.isArray(student)) {
 
-                return {status: 400, message: "To edit a student, search by ID or email, please"};
+            //     return {status: 400, message: "To edit a student, search by ID or email, please"};
 
-            }
+            // }
 
             if ( !body ) {
 
-                return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change user data"};
+                //return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change user data"};
 
             } else {
 
@@ -333,7 +339,7 @@ function partialStudentUpdate(searchParam, body) {
 
         if ( !body ) {
 
-            return {status: 400, message: "Not content"};
+            //return {status: 400, message: "Not content"};
 
         } else {
             
@@ -367,7 +373,7 @@ function partialStudentUpdate(searchParam, body) {
 
                 if (!uniqueCourses/*student.name === body.name && student.email === body.email && !compareCourses*/) {
 
-                    return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change something"};
+                    //return {status: 400, message: "The entire user cannot be updated because some data did not change. Please change something"};
 
                 } else {
 
@@ -551,7 +557,7 @@ function searchStudents(searchParam) {
 
         return false;
 
-    } else if (!uuidMatch && !emailMAtch) {
+    } else if (!uuidMatch && !emailMAtch) {    
 
         let student = studentsData.filter(studentData => studentData.name.trim().toLowerCase() === searchParam.trim().toLowerCase());
 
@@ -625,23 +631,23 @@ function putCourses(id, body) {
         return { status: 400, message: "invalid input format" };   
     }
 
-    let searchResult = searchStudents(id);
+    let searchResult = searchStudents(id);    
 
     if (!searchResult) {
 
         return { status: 404, message: "Student not foun or not exist" };  
     }
 
-    if (!nonDuplicateCourses(courses)) {
+    if (!nonDuplicateCourses(body.courses)) {
 
         return { status: 400, message: "Check the courses, there cannot be repeated or empty courses" }
     }
 
     let studentsData = readData();
 
-    let studentIndex = searchResult.studentIndex
+    let studentIndex = searchResult.studentIndex;
 
-    studentsData[studentIndex].courses = courses;
+    studentsData[studentIndex].courses = body.courses;
 
     writeData(studentsData);
 

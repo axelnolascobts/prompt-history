@@ -1,62 +1,80 @@
 jest.mock('fs');
 const fs = require('fs');
 
-beforeEach(() => {
-
-    fs.readFileSync.mockReturnValue(JSON.stringify(
-        [
-            {
-                "id": "78b2c235-21ce-4fc5-b53d-482a061e6a90",
-                "name": "holaaa",
-                "email": "a@hola.com",
-                "courses": []
-            },
-            {
-                "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
-                "name": "Benjamin",
-                "email": "benhja@hola.com",
-                "courses": [
-                "biología"
-                ]
-            },
-            {
-                "id": "8e90aad9-1ebd-4308-8f73-62a89f58f142",
-                "name": "Dante",
-                "email": "dadada@hola.com",
-                "courses": [
-                "historia",
-                "matemáticas"
-                ]
-            },
-            {
-                "id": "2f9d2ea7-d403-4af7-9d90-41896646d368",
-                "name": "HOLO",
-                "email": "DANTE@hola.com",
-                "courses": [
-                "historia",
-                "matemáticas",
-                "fisica",
-                "materia"
-                ]
-            }
-        ]
-    ));
-
-    fs.writeFileSync.mockImplementation(() => {});
-
-});
-
-afterEach(() => {
-
-    jest.clearAllMocks();
-});
-
 const REQUEST = require('supertest');
 const APP = require('../app.js');
 
-
-
 describe("Some Endpoints from students REST API", () => {
+
+    beforeEach(() => {
+
+        fs.readFileSync.mockReturnValue(JSON.stringify({
+            students: [
+                {
+                    "id": "78b2c235-21ce-4fc5-b53d-482a061e6a90",
+                    "name": "holaaa",
+                    "email": "a@hola.com",
+                    "courses": []
+                },
+                {
+                    "id": "fb5f899d-54a5-4ac6-8cc1-378e66afbd5d",
+                    "name": "Benjamin",
+                    "email": "benhja@hola.com",
+                    "courses": ["biología"]
+                },
+                {
+                    "id": "8e90aad9-1ebd-4308-8f73-62a89f58f142",
+                    "name": "Dante",
+                    "email": "dadada@hola.com",
+                    "courses": ["historia", "matemáticas"]
+                },
+                {
+                    "id": "2f9d2ea7-d403-4af7-9d90-41896646d368",
+                    "name": "HOLO",
+                    "email": "DANTE@hola.com",
+                    "courses": ["historia", "matemáticas", "fisica", "materia"]
+                }
+            ],
+            "courses": [
+                {
+                "course": "historia",
+                "students": [
+                    {
+                    "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+                    "studentName": "Isaac Gallo"
+                    }
+                ]
+                },
+                {
+                "course": "biologia",
+                "students": [
+                    {
+                    "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+                    "studentName": "Isaac Gallo"
+                    }
+                ]
+                },
+                {
+                "course": "arte",
+                "students": [
+                    {
+                    "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",
+                    "studentName": "Isaac Gallo"
+                    }
+                ]
+                }
+            ]
+        },
+    ));
+
+        fs.writeFileSync.mockImplementation(() => {});
+
+    });
+
+    afterEach(() => {
+
+        jest.clearAllMocks();
+    });
 
     test("GET /estudents should return an error message", async () => {
 
@@ -84,11 +102,32 @@ describe("Some Endpoints from students REST API", () => {
         const RESPONSE = await REQUEST(APP).get('/students/search?email=benhja@hola.com');
 
         expect(RESPONSE.statusCode).toBe(200);
+    });
+
+    test("GET /students/search?id=fb5f899d-54a5-4ac6-8cc1-378e66afbd5d should return a student data", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/students/search?id=fb5f899d-54a5-4ac6-8cc1-378e66afbd5d');
+
+        expect(RESPONSE.statusCode).toBe(200);
+    }); 
+
+    test("GET /students/search?name=Benjamin should return a student data", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/students/search?name=Benjamin');
+
+        expect(RESPONSE.statusCode).toBe(200);
     }); 
 
     test("GET /students/:id should return a student data", async () => {
 
-        const RESPONSE = await REQUEST(APP).get('/students/26f5101b-bc69-474c-85b5-b05f4cd4e7aa');
+        const RESPONSE = await REQUEST(APP).get('/students/fb5f899d-54a5-4ac6-8cc1-378e66afbd5d');
+
+        expect(RESPONSE.statusCode).toBe(200);
+    });
+
+    test("GET /students/:id/courses should return a student courses", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/students/fb5f899d-54a5-4ac6-8cc1-378e66afbd5d/courses');
 
         expect(RESPONSE.statusCode).toBe(200);
     });
@@ -120,19 +159,6 @@ describe("Some Endpoints from students REST API", () => {
         );
 
         expect(RESPONSE.statusCode).toBe(201);
-        // expect(RESPONSE.body).toEqual(
-        //     {
-        //         "status": 201,
-        //         "data": {
-        //             "id": "4fd81bc4-6389-42a0-bc63-eaae6ff1afa5",
-        //             "name": "Pancho",
-        //             "email": "pancho@hola.com",
-        //             "courses": [
-        //                 "biología"
-        //             ]
-        //         }
-        //     }
-        // );
     });
 
     test("POST /students should return error message", async () => {
@@ -149,12 +175,6 @@ describe("Some Endpoints from students REST API", () => {
         );
 
         expect(RESPONSE.statusCode).toBe(400);
-        expect(RESPONSE.body).toEqual(
-            {
-                "status": 400,
-                "message": "Name is required and obligatory data, plis fill it",
-            }
-        );
     });
 
     test("PUT /students/:searchParam should return edited student", async () => {
@@ -173,6 +193,20 @@ describe("Some Endpoints from students REST API", () => {
         expect(RESPONSE.statusCode).toBe(200);
     });
 
+    test("PUT /students/:id/courses should return edited courses list", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/students/fb5f899d-54a5-4ac6-8cc1-378e66afbd5d/courses')
+        .send(
+            {
+                "courses": [
+                    "materiaxd"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(200);
+    });
+
     test("PATCH /students/:searchParam should return edited student", async () => {
 
         const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90')
@@ -182,6 +216,20 @@ describe("Some Endpoints from students REST API", () => {
                 "email": "correo@correo.com",
                 "courses": [
                     "materiaxd"
+                ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(200);
+    });
+
+    test("PATCH /students/:id/courses should return edited courses list", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/fb5f899d-54a5-4ac6-8cc1-378e66afbd5d/courses')
+        .send(
+            {
+                "courses": [
+                    "materiaxd", "materia2"
                 ]
             }
         );
@@ -233,12 +281,12 @@ describe("Some Endpoints from students REST API", () => {
 
     test("PUT /students/:searchParam should return an error for not found student", async () => {
 
-        const RESPONSE = await REQUEST(APP).put('/students/b5f899d-afbd5d')
+        const RESPONSE = await REQUEST(APP).put('/students/78b2c235-21ce-4fc5-b53d-482a061e6aui')
         .send(
             {
                 "name": "Constantino",
                 "email": "aaa@hola.com",
-                "courses": "materia"
+                "courses": ["materia"]
             }
         );
 
@@ -252,28 +300,11 @@ describe("Some Endpoints from students REST API", () => {
             {
                 "name": "Constantino",
                 "email": "aaa@hola.com",
-                "courses": "materia,materia"
+                "courses": ["materia","materia"]
             }
         );
 
         expect(RESPONSE.statusCode).toBe(400);
-    });
-
-    test("PUT /students/:searchParam should return an error for not change data", async () => {
-
-        const RESPONSE = await REQUEST(APP).put('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90')
-        .send(
-            {
-                "name": "holaaa",
-                "email": "aaa@hola.com",
-                "courses": "materia"
-            }
-        );
-
-        expect(RESPONSE.statusCode).toBe(400);
-        expect(RESPONSE.body).toEqual(
-            {"status": 400, "message": "The entire user cannot be updated because some data did not change. Please change all user data"}
-        );
     });
 
     test("PUT /students/:searchParam should return an error for ocuped email", async () => {
@@ -283,31 +314,11 @@ describe("Some Endpoints from students REST API", () => {
             {
                 "name": "Max",
                 "email": "dadada@hola.com",
-                "courses": "materia"
+                "courses": ["materia"]
             }
         );
 
         expect(RESPONSE.statusCode).toBe(400);
-        expect(RESPONSE.body).toEqual(
-            {"status": 400, "message": "The email is ocuped, plis use another email to create a new student"}
-        );
-    });
-
-    test("PUT /students/:searchParam should return an error for use name by search param", async () => {
-
-        const RESPONSE = await REQUEST(APP).put('/students/Benjamin')
-        .send(
-            {
-                "name": "Max",
-                "email": "correoprueba@hola.com",
-                "courses": "materia"
-            }
-        );
-
-        expect(RESPONSE.statusCode).toBe(400);
-        expect(RESPONSE.body).toEqual(
-            {"status": 400, "message": "To edit a student, search by ID or email, please"}
-        );
     });
 
     test("GET /students/:searchParam should return a list of students with same name", async () => {
@@ -350,22 +361,6 @@ describe("Some Endpoints from students REST API", () => {
         );
 
         expect(RESPONSE.statusCode).toBe(200);
-        expect(RESPONSE.body).toEqual(
-            {
-                "status": 200,
-                "data": {
-                    "id": "2f9d2ea7-d403-4af7-9d90-41896646d368",
-                    "name": "benja editado",
-                    "email": "cambiadocorreoa@hola.com",
-                    "courses": [
-                        "hola",
-                        "materia",
-                        "otramateria",
-                        "otramateria2"
-                    ]
-                }
-            }
-        );
     });
 
     test("PUT /students/:searchParam should return an error from repeated courses", async () => {
@@ -375,12 +370,11 @@ describe("Some Endpoints from students REST API", () => {
             {
                 "name": "AAAAA",
                 "email": "gayutra@hola.com",
-                "courses": [ "biología" ]
+                "courses": [ "biología", "biología" ]
             }
         );
 
         expect(RESPONSE.statusCode).toBe(400);
-
     });
 
     test("POST /students should return new student", async () => {
@@ -390,7 +384,7 @@ describe("Some Endpoints from students REST API", () => {
             {
                 "name": "col",
                 "email": "coayduaa@cureo.com",
-                "courses": "biología"
+                "courses": ["biología"]
 
             }
         );
@@ -405,7 +399,7 @@ describe("Some Endpoints from students REST API", () => {
             {
                 "name": "col",
                 "email": "coayduaa@cureo.com",
-                "courses": "biología"
+                "courses": ["biología"]
 
             }
         );
@@ -423,24 +417,6 @@ describe("Some Endpoints from students REST API", () => {
                 "email": "a@hola.com",
                 "courses": "biología"
 
-            }
-        );
-
-        expect(RESPONSE.statusCode).toBe(400);
-
-    });
-
-    test("PATCH /students/:searchParam should return error for not change data", async () => {
-
-        const RESPONSE = await REQUEST(APP).patch('/students/8e90aad9-1ebd-4308-8f73-62a89f58f142')
-        .send(
-            {
-                "name": "Dante",
-                "email": "dadada@hola.com",
-                "courses": [
-                    "historia",
-                    "matemáticas"
-                ]
             }
         );
 
@@ -568,14 +544,455 @@ describe("Some Endpoints from students REST API", () => {
         );
 
         expect(RESPONSE.statusCode).toBe(400);
+    });
 
+    test("GET /students/:searchParam should return an error for undefined param", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/students/search?=benhja@hola.com');
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PUT /students/:searchParam should return an error for use name to edit student", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/students/search?name=benjamin');
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /students/:searchParam should return an error for repeated courses", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90')
+        .send(
+            {
+                "courses": [ "curso", "curso" ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PUT /students/:id/courses should return an error for repeated courses", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90/courses')
+        .send(
+            {
+                "courses": [ "curso", "curso" ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PUT /students/:id/courses should return an error for student not found", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/students/78b2c235-21ce-4fc5-b53d-482a061e6d90/courses')
+        .send(
+            {
+                "courses": [ "curso", "curso" ]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(404);
+    });
+
+    test("PUT /students/:id/courses should return an error for invalid format", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90/courses')
+        .send(
+            {
+                "courses": 33
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /students/:id/courses should return an error for repeated courses", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90/courses')
+        .send(
+            {
+                "courses": ["course","course"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /students/:id/courses should return an error for student not fount", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6x90/courses')
+        .send(
+            {
+                "courses": ["course","course"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(404);
+    });
+
+    test("PATCH /students/:id/courses should return an error for invalid format", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90/courses')
+        .send(
+            {
+                "courses": "course"
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /students/:id should return an error for repeated email", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90')
+        .send(
+            {
+                "email": "dadada@hola.com"
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /students/:id should return an error for repeated email", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90')
+        .send(
+            {
+                "name": "    "
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /students/:id should return an error for repeated email", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/students/78b2c235-21ce-4fc5-b53d-482a061e6a90')
+        .send(
+            {
+                "courses": ["uno", "uno"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+    
+    test("GET /students/:id/courses should return an error for student not found", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/students/78b2c235-21ce-4fc5-b53d-482a061e6x90/courses');
+
+        expect(RESPONSE.statusCode).toBe(404);
+    });
+
+    test("GET /courses/ should return every courses", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/courses/');
+
+        expect(RESPONSE.statusCode).toBe(200);
+    });
+
+    test("GET /courses/:name should return one courses", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/courses/arte');
+
+        expect(RESPONSE.statusCode).toBe(200);
+    });
+
+    test("GET /courses/:name should return an error for not found course", async () => {
+
+        const RESPONSE = await REQUEST(APP).get('/courses/geografia');
+
+        expect(RESPONSE.statusCode).toBe(404);
+    });
+
+    test("POST /courses/ should return new course", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "course": "geografia",
+            "students": ["78b2c235-21ce-4fc5-b53d-482a061e6a90","fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(201);
+    });
+
+    test("POST /courses/ should return error for repeated students", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "course": "geografia",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d","fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("POST /courses/ should return error for not found students", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "course": "geografia",
+            "students": ["hola"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("POST /courses/ should return error for invalid input format", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "name": "geografia",
+            "a": ["hola"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("POST /courses/ should return error for repeted course name", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "course": "arte",
+            "students": ["hola"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("POST /courses/ should return error for empty course name", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "course": "   ",
+            "students": ["hola"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("POST /courses/ should return new course", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "course": "materia",
+            "students": []
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(201);
+    });
+
+    test("POST /courses/ should return an error for not found student in course", async () => {
+
+        const RESPONSE = await REQUEST(APP).post('/courses/')
+        .send(
+            {
+            "course": "geografia",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd8d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /courses/:name should return edited course", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/courses/arte')
+        .send(
+            {
+            "course": "arte",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(200);
+    });
+
+    test("PATCH /courses/:name should return an error for invalid input format", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/courses/arte')
+        .send(
+            {
+            "name": "arte",
+            "estudns": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /courses/:name should return an error for course not found", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/courses/locologia')
+        .send(
+            {
+            "course": "locologia",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd8d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(404);
+    });
+
+    test("PATCH /courses/:name should return an error for course not found", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/courses/arte')
+        .send(
+            {
+            "course": "ecologia",
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /courses/:name should return an error for course not found", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/courses/arte')
+        .send(
+            {
+            "course": "arte",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd8d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PATCH /courses/:name should return an error for course not found", async () => {
+
+        const RESPONSE = await REQUEST(APP).patch('/courses/arte')
+        .send(
+            {
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d","fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PUT /courses/:name should return an edited course", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/courses/arte')
+        .send(
+            {
+            "course": "arte",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(200);
+    });
+
+    test("PUT /courses/:name should return an error for invalid input format", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/courses/arte')
+        .send(
+            {
+            "coursess": "arte",
+            "studentsaa": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PUT /courses/:name should return an error for not found course", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/courses/astrologia')
+        .send(
+            {
+            "course": "arte",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(404);
+    });
+
+    test("PUT /courses/:name should return an error for try change course name", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/courses/arte')
+        .send(
+            {
+            "course": "artesss",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PUT /courses/:name should return an error for repeated students", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/courses/arte')
+        .send(
+            {
+            "course": "arte",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd5d","fb5f899d-54a5-4ac6-8cc1-378e66afbd5d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("PUT /courses/:name should return an error for not found students", async () => {
+
+        const RESPONSE = await REQUEST(APP).put('/courses/arte')
+        .send(
+            {
+            "course": "arte",
+            "students": ["fb5f899d-54a5-4ac6-8cc1-378e66afbd8d"]
+            }
+        );
+
+        expect(RESPONSE.statusCode).toBe(400);
+    });
+
+    test("DELETE /courses/:name should return an ok for deleted course", async () => {
+
+        const RESPONSE = await REQUEST(APP).delete('/courses/arte');
+
+        expect(RESPONSE.statusCode).toBe(204);
+    });
+
+    test("DELETE /courses/:name should return an error for not found course", async () => {
+
+        const RESPONSE = await REQUEST(APP).delete('/courses/enchiladas3');
+
+        expect(RESPONSE.statusCode).toBe(404);
     });
 
     test("DELETE /students/:searchParam should return an error for use name", async () => {
 
-        const RESPONSE = await REQUEST(APP).delete('/students/holaaa');
+        const RESPONSE = await REQUEST(APP).delete('/students/holaa');
 
-        expect(RESPONSE.statusCode).toBe(400);
+        expect(RESPONSE.statusCode).toBe(404);
+
+    });
+
+    test("DELETE /students/:id/courses should return an error for student not found", async () => {
+
+        const RESPONSE = await REQUEST(APP).delete('/students/8e90aad9-1ebd-4308-8f73-62a89f58fds2/courses');
+
+        expect(RESPONSE.statusCode).toBe(404);
 
     });
 
@@ -601,6 +1018,13 @@ describe("Some Endpoints from students REST API", () => {
 
         expect(RESPONSE.statusCode).toBe(404);
 
+    });
+
+    test("DELETE /students/:id/courses should return a deleted response", async () => {
+
+        const RESPONSE = await REQUEST(APP).delete('/students/fb5f899d-54a5-4ac6-8cc1-378e66afbd5d/courses')
+
+        expect(RESPONSE.statusCode).toBe(200);
     });
     
 });

@@ -71,22 +71,22 @@ ROUTER.patch('/:id', (request, response) => {
     response.status(updatedStudent.status).json(updatedStudent);
 });
 
-ROUTER.patch('/:id/courses', (request, response) => {
-
-    let id = request.params.id;
-    let body = request.body;
-
-    let result = patchCourses(id, body);
-
-    response.status(result.status).json(result);
-});
-
 ROUTER.put('/:id/courses', (request, response) => {
 
     let id = request.params.id;
     let body = request.body;
 
     let result = putCourses(id, body);
+
+    response.status(result.status).json(result);
+});
+
+ROUTER.patch('/:id/courses', (request, response) => {
+
+    let id = request.params.id;
+    let body = request.body;
+
+    let result = patchCourses(id, body);
 
     response.status(result.status).json(result);
 });
