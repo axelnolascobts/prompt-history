@@ -3,10 +3,7 @@ const {
   WriteData,
   readCourses,
   writeCourses,
-  checkCoursesExist,
-  hasDuplicateCourses,
   validateStudent,
-  emailRegex,
   uuidv4,
 } = require("./utils");
 
@@ -17,7 +14,7 @@ exports.createStudent = (req, res) => {
     if (Object.keys(req.query).length > 0) {
       return res.status(400).json({
         status: 400,
-        message: "Request body cannot be empty",
+        message: "Query parameters are not allowed in POST",
       });
     }
 

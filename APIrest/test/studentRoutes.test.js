@@ -122,7 +122,7 @@ describe("Student API", () => {
       };
       const res = await request(app).post("/students").send(newStudent);
       expect(res.statusCode).toBe(400);
-      expect(res.body.message).toBe('data/email must match format "email"');
+      expect(res.body.message).toBe('email must match format "email"');
     });
 
     it("should reject empty or invalid course strings", async () => {
@@ -198,7 +198,7 @@ describe("Student API", () => {
       const updated = { name: "Milton", email: "milton@gmail.com", courses: "Math" };
       const res = await request(app).put("/students").query({ id: "123" }).send(updated);
       expect(res.statusCode).toBe(400);
-      expect(res.body.message).toBe("data/courses must be array");
+      expect(res.body.message).toBe("courses must be array");
     });
   });
 
@@ -208,7 +208,7 @@ describe("Student API", () => {
       const updated = { name: "Milton", email: "milton@gmail.com", courses: ["Math"] };
       const res = await request(app).put("/students").send(updated);
       expect(res.statusCode).toBe(400);
-      expect(res.body.message).toMatch(/id.*email.*required|cannot delete with name/i);
+      expect(res.body.message).toMatch("cannot update with name");
     });
   });
 
@@ -362,7 +362,7 @@ describe("Student API", () => {
         name: "",
         email: "milton@mail.com",
         courses: ["Math"]
-      }, [], mockCourses)).toEqual({ valid: false, message: "data/name must NOT have fewer than 1 characters" });
+      }, [], mockCourses)).toEqual({ valid: false, message: "name must NOT have fewer than 1 characters" });
     });
 
     it("should invalidate student with invalid email", () => {
@@ -370,7 +370,7 @@ describe("Student API", () => {
         name: "Milton",
         email: "miltonmail.com",
         courses: ["Math"]
-      }, [], mockCourses)).toEqual({ valid: false, message: 'data/email must match format "email"' });
+      }, [], mockCourses)).toEqual({ valid: false, message: 'email must match format "email"' });
     });
 
     it("should invalidate student with empty courses", () => {
@@ -378,7 +378,7 @@ describe("Student API", () => {
         name: "Milton",
         email: "milton@mail.com",
         courses: []
-      }, [], mockCourses)).toEqual({ valid: false, message: "data/courses must NOT have fewer than 1 items" });
+      }, [], mockCourses)).toEqual({ valid: false, message: "courses must NOT have fewer than 1 items" });
     });
   });
 
@@ -401,7 +401,7 @@ describe("Student API", () => {
         courses: ["Math"]
       });
       expect(res.statusCode).toBe(400);
-      expect(res.body.message).toBe("Request body cannot be empty");
+      expect(res.body.message).toBe("Query parameters are not allowed in POST");
     });
 
     it("PATCH /students should return 400 if no id or email", async () => {

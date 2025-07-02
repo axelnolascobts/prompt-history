@@ -4,7 +4,9 @@
     "students": [
       "juan@gmail.com",
       "pepe@gmail.com",
-      "pepe1@gmail.com"
+      "pepe1@gmail.com",
+      "mejia@gmail1.com",
+      "prueba@gmail.com"
     ]
   },
   {
@@ -12,12 +14,17 @@
     "students": [
       "juan@gmail.com",
       "mejia3@gmail.com",
-      "milton@gmail1.com",
       "juan@gmail1.com"
     ]
   },
   {
     "name": "maths",
+    "students": [
+      "mejia@gmail1.com"
+    ]
+  },
+  {
+    "name": "history",
     "students": []
   }
 ]

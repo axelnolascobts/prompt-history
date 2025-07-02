@@ -69,10 +69,11 @@ const studentSchema = {
 const validateStudent = ajv.compile(studentSchema);
 
 function validateStudentData(student, students, coursesData, currentId = null) {
-  // AJV validation
   const valid = validateStudent(student);
   if (!valid) {
-    return { valid: false, message: ajv.errorsText(validateStudent.errors) };
+    let message = ajv.errorsText(validateStudent.errors);
+    message = message.replace(/data[./]/g, "");
+    return { valid: false, message };
   }
 
   // Email duplicado

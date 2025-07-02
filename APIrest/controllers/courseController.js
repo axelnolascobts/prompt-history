@@ -43,7 +43,72 @@ function getAllCourses(req, res) {
 
 // Crear un nuevo curso (por query param)
 function createCourse(req, res) {
-  const name = req.body.name || req.query.name;
+  // No permitir query params en POST
+  if (Object.keys(req.query).length > 0) {
+    return res.status(400).json({
+      status: 400,
+      message: "Query parameters are not allowed",
+    });
+  }
+
+  // Validar que el body no esté vacío y tenga la propiedad name
+  if (!req.body || (!req.body.name && req.body.name !== "")) {
+    return res.status(400).json({
+      status: 400,
+      message: "Course name is required in request body",
+    });
+  }
+
+  const { name } = req.body;
+  const courses = readData(COURSE_PATH, []);
+
+  // Permitir crear varios cursos con un arreglo de strings
+  if (Array.isArray(name)) {
+    if (name.length === 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Course name array cannot be empty",
+      });
+    }
+    const created = [];
+    const errors = [];
+    name.forEach((courseName) => {
+      if (
+        typeof courseName !== "string" ||
+        courseName.trim() === "" ||
+        !/^[\p{L}\d .'-]+$/u.test(courseName)
+      ) {
+        errors.push({
+          name: courseName,
+          message: "Course name is invalid or contains invalid characters",
+        });
+        return;
+      }
+      if (
+        courses.find(
+          (c) => c.name.toLowerCase() === courseName.trim().toLowerCase()
+        )
+      ) {
+        errors.push({
+          name: courseName,
+          message: "Course already exists",
+        });
+        return;
+      }
+      const newCourse = { name: courseName.trim(), students: [] };
+      courses.push(newCourse);
+      created.push(newCourse);
+    });
+    writeData(COURSE_PATH, courses);
+    return res.status(201).json({
+      status: 201,
+      message: "Courses processed",
+      created,
+      errors,
+    });
+  }
+
+  // crear un solo curso
   if (!name || typeof name !== "string" || name.trim() === "") {
     return res
       .status(400)
@@ -54,7 +119,6 @@ function createCourse(req, res) {
       .status(400)
       .json({ message: "Course name contains invalid characters" });
   }
-  const courses = readData(COURSE_PATH, []);
   if (courses.find((c) => c.name.toLowerCase() === name.trim().toLowerCase())) {
     return res
       .status(409)
@@ -63,7 +127,9 @@ function createCourse(req, res) {
   const newCourse = { name: name.trim(), students: [] };
   courses.push(newCourse);
   writeData(COURSE_PATH, courses);
-  res.status(201).json({ status: 201, message: "Course created successfully", data: newCourse });
+  res
+    .status(201)
+    .json({ status: 201, message: "Course created successfully", data: newCourse });
 }
 
 // Eliminar un curso (por query param)

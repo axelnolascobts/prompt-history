@@ -133,7 +133,7 @@
                 "examples": {
                   "queryParamsNotAllowed": {
                     "summary": "Query params not allowed",
-                    "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
+                    "value": { "status": 400, "message": "Query parameters are not allowed in POST /students", "data": null }
                   },
                   "emptyBody": {
                     "summary": "Empty body",
@@ -153,11 +153,11 @@
                   },
                   "emailInvalid": {
                     "summary": "Email invalid",
-                    "value": { "status": 400, "message": "Invalid email format", "data": null }
+                    "value": { "status": 400, "message": "email must match format \"email\"", "data": null }
                   },
                   "coursesInvalid": {
                     "summary": "Courses invalid",
-                    "value": { "status": 400, "message": "Courses cannot be empty and must be an array of strings", "data": null }
+                    "value": { "status": 400, "message": "courses must be array", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
@@ -270,11 +270,11 @@
                   },
                   "emailInvalid": {
                     "summary": "Email invalid",
-                    "value": { "status": 400, "message": "Invalid email format", "data": null }
+                    "value": { "status": 400, "message": "email must match format \"email\"", "data": null }
                   },
                   "coursesInvalid": {
                     "summary": "Courses invalid",
-                    "value": { "status": 400, "message": "Courses must be a non-empty array of non-empty strings", "data": null }
+                    "value": { "status": 400, "message": "courses must be array", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
@@ -392,19 +392,11 @@
                 "examples": {
                   "missingQuery": {
                     "summary": "Missing query param",
-                    "value": { "status": 400, "message": "cannot edit with name", "data": null }
+                    "value": { "status": 400, "message": "id or email is required", "data": null }
                   },
                   "emptyBody": {
                     "summary": "Empty body",
                     "value": { "status": 400, "message": "Request body cannot be empty", "data": null }
-                  },
-                  "bodyNotObject": {
-                    "summary": "Body not object",
-                    "value": { "status": 400, "message": "Request body is required and must be a JSON object", "data": null }
-                  },
-                  "invalidField": {
-                    "summary": "Invalid field",
-                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   },
                   "nameEmpty": {
                     "summary": "Name empty",
@@ -420,11 +412,11 @@
                   },
                   "emailInvalid": {
                     "summary": "Email invalid",
-                    "value": { "status": 400, "message": "Invalid email format", "data": null }
+                    "value": { "status": 400, "message": "email must match format \"email\"", "data": null }
                   },
                   "coursesInvalid": {
                     "summary": "Courses invalid",
-                    "value": { "status": 400, "message": "Courses must be a non-empty array of non-empty strings", "data": null }
+                    "value": { "status": 400, "message": "courses must be array", "data": null }
                   },
                   "duplicateCourses": {
                     "summary": "Duplicate courses",
@@ -433,6 +425,10 @@
                   "nonExistentCourses": {
                     "summary": "Non-existent courses",
                     "value": { "status": 400, "message": "These courses do not exist: maths 2", "data": null }
+                  },
+                  "invalidField": {
+                    "summary": "Invalid field",
+                    "value": { "status": 400, "message": "Request contains invalid field(s).", "data": null }
                   }
                 }
               }
@@ -653,21 +649,21 @@
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "examples": {
+                  "queryParamsNotAllowed": {
+                    "summary": "Query params not allowed",
+                    "value": { "status": 400, "message": "Query parameters are not allowed in POST /courses", "data": null }
+                  },
+                  "emptyArray": {
+                    "summary": "Empty array",
+                    "value": { "status": 400, "message": "Course name array cannot be empty", "data": null }
+                  },
                   "emptyName": {
                     "summary": "Name required",
-                    "value": {
-                      "status": 400,
-                      "message": "Course name is required",
-                      "data": null
-                    }
+                    "value": { "status": 400, "message": "Course name is required", "data": null }
                   },
                   "invalidName": {
                     "summary": "Invalid name",
-                    "value": {
-                      "status": 400,
-                      "message": "Course name contains invalid characters",
-                      "data": null
-                    }
+                    "value": { "status": 400, "message": "Course name contains invalid characters", "data": null }
                   }
                 }
               }

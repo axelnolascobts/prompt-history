@@ -1,6 +1,7 @@
 const { ReadData } = require("./utils");
 
 exports.getStudents = (req, res) => {
+  
   const students = ReadData();
   const { id, name, email, course } = req.query;
 

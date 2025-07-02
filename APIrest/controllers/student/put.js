@@ -22,7 +22,7 @@ exports.updateStudent = (req, res) => {
     if (!id && !email) {
       return res.status(400).json({
         status: 400,
-        message: "cannot delete with name",
+        message: "cannot update with name",
         data: null,
       });
     }
