@@ -68,3 +68,18 @@ JOIN departments d ON e.department_id = d.id
 ORDER BY d.name, salary_rank;
 COMMIT;
 ROLLBACK;
+
+/* EXTRA ejemplo de transacción con rollback
+-- Simulación de una transacción que reduce el inventario y crea una orden.
+-- Si algo falla, se revertirá todo lo que se hizo en la transacción.
+-- Esto es un ejemplo de cómo manejar transacciones en SQL.
+BEGIN;
+
+-- 1. Reducir inventario
+UPDATE products SET stock = stock - 1 WHERE id = 100;
+
+-- 2. Crear orden
+INSERT INTO orders (user_id, product_id, status) VALUES (42, 100, 'paid');
+Si el producto ya no está en stock, se hace ROLLBACK y no se crea la orden sin inventario.
+COMMIT;
+ */
