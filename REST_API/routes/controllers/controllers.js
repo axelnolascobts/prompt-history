@@ -2,8 +2,10 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const AJV = require("ajv");
 const AJVFORMATS = require("ajv-formats");
+const path = require("path");
+const DATA_ROUTE = path.join(__dirname, "../../data/db.json");
 
-const DATA_ROUTE = "/home/user/Documentos/prompt-history/REST_API/data/db.json";
+//const DATA_ROUTE = "/home/user/Documentos/prompt-history/REST_API/data/db.json";
 
 const AJV_VALIDATOR = new AJV({ allErrors: true });
 AJVFORMATS(AJV_VALIDATOR);

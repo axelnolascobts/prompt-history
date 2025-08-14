@@ -31,9 +31,12 @@
     },
     {
       "id": "636b7dbd-607a-48a6-8967-8bb8758bd724",
-      "name": "nonbre",
-      "email": "nombre@nombre.com",
-      "courses": []
+      "name": "nombre",
+      "email": "nombre@gmail.com",
+      "courses": [
+        "gramatica",
+        "historia"
+      ]
     },
     {
       "id": "11fb92fb-3314-4306-811f-e92bc0e915ee",

@@ -678,6 +678,148 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Update the courses of a student by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "courses": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                },
+                "required": ["courses"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Courses updated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Student" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidFormat": {
+                    "summary": "Invalid input format",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Invalid input format" }
+                      ]
+                    }
+                  },
+                  "studentExists": {
+                    "summary": "Repeated courses",
+                    "value": {
+                      "status": 400,
+                      "data": [
+                        { "message": "Check the courses, there cannot be repeated or empty courses" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete the courses of a student by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Courses deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Student" }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "data": [
+                    { "message": "Student not found or not exist" }
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

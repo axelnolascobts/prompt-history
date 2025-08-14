@@ -224,3 +224,4 @@ RESTARTBUTTON.onclick = () => {
     printTurnOf();
     setEventToClickCells();
 };
+
