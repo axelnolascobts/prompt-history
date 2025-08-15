@@ -304,4 +304,21 @@ que es un Closure en javascript y como trabaja?
 Prompt 5:
 muestrame  closure that keeps track of how many times a function is called
 
+15 - Agosto - 2025
+
+Prompt 1: 
+¿Es posible tipar componentes en React? Si es así, dame un ejemplo sencillo de cómo hacerlo.
+
+Prompt 2:
+¿Es posible importar interfaces de TS entre archivos? ¿Cómo hacerlo?
+
+Prompt 3:
+¿Qué es React.FC y para qué se usa?
+
+Prompt 4:
+¿Qué es y qué hace la propiedad children?
+
+
+
+
 
