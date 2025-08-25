@@ -1,57 +1,94 @@
 "use client";
-import { useEffect, useState } from "react";
-import Controls from "@/components/Controls";
-import PokemonGrid from "@/components/PokemonGrid";
 
-export default function Home() {
-  const [pokemons, setPokemons] = useState<any[]>([]);
+import { useEffect, useState, useCallback } from "react";
+import PokemonCard from "@/components/PokemonCard";
+import Link from "next/link";
+
+interface PokemonType {
+  name: string;
+  url: string;
+}
+
+interface Pokemon {
+  id: number;
+  name: string;
+  sprites: { front_default: string };
+  types: { type: { name: string } }[];
+}
+
+interface PokemonListResult {
+  name: string;
+  url: string;
+}
+
+export default function HomePage() {
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [types, setTypes] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(20);
+  const [limit, setLimit] = useState<number>(5);
   const [totalPokemons, setTotalPokemons] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchActive, setSearchActive] = useState(false); 
 
-  // Fetch Pokémon types
-  const fetchTypes = async () => {
+  const fetchTypes = useCallback(async () => {
     try {
       const res = await fetch("https://pokeapi.co/api/v2/type");
       const data = await res.json();
-      const typeNames = data.results.map((t: any) => t.name);
-      setTypes(typeNames);
-    } catch (error) {
-      console.error("Error loading types:", error);
+      setTypes(data.results.map((t: PokemonType) => t.name));
+    } catch (err) {
+      console.error(err);
     }
-  };
+  }, []);
 
-  // Fetch Pokémon list
-  const fetchPokemons = async () => {
+  const fetchPokemons = useCallback(async () => {
     try {
       setLoading(true);
       const offset = (currentPage - 1) * limit;
-      const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
 
       if (selectedType) {
         const res = await fetch(`https://pokeapi.co/api/v2/type/${selectedType}`);
-        const data = await res.json();
+        const data: { pokemon: { pokemon: PokemonListResult }[] } = await res.json();
         const subset = data.pokemon.slice(offset, offset + limit);
-        const requests = subset.map((p: any) => fetch(p.pokemon.url));
-        const responses = await Promise.all(requests);
-        const details = await Promise.all(responses.map((r) => r.json()));
+        const responses = await Promise.all(subset.map((p) => fetch(p.pokemon.url)));
+        const details: Pokemon[] = await Promise.all(responses.map((r) => r.json()));
         setPokemons(details);
         setTotalPokemons(data.pokemon.length);
       } else {
-        const res = await fetch(url);
-        const data = await res.json();
-        setTotalPokemons(data.count);
-        const requests = data.results.map((p: any) => fetch(p.url));
-        const responses = await Promise.all(requests);
-        const details = await Promise.all(responses.map((r) => r.json()));
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
+        const data: { count: number; results: PokemonListResult[] } = await res.json();
+        const responses = await Promise.all(data.results.map((p) => fetch(p.url)));
+        const details: Pokemon[] = await Promise.all(responses.map((r) => r.json()));
         setPokemons(details);
+        setTotalPokemons(data.count);
       }
-    } catch (error) {
-      console.error("Error loading Pokémon:", error);
+      setSearchActive(false);
+    } catch (err) {
+      console.error(err);
+      setPokemons([]);
+      setTotalPokemons(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, limit, selectedType]);
+
+  const handleSearch = async () => {
+    if (!searchTerm) return fetchPokemons();
+    try {
+      setLoading(true);
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase()}`);
+      if (!res.ok) throw new Error("Pokemon not found");
+      const data: Pokemon = await res.json();
+      setPokemons([data]);
+      setTotalPokemons(1);
+      setSearchActive(true);
+    } catch (err) {
+      console.error(err);
+      setPokemons([]);
+      setTotalPokemons(0);
+      setSearchActive(true);
     } finally {
       setLoading(false);
     }
@@ -59,52 +96,132 @@ export default function Home() {
 
   useEffect(() => {
     fetchTypes();
-  }, []);
+    fetchPokemons();
+  }, [fetchTypes, fetchPokemons]);
 
-  useEffect(() => {
-    if (searchTerm) {
-      fetchSinglePokemon(searchTerm);
-    } else {
-      fetchPokemons();
-    }
-  }, [selectedType, limit, currentPage, searchTerm]);
+  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNextPage = () =>
+    setCurrentPage((prev) => (prev * limit < totalPokemons ? prev + 1 : prev));
 
-  const fetchSinglePokemon = async (name: string) => {
-    try {
-      setLoading(true);
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
-      if (!res.ok) throw new Error("Pokemon not found");
-      const data = await res.json();
-      setPokemons([data]);
-      setTotalPokemons(1);
-    } catch (error) {
-      console.error("Error fetching Pokémon:", error);
-      setPokemons([]);
-    } finally {
-      setLoading(false);
-    }
+  const handleLimitChange = (newLimit: number) => {
+    const firstIndex = (currentPage - 1) * limit;
+    const newPage = Math.floor(firstIndex / newLimit) + 1;
+    setLimit(newLimit);
+    setCurrentPage(newPage);
   };
 
   return (
-    <main className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Pokédex</h1>
-      <Controls
-        types={types}
-        selectedType={selectedType}
-        setSelectedType={setSelectedType}
-        limit={limit}
-        setLimit={setLimit}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPokemons={totalPokemons}
-      />
-      {loading ? (
-        <p className="text-center mt-4">Loading...</p>
-      ) : (
-        <PokemonGrid pokemons={pokemons} />
+    <div
+      className={`pokedex_carcasa ${darkMode ? "dark-mode" : ""}`}
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      {/* Controles */}
+      <div
+        className="controls-container"
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "1rem",
+          padding: "1rem",
+          width: "100%",
+          maxWidth: "1200px",
+        }}
+      >
+        <input
+          className="input_field"
+          type="text"
+          placeholder="Search Pokémon"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button className="search" onClick={handleSearch}>
+        </button>
+        <button onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </button>
+        <select
+          value={selectedType}
+          onChange={(e) => {
+            setSelectedType(e.target.value);
+            setCurrentPage(1);
+          }}
+        >
+          <option value="">All types</option>
+          {types.map((type) => (
+            <option key={type} value={type}>
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </option>
+          ))}
+        </select>
+        <select
+          value={limit}
+          onChange={(e) => handleLimitChange(Number(e.target.value))}
+        >
+          {[5, 10, 20, 50, 100].map((num) => (
+            <option key={num} value={num}>
+              {num} Pokémon
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Grid */}
+      <div
+        id="pokemonGrid"
+        className="pokemonGrid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(5, 1fr)", 
+          gap: "10px",
+          width: "100%",
+          maxWidth: "1200px",
+          justifyContent: searchActive ? "center" : "start", 
+        }}
+      >
+        {loading ? (
+          <p className="loader" style={{ textAlign: "center", width: "100%" }}>
+            Loading...
+          </p>
+        ) : (
+          pokemons.map((p) => (
+            <Link key={p.id} href={`/pokemon/${p.name}`}>
+              <PokemonCard poke={p} />
+            </Link>
+          ))
+        )}
+      </div>
+
+      {/* Paginación */}
+      {!searchActive && (
+        <div
+          id="paginationContainer"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "1rem",
+            marginTop: "1rem",
+            marginBottom: "2rem",
+            width: "100%",
+          }}
+        >
+          <button onClick={handlePrevPage} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>{currentPage}</span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage * limit >= totalPokemons}
+          >
+            Next
+          </button>
+        </div>
       )}
-    </main>
+    </div>
   );
 }

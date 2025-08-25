@@ -1,30 +1,38 @@
+import React from "react";
+
 interface ControlsProps {
   types: string[];
   selectedType: string;
   setSelectedType: (value: string) => void;
   limit: number;
-  setLimit: (value: number) => void;
   searchTerm: string;
   setSearchTerm: (value: string) => void;
   currentPage: number;
   setCurrentPage: (value: number) => void;
   totalPokemons: number;
+  handleLimitChange: (newLimit: number) => void;
+  handleNextPage: () => void;
+  handlePrevPage: () => void;
 }
+
 
 export default function Controls({
   types,
   selectedType,
   setSelectedType,
   limit,
-  setLimit,
   searchTerm,
   setSearchTerm,
   currentPage,
   setCurrentPage,
-  totalPokemons
+  totalPokemons,
+  handleLimitChange,
+  handleNextPage,
+  handlePrevPage,
 }: ControlsProps) {
   return (
     <div className="flex flex-wrap gap-4 mb-6">
+      {/* Search input */}
       <input
         type="text"
         placeholder="Search Pokémon"
@@ -32,6 +40,8 @@ export default function Controls({
         onChange={(e) => setSearchTerm(e.target.value)}
         className="border p-2 rounded"
       />
+
+      {/* Type filter */}
       <select
         value={selectedType}
         onChange={(e) => {
@@ -47,12 +57,11 @@ export default function Controls({
           </option>
         ))}
       </select>
+
+      {/* Limit per page */}
       <select
         value={limit}
-        onChange={(e) => {
-          setLimit(Number(e.target.value));
-          setCurrentPage(1);
-        }}
+        onChange={(e) => handleLimitChange(Number(e.target.value))}
         className="border p-2 rounded"
       >
         {[5, 10, 20, 50, 100].map((num) => (
@@ -62,9 +71,10 @@ export default function Controls({
         ))}
       </select>
 
+      {/* Pagination buttons */}
       <div className="flex gap-2 items-center">
         <button
-          onClick={() => setCurrentPage(currentPage - 1)}
+          onClick={handlePrevPage}
           disabled={currentPage === 1}
           className="border px-3 py-1 rounded disabled:opacity-50"
         >
@@ -72,7 +82,7 @@ export default function Controls({
         </button>
         <span>Page {currentPage}</span>
         <button
-          onClick={() => setCurrentPage(currentPage + 1)}
+          onClick={handleNextPage}
           disabled={currentPage * limit >= totalPokemons}
           className="border px-3 py-1 rounded disabled:opacity-50"
         >

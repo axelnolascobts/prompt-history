@@ -162,7 +162,7 @@ a{
 
 .pokemonGrid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     grid-gap: 5px;
     padding: 5px;
     max-width: 100%;
@@ -222,6 +222,11 @@ a{
     position: relative;
     width: 100%;
     text-align: center;
+}
+
+.pokedex_carcasa.dark-mode .card {
+    background-color: rgb(75, 17, 17); 
+    color: white;
 }
 
 
