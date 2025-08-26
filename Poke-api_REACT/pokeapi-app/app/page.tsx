@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useTransition } from "react";
 import PokemonCard from "@/components/PokemonCard";
 import Link from "next/link";
 
+// Interfaces para la estructura de datos
 interface PokemonType {
   name: string;
   url: string;
@@ -22,6 +23,7 @@ interface PokemonListResult {
 }
 
 export default function HomePage() {
+  // Estados principales
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [types, setTypes] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState<string>("");
@@ -33,8 +35,10 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
 
+  // Transición para renderizado de estado concurrente
   const [isPending, startTransition] = useTransition();
 
+  // Función para obtener todos los tipos de Pokémon
   const fetchTypes = useCallback(async () => {
     try {
       const res = await fetch("https://pokeapi.co/api/v2/type");
@@ -45,12 +49,14 @@ export default function HomePage() {
     }
   }, []);
 
+  // Función para obtener los Pokémon según filtros, página y límite
   const fetchPokemons = useCallback(async () => {
     try {
       setLoading(true);
       const offset = (currentPage - 1) * limit;
 
       if (selectedType) {
+        // Filtrar por tipo
         const res = await fetch(`https://pokeapi.co/api/v2/type/${selectedType}`);
         const data: { pokemon: { pokemon: PokemonListResult }[] } = await res.json();
         const subset = data.pokemon.slice(offset, offset + limit);
@@ -61,6 +67,7 @@ export default function HomePage() {
           setTotalPokemons(data.pokemon.length);
         });
       } else {
+        // Sin filtro de tipo
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
         const data: { count: number; results: PokemonListResult[] } = await res.json();
         const responses = await Promise.all(data.results.map((p) => fetch(p.url)));
@@ -70,6 +77,7 @@ export default function HomePage() {
           setTotalPokemons(data.count);
         });
       }
+
       setSearchActive(false);
     } catch (err) {
       console.error(err);
@@ -82,6 +90,7 @@ export default function HomePage() {
     }
   }, [currentPage, limit, selectedType]);
 
+  // Función de búsqueda por nombre
   const handleSearch = async () => {
     if (!searchTerm) return fetchPokemons();
     try {
@@ -106,15 +115,18 @@ export default function HomePage() {
     }
   };
 
+  // Efecto inicial para cargar tipos y Pokémon
   useEffect(() => {
     fetchTypes();
     fetchPokemons();
   }, [fetchTypes, fetchPokemons]);
 
+  // Funciones de paginación
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNextPage = () =>
     setCurrentPage((prev) => (prev * limit < totalPokemons ? prev + 1 : prev));
 
+  // Cambiar límite de elementos por página
   const handleLimitChange = (newLimit: number) => {
     const firstIndex = (currentPage - 1) * limit;
     const newPage = Math.floor(firstIndex / newLimit) + 1;
@@ -132,7 +144,7 @@ export default function HomePage() {
         alignItems: "center",
       }}
     >
-      {/* Controles */}
+      {/* Controles de búsqueda, filtro, límite y modo oscuro */}
       <div className="controls-container">
         <input
           className="input_field"
@@ -171,10 +183,18 @@ export default function HomePage() {
         </select>
       </div>
 
-      {/* Grid */}
+      {/* Grid de Pokémon */}
       <div id="pokemonGrid" className="pokemonGrid">
         {loading || isPending ? (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+          // SVG de carga centrado mientras se obtiene la información
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
             <svg
               fill={darkMode ? "#ffffff" : "#000000"}
               height="200px"
@@ -193,6 +213,7 @@ export default function HomePage() {
             </svg>
           </div>
         ) : (
+          // Mostrar la lista de Pokémon en tarjetas
           pokemons.map((p) => (
             <Link key={p.id} href={`/pokemon/${p.name}`}>
               <PokemonCard poke={p} />
@@ -201,7 +222,7 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Paginación */}
+      {/* Paginación solo si no hay búsqueda activa */}
       {!searchActive && (
         <div id="paginationContainer">
           <button onClick={handlePrevPage} disabled={currentPage === 1}>

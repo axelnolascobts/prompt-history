@@ -1,8 +1,9 @@
 "use client";
-
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
+
 
 // Interfaz principal del Pokémon
 interface Pokemon {
@@ -15,10 +16,12 @@ interface Pokemon {
   abilities: { ability: { name: string } }[];
 }
 
+
 // Interfaz recursiva para los sprites
 interface Sprites {
   [key: string]: string | Sprites | null;
 }
+
 
 // Para guardar el nombre y URL de cada sprite
 interface SpriteInfo {
@@ -38,8 +41,9 @@ export default function PokemonDetailsPage({ params }: Props) {
   const [darkMode, setDarkMode] = useState(false);
   const router = useRouter();
 
+
   /**
-   * Función recursiva para extraer todos los sprites de un Pokémon
+   * Función para extraer todos los sprites de un Pokémon
    * @param sprites - objeto de sprites del Pokémon
    * @returns lista de sprites con nombre y URL
    */
@@ -57,6 +61,7 @@ export default function PokemonDetailsPage({ params }: Props) {
     traverse(sprites);
     return result;
   };
+
 
   // Fetch del Pokémon al cargar la página
   useEffect(() => {
@@ -83,6 +88,7 @@ export default function PokemonDetailsPage({ params }: Props) {
 
   const spriteList = extractSprites(pokemon.sprites);
 
+
   return (
     <div className={`pokedex_carcasa_2 ${darkMode ? "dark-mode" : ""}`}>
       {/* Botones de navegación y modo oscuro */}
@@ -95,6 +101,8 @@ export default function PokemonDetailsPage({ params }: Props) {
         </button>
       </div>
 
+
+
       {/* Contenedor principal de información */}
       <div className="bordes_2">
         {/* Sprites */}
@@ -103,10 +111,16 @@ export default function PokemonDetailsPage({ params }: Props) {
           {spriteList.map((sprite) => (
             <div key={sprite.name} className="sprite-item">
               <p>{sprite.name.replaceAll("_", " ")}</p>
-              <img src={sprite.url} alt={sprite.name} />
+              <Image
+               src={sprite.url}
+              alt={sprite.name}
+              width={65}
+              height={65} />
             </div>
           ))}
         </div>
+
+
 
         {/* Información del Pokémon */}
         <h2>Name:</h2>
