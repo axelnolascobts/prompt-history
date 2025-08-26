@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
 
+// Interfaz principal del Pokémon
 interface Pokemon {
   id: number;
   name: string;
@@ -19,12 +20,13 @@ interface Sprites {
   [key: string]: string | Sprites | null;
 }
 
-// Para guardar la URL y su nombre
+// Para guardar el nombre y URL de cada sprite
 interface SpriteInfo {
   name: string;
   url: string;
 }
 
+// Props para recibir el nombre del Pokémon
 interface Props {
   params: Promise<{ name: string }>;
 }
@@ -36,9 +38,14 @@ export default function PokemonDetailsPage({ params }: Props) {
   const [darkMode, setDarkMode] = useState(false);
   const router = useRouter();
 
-  // Extrae todos los sprites recursivamente con su nombre
+  /**
+   * Función recursiva para extraer todos los sprites de un Pokémon
+   * @param sprites - objeto de sprites del Pokémon
+   * @returns lista de sprites con nombre y URL
+   */
   const extractSprites = (sprites: Sprites): SpriteInfo[] => {
     const result: SpriteInfo[] = [];
+
     const traverse = (obj: Sprites, prefix = "") => {
       Object.entries(obj).forEach(([key, val]) => {
         const name = prefix ? `${prefix} ${key}` : key;
@@ -46,10 +53,12 @@ export default function PokemonDetailsPage({ params }: Props) {
         else if (val && typeof val === "object") traverse(val as Sprites, name);
       });
     };
+
     traverse(sprites);
     return result;
   };
 
+  // Fetch del Pokémon al cargar la página
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
@@ -68,70 +77,38 @@ export default function PokemonDetailsPage({ params }: Props) {
     fetchPokemon();
   }, [name]);
 
-  if (loading) return <p className="text-center mt-4">Loading...</p>;
-  if (!pokemon) return <p className="text-center mt-4">Pokemon not found</p>;
+  // Mostrar loading o mensaje si no hay Pokémon
+  if (loading) return <p className="loader">Loading...</p>;
+  if (!pokemon) return <p className="loader">Pokemon not found</p>;
 
   const spriteList = extractSprites(pokemon.sprites);
 
   return (
-    <div
-      className={`pokedex_carcasa_2 ${darkMode ? "dark-mode" : ""}`}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        minHeight: "100vh",
-        padding: "2rem",
-      }}
-    >
-      <button
-        className="back_button"
-        style={{ marginBottom: "1rem" }}
-        onClick={() => router.back()}
-      >
-        Back
-      </button>
+    <div className={`pokedex_carcasa_2 ${darkMode ? "dark-mode" : ""}`}>
+      {/* Botones de navegación y modo oscuro */}
+      <div className="controls-container">
+        <button className="back_button" onClick={() => router.back()}>
+          Back
+        </button>
+        <button onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </button>
+      </div>
 
-      <button
-        style={{ marginBottom: "1rem" }}
-        onClick={() => setDarkMode(!darkMode)}
-      >
-        {darkMode ? "Light Mode" : "Dark Mode"}
-      </button>
-
-      <div
-        className="bordes_2"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-          maxWidth: "600px",
-          padding: "1rem",
-        }}
-      >
+      {/* Contenedor principal de información */}
+      <div className="bordes_2">
+        {/* Sprites */}
         <h2>Sprites:</h2>
-        <div
-          className="details-sprites"
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "10px",
-          }}
-        >
+        <div className="details-sprites">
           {spriteList.map((sprite) => (
-            <div
-              key={sprite.name}
-              className="sprite-item"
-              style={{ textAlign: "center" }}
-            >
+            <div key={sprite.name} className="sprite-item">
               <p>{sprite.name.replaceAll("_", " ")}</p>
               <img src={sprite.url} alt={sprite.name} />
             </div>
           ))}
         </div>
 
+        {/* Información del Pokémon */}
         <h2>Name:</h2>
         <p>{pokemon.name}</p>
 
