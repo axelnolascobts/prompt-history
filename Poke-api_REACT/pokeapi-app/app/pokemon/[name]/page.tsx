@@ -65,6 +65,7 @@ export default function PokemonDetailsPage({ params }: Props) {
 
   // Fetch del Pokémon al cargar la página
   useEffect(() => {
+    const controller = new AbortController();
     const fetchPokemon = async () => {
       try {
         setLoading(true);
@@ -78,6 +79,7 @@ export default function PokemonDetailsPage({ params }: Props) {
       } finally {
         setLoading(false);
       }
+      return () => controller.abort();
     };
     fetchPokemon();
   }, [name]);
@@ -91,6 +93,7 @@ export default function PokemonDetailsPage({ params }: Props) {
 
   return (
     <div className={`pokedex_carcasa_2 ${darkMode ? "dark-mode" : ""}`}>
+      
       {/* Botones de navegación y modo oscuro */}
       <div className="controls-container">
         <button className="back_button" onClick={() => router.back()}>
@@ -100,27 +103,6 @@ export default function PokemonDetailsPage({ params }: Props) {
           {darkMode ? "Light Mode" : "Dark Mode"}
         </button>
       </div>
-
-
-
-      {/* Contenedor principal de información */}
-      <div className="bordes_2">
-        {/* Sprites */}
-        <h2>Sprites:</h2>
-        <div className="details-sprites">
-          {spriteList.map((sprite) => (
-            <div key={sprite.name} className="sprite-item">
-              <p>{sprite.name.replaceAll("_", " ")}</p>
-              <Image
-               src={sprite.url}
-              alt={sprite.name}
-              width={65}
-              height={65} />
-            </div>
-          ))}
-        </div>
-
-
 
         {/* Información del Pokémon */}
         <h2>Name:</h2>
@@ -137,6 +119,27 @@ export default function PokemonDetailsPage({ params }: Props) {
 
         <h2>Ability(s):</h2>
         <p>{pokemon.abilities.map((a) => a.ability.name).join(", ")}</p>
+
+      {/* Contenedor principal de información */}
+      <div className="bordes_2">
+        {/* Sprites */}
+        <h2>Sprites:</h2>
+        <div className="details-sprites">
+          {spriteList.map((sprite) => (
+            <div key={sprite.name} className="sprite-item">
+              <p>{sprite.name}</p>
+              <Image
+               src={sprite.url}
+              alt={sprite.name}
+              width={65}
+              height={65} />
+            </div>
+          ))}
+        </div>
+
+
+
+
       </div>
     </div>
   );

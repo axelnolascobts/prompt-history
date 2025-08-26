@@ -33,7 +33,8 @@ export default function PokemonGrid({ pokemons }: PokemonGridProps) {
               alt={pokemon.name}
               width={100}
               height={100}
-              priority // Carga inmediata de las imágenes para mejor performance
+              loading="lazy"
+              
             />
           </div>
 

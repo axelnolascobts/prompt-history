@@ -90,6 +90,7 @@ export default function HomePage() {
     }
   }, [currentPage, limit, selectedType]);
 
+
   // Función de búsqueda por nombre
   const handleSearch = async () => {
     if (!searchTerm) return fetchPokemons();
@@ -103,6 +104,7 @@ export default function HomePage() {
         setTotalPokemons(1);
         setSearchActive(true);
       });
+
     } catch (err) {
       console.error(err);
       startTransition(() => {
@@ -110,6 +112,7 @@ export default function HomePage() {
         setTotalPokemons(0);
         setSearchActive(true);
       });
+
     } finally {
       setLoading(false);
     }
@@ -117,14 +120,22 @@ export default function HomePage() {
 
   // Efecto inicial para cargar tipos y Pokémon
   useEffect(() => {
+    const controller = new AbortController();
+
     fetchTypes();
     fetchPokemons();
+    return () => controller.abort();
   }, [fetchTypes, fetchPokemons]);
+
+
 
   // Funciones de paginación
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const handleNextPage = () =>
     setCurrentPage((prev) => (prev * limit < totalPokemons ? prev + 1 : prev));
+
+
+
 
   // Cambiar límite de elementos por página
   const handleLimitChange = (newLimit: number) => {
@@ -133,6 +144,7 @@ export default function HomePage() {
     setLimit(newLimit);
     setCurrentPage(newPage);
   };
+
 
   return (
     <div
@@ -144,6 +156,8 @@ export default function HomePage() {
         alignItems: "center",
       }}
     >
+
+
       {/* Controles de búsqueda, filtro, límite y modo oscuro */}
       <div className="controls-container">
         <input
@@ -153,10 +167,14 @@ export default function HomePage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+
         <button className="search" onClick={handleSearch}></button>
+
         <button onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? "Light Mode" : "Dark Mode"}
         </button>
+
+
         <select
           value={selectedType}
           onChange={(e) => {
@@ -164,17 +182,21 @@ export default function HomePage() {
             setCurrentPage(1);
           }}
         >
+
+
           <option value="">All types</option>
           {types.map((type) => (
             <option key={type} value={type}>
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </option>
           ))}
+
         </select>
         <select
           value={limit}
           onChange={(e) => handleLimitChange(Number(e.target.value))}
         >
+
           {[5, 10, 20, 50, 100].map((num) => (
             <option key={num} value={num}>
               {num} Pokémon
@@ -195,6 +217,7 @@ export default function HomePage() {
               width: "100%",
             }}
           >
+
             <svg
               fill={darkMode ? "#ffffff" : "#000000"}
               height="200px"
@@ -212,6 +235,7 @@ export default function HomePage() {
               </g>
             </svg>
           </div>
+
         ) : (
           // Mostrar la lista de Pokémon en tarjetas
           pokemons.map((p) => (
@@ -221,6 +245,7 @@ export default function HomePage() {
           ))
         )}
       </div>
+      
 
       {/* Paginación solo si no hay búsqueda activa */}
       {!searchActive && (

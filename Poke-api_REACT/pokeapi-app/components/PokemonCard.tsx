@@ -33,7 +33,7 @@ interface PokemonCardProps {
             alt={poke.name}
             width={96}
             height={96}
-            priority // Carga inmediata para mejorar percepción de performance
+            loading="lazy"
           />
 
           {/* Nombre del Pokémon */}
