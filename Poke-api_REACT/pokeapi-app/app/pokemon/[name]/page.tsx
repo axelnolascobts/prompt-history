@@ -65,7 +65,6 @@ export default function PokemonDetailsPage({ params }: Props) {
 
   // Fetch del Pokémon al cargar la página
   useEffect(() => {
-    const controller = new AbortController();
     const fetchPokemon = async () => {
       try {
         setLoading(true);
@@ -79,7 +78,6 @@ export default function PokemonDetailsPage({ params }: Props) {
       } finally {
         setLoading(false);
       }
-      return () => controller.abort();
     };
     fetchPokemon();
   }, [name]);

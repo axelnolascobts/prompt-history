@@ -208,13 +208,14 @@ export default function HomePage() {
       {/* Grid de Pokémon */}
       <div id="pokemonGrid" className="pokemonGrid">
         {loading || isPending ? (
-          // SVG de carga centrado mientras se obtiene la información
+          // SVG de carga 
           <div
             style={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              zIndex: 1
             }}
           >
 
