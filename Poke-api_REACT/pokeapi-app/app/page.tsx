@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 import PokemonCard from "@/components/PokemonCard";
 import Link from "next/link";
 
@@ -31,7 +31,9 @@ export default function HomePage() {
   const [totalPokemons, setTotalPokemons] = useState<number>(0);
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [searchActive, setSearchActive] = useState(false); 
+  const [searchActive, setSearchActive] = useState(false);
+
+  const [isPending, startTransition] = useTransition();
 
   const fetchTypes = useCallback(async () => {
     try {
@@ -54,21 +56,27 @@ export default function HomePage() {
         const subset = data.pokemon.slice(offset, offset + limit);
         const responses = await Promise.all(subset.map((p) => fetch(p.pokemon.url)));
         const details: Pokemon[] = await Promise.all(responses.map((r) => r.json()));
-        setPokemons(details);
-        setTotalPokemons(data.pokemon.length);
+        startTransition(() => {
+          setPokemons(details);
+          setTotalPokemons(data.pokemon.length);
+        });
       } else {
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
         const data: { count: number; results: PokemonListResult[] } = await res.json();
         const responses = await Promise.all(data.results.map((p) => fetch(p.url)));
         const details: Pokemon[] = await Promise.all(responses.map((r) => r.json()));
-        setPokemons(details);
-        setTotalPokemons(data.count);
+        startTransition(() => {
+          setPokemons(details);
+          setTotalPokemons(data.count);
+        });
       }
       setSearchActive(false);
     } catch (err) {
       console.error(err);
-      setPokemons([]);
-      setTotalPokemons(0);
+      startTransition(() => {
+        setPokemons([]);
+        setTotalPokemons(0);
+      });
     } finally {
       setLoading(false);
     }
@@ -81,14 +89,18 @@ export default function HomePage() {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase()}`);
       if (!res.ok) throw new Error("Pokemon not found");
       const data: Pokemon = await res.json();
-      setPokemons([data]);
-      setTotalPokemons(1);
-      setSearchActive(true);
+      startTransition(() => {
+        setPokemons([data]);
+        setTotalPokemons(1);
+        setSearchActive(true);
+      });
     } catch (err) {
       console.error(err);
-      setPokemons([]);
-      setTotalPokemons(0);
-      setSearchActive(true);
+      startTransition(() => {
+        setPokemons([]);
+        setTotalPokemons(0);
+        setSearchActive(true);
+      });
     } finally {
       setLoading(false);
     }
@@ -140,8 +152,7 @@ export default function HomePage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="search" onClick={handleSearch}>
-        </button>
+        <button className="search" onClick={handleSearch}></button>
         <button onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? "Light Mode" : "Dark Mode"}
         </button>
@@ -177,14 +188,14 @@ export default function HomePage() {
         className="pokemonGrid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)", 
+          gridTemplateColumns: "repeat(5, 1fr)",
           gap: "10px",
           width: "100%",
           maxWidth: "1200px",
-          justifyContent: searchActive ? "center" : "start", 
+          justifyContent: searchActive ? "center" : "start",
         }}
       >
-        {loading ? (
+        {loading || isPending ? (
           <p className="loader" style={{ textAlign: "center", width: "100%" }}>
             Loading...
           </p>
