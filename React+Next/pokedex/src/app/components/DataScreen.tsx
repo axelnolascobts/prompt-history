@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Pokemon } from "../page";
 
 interface DataScreenProperties {
@@ -23,7 +24,7 @@ export const DataScreen:  React.FC<DataScreenProperties> = ({ darkMode, loading,
                 )}
 
                 {error && (
-                    <div id="error-message" className="error-message">
+                    <div id="error-message" className="error-message" style={{ display: 'flex' }}>
                     <p>{error}</p>
                     </div>
                 )}
@@ -34,10 +35,17 @@ export const DataScreen:  React.FC<DataScreenProperties> = ({ darkMode, loading,
                             <div className="pokemon-list-item">
                                 <Link href={`/details/?searchValue=${pokemonList[0].name}`} passHref>
                                     <p className="pokemon-names-single">{pokemonList[0].name}</p>
-                                    <img
-                                        className="pokemon-sprite"
-                                        src={pokemonList[0].sprites.front_default}
-                                    />
+                                    {pokemonList[0].sprites.front_default ? (
+                                        <Image
+                                            className="pokemon-sprite"
+                                            src={pokemonList[0].sprites.front_default}
+                                            alt={pokemonList[0].name}
+                                            width={400}
+                                            height={400}
+                                        />
+                                    ) : (
+                                        <p>IMAGE NOT FOUND</p>
+                                    )}
                                     <p className="pokemon-types-single">
                                         {pokemonList[0].types.map((type, index) => (
                                             <span key={index}>{type.type.name}</span>
@@ -56,10 +64,15 @@ export const DataScreen:  React.FC<DataScreenProperties> = ({ darkMode, loading,
                                 >
                                     <Link href={`/details/?searchValue=${pokemon.name}`} passHref>
                                         <p className="pokemon-names">{pokemon.name}</p>
-                                        <img
+                                        {pokemon.sprites.front_default ? (<Image
                                             className="pokemon-sprite"
                                             src={pokemon.sprites.front_default}
-                                        />
+                                            alt={pokemon.name}
+                                            width={400}
+                                            height={400}
+                                        />) : (
+                                            <p>IMAGE NOT FOUND</p>
+                                        )}
                                         <p className="pokemon-types">
                                             {pokemon.types.map((type, index) => (
                                             <span key={index}>{type.type.name}</span>

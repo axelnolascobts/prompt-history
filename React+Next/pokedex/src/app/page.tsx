@@ -25,7 +25,7 @@ export default function Home() {
 
     const baseUrl = "https://pokeapi.co/api/v2/";
 
-    const [totalPokemons, setTotalPokemons] = useState<number>(1025);
+    const [totalPokemons, setTotalPokemons] = useState<number>(1302);
     const [darkMode, setDarkMode] = useState<boolean>(false);
     const [limit, setLimit] = useState<number>(20);
     const [auxiliarLimit, setAuxiliarLimit] = useState<number>(20);
@@ -73,30 +73,27 @@ export default function Home() {
         try {
             const response = await fetch(url);
 
-        if (!response.ok) {
-            throw new Error('POKEMON NOT FOUND');
-        }
+            if (!response.ok) {
+                throw new Error('POKEMON NOT FOUND');
+            }
 
-        const data = await response.json();
-        const pokemonData = data.results;
+            const data = await response.json();
+            const pokemonData = data.results;
 
-        if(Array.isArray(pokemonData)){
+            if(Array.isArray(pokemonData)){
 
-            const pokemonDetailsPromises = pokemonData.map(async (pokemon) => {
-                const response = await fetch(pokemon.url);
-                return await response.json();
-            });
+                const pokemonDetailsPromises = pokemonData.map(async (pokemon) => {
+                    const response = await fetch(pokemon.url);
+                    return await response.json();
+                });
 
-            const pokemonDetails = await Promise.all(pokemonDetailsPromises);
-            setPokemonList(pokemonDetails);
+                const pokemonDetails = await Promise.all(pokemonDetailsPromises);
+                setPokemonList(pokemonDetails);
 
-        } else {
+            } else {
 
-            setPokemonList([data]);
-        }
-
-        
-
+                setPokemonList([data]);
+            }
         } catch (error: unknown) {
 
             if (error instanceof Error) {
@@ -114,7 +111,7 @@ export default function Home() {
 
     useEffect(() => {
 
-        loadPokemonData(`${baseUrl}pokemon?limit=${limit}&offset=${offset}`);
+        //loadPokemonData(`${baseUrl}pokemon?limit=${limit}&offset=${offset}`);
 
         const consultTypes = async () => {
 
@@ -137,11 +134,13 @@ export default function Home() {
         };
 
         consultTypes();
+        updatePagination();
     }, [limit]);
 
     useEffect(() => {
 
         setNumberOfPages(calculateNumberOfPages(limit, totalPokemons));
+        //updatePagination();
 
     }, [limit, totalPokemons]);
 
@@ -207,7 +206,7 @@ export default function Home() {
         
         if (pokemonType < 1) {
             //console.log(pokemonType);
-            setTotalPokemons(1025);
+            setTotalPokemons(1302);
             
             const url = `${baseUrl}pokemon/?limit=${limit}&offset=${offset}`;
             loadPokemonData(url);
@@ -226,15 +225,21 @@ export default function Home() {
     const searchAPokemon = () => {
         let url = "";
         setOffset(0);
+        setError(null);
 
         if (inputValue === "") {
-
-            setTotalPokemons(1025);
+            
+            console.log("hola");
+        
+            setTotalPokemons(1302);
             url = `${baseUrl}pokemon/?limit=${limit}&offset=${offset}`;
+            loadPokemonData(url);
+            updatePagination();
 
         } else {
             setTotalPokemons(limit);
             url = `${baseUrl}pokemon/${inputValue}/`;
+            loadPokemonData(url);
         }
 
         loadPokemonData(url);
@@ -265,13 +270,25 @@ export default function Home() {
     useEffect(() => {
 
         setCurrentPage(Math.floor(offset / limit) + 1);
+        updatePagination();
+        
+    }, [offset]);
+
+    useEffect(() => {
+
+        updatePagination();
+
+    }, [limit])
+
+    function updatePagination() {
 
         if (pokemonType < 1) {
             paginationWithoutFilter();
         } else {
             paginationWithTypeFilter();
         }
-    }, [offset]);
+
+    };
 
 
   return (

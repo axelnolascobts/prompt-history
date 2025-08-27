@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import "./details.css";
 
 interface PokemonTypes {
@@ -105,7 +106,11 @@ export default function Details() {
                     {Object.values(pokemonDetails.sprites)
                         .filter((sprite) => typeof sprite === "string")
                         .map((sprite, index) => (
-                            <img key={index} className="pokemon-sprite" src={sprite} alt={pokemonDetails.name} />
+                            <Image key={index} className="pokemon-sprite"
+                            src={sprite}
+                            alt={pokemonDetails.name}
+                            width={400}
+                            height={400}/>
                         ))}
                 </section>
 

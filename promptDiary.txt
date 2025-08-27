@@ -318,6 +318,15 @@ Prompt 3:
 Prompt 4:
 ¿Qué es y qué hace la propiedad children?
 
+27 - Agosto - 2025
+
+Prompt 1:
+Tengo un proyecto react en el que uso typescript, en una parte de mi proyecto utilizo una etiqueta HTML <img> y me aparece un warning que indica que la imagen podría cargar más lento. Además me dice que considere utilizar <Image />. qué es la etiqueta <Image /> y como podría implementarla? dame una explicación sencilla y un ejemplo práctico para entenderlo mejor.
+
+Prompt 2:
+Ahora muéstrame un ejemplo usando URLs externas.
+
+
 
 
 
