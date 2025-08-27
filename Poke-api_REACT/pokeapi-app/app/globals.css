@@ -20,25 +20,6 @@ html, body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Contenedor principal de HomePage */
-.pokedex_carcasa {
-  display: flex;
-  justify-items: center;
-  width: 100%;
-  min-height: 100vh;
-  flex-direction: column;
-  position: relative;
-  background-color: rgb(158, 0, 0);
-  justify-self: center;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Contenedor HomePage modo oscuro */
-.pokedex_carcasa.dark-mode {
-  background-color: rgb(75, 17, 17);
-  color: white;
-}
-
 /* Controles */
 .controls-container {
   display: flex;
@@ -81,8 +62,7 @@ button {
 }
 
 /* Botones en modo oscuro */
-.pokedex_carcasa.dark-mode button,
-.pokedex_carcasa_2.dark-mode button {
+.pokedex_case.dark-mode button {
   background-color: rgb(75, 17, 17);
   color: white;
   border: 1px solid white;
@@ -115,8 +95,8 @@ button {
 }
 
 /* Tarjeta modo oscuro */
-.pokedex_carcasa.dark-mode .card {
-  background-color: rgb(75, 17, 17);
+.pokedex_case.dark-mode .card {
+  background-color: #1a0606;
   color: white;
 }
 
@@ -169,7 +149,7 @@ a {
 }
 
 /* Página de detalle del Pokémon */
-.pokedex_carcasa_2 {
+.pokedex_case {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -181,7 +161,7 @@ a {
 }
 
 /* Contenedor detalle modo oscuro */
-.pokedex_carcasa_2.dark-mode {
+.pokedex_case.dark-mode {
   background-color: rgb(26, 6, 6);
   color: white;
 }
@@ -200,7 +180,7 @@ a {
 }
 
 /* Tarjeta interna modo oscuro */
-.pokedex_carcasa_2.dark-mode .bordes_2 {
+.pokedex_case.dark-mode .bordes_2 {
   background-color: rgb(26, 6, 6);
   color: white;
 }
@@ -214,7 +194,7 @@ h2 {
 }
 
 /* Títulos en modo oscuro */
-.pokedex_carcasa_2.dark-mode h2 {
+.pokedex_case.dark-mode h2 {
   color: white;
 }
 
@@ -227,7 +207,7 @@ p {
 }
 
 /* Párrafos en modo oscuro */
-.pokedex_carcasa_2.dark-mode p {
+.pokedex_case.dark-mode p {
   color: white;
 }
 

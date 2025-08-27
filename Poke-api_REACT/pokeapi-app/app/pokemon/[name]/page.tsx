@@ -87,7 +87,7 @@ interface Props {
 
 
   return (
-    <div className={`pokedex_carcasa_2 ${darkMode ? "dark-mode" : ""}`}>
+    <div className={`pokedex_case ${darkMode ? "dark-mode" : ""}`}>
       
       {/* Botones de navegación y modo oscuro */}
       <div className="controls-container">

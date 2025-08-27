@@ -29,7 +29,8 @@ export default function PokemonCard({ poke }: PokemonCardProps) {
           alt={poke.name}
           width={96}
           height={96}
-          loading="lazy"
+          // loading="lazy"
+          priority= {true}
         />
       ) : (
         <div>
