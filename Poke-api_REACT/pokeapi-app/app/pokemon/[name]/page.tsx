@@ -34,33 +34,29 @@ interface Props {
   params: Promise<{ name: string }>;
 }
 
-export default function PokemonDetailsPage({ params }: Props) {
-  const { name } = use(params);
-  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const router = useRouter();
+    export default function PokemonDetailsPage({ params }: Props) {
+      const { name } = use(params);
+      const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+      const [loading, setLoading] = useState(true);
+      const [darkMode, setDarkMode] = useState(false);
+      const router = useRouter();
 
 
-  /**
-   * Función para extraer todos los sprites de un Pokémon
-   * @param sprites - objeto de sprites del Pokémon
-   * @returns lista de sprites con nombre y URL
-   */
-  const extractSprites = (sprites: Sprites): SpriteInfo[] => {
-    const result: SpriteInfo[] = [];
 
-    const traverse = (obj: Sprites, prefix = "") => {
-      Object.entries(obj).forEach(([key, val]) => {
-        const name = prefix ? `${prefix} ${key}` : key;
-        if (typeof val === "string" && val) result.push({ name, url: val });
-        else if (val && typeof val === "object") traverse(val as Sprites, name);
-      });
+    const extractSprites = (sprites: Sprites): SpriteInfo[] => {
+      const result: SpriteInfo[] = [];
+
+      const traverse = (obj: Sprites, prefix = "") => {
+        Object.entries(obj).forEach(([key, val]) => {
+          const name = prefix ? `${prefix} ${key}` : key;
+          if (typeof val === "string" && val) result.push({ name, url: val });
+          else if (val && typeof val === "object") traverse(val as Sprites, name); //revisa el object y lo lleva a sprites
+        });
+      };
+
+      traverse(sprites);
+      return result;
     };
-
-    traverse(sprites);
-    return result;
-  };
 
 
   // Fetch del Pokémon al cargar la página
@@ -81,6 +77,7 @@ export default function PokemonDetailsPage({ params }: Props) {
     };
     fetchPokemon();
   }, [name]);
+
 
   // Mostrar loading o mensaje si no hay Pokémon
   if (loading) return <p className="loader">Loading...</p>;
@@ -118,8 +115,12 @@ export default function PokemonDetailsPage({ params }: Props) {
         <h2>Ability(s):</h2>
         <p>{pokemon.abilities.map((a) => a.ability.name).join(", ")}</p>
 
+
       {/* Contenedor principal de información */}
+
       <div className="bordes_2">
+
+
         {/* Sprites */}
         <h2>Sprites:</h2>
         <div className="details-sprites">
@@ -134,10 +135,6 @@ export default function PokemonDetailsPage({ params }: Props) {
             </div>
           ))}
         </div>
-
-
-
-
       </div>
     </div>
   );

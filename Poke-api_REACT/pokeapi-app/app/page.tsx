@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback, useTransition } from "react";
+import { useEffect, useState, useCallback, useTransition, useRef } from "react";
 import PokemonCard from "@/components/PokemonCard";
 import Link from "next/link";
 
-// Interfaces para la estructura de datos
+// Interfaces para tipos de datos
 interface PokemonType {
   name: string;
   url: string;
@@ -23,22 +23,27 @@ interface PokemonListResult {
 }
 
 export default function HomePage() {
-  // Estados principales
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [types, setTypes] = useState<string[]>([]);
-  const [selectedType, setSelectedType] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(5);
-  const [totalPokemons, setTotalPokemons] = useState<number>(0);
-  const [darkMode, setDarkMode] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [searchActive, setSearchActive] = useState(false);
+  // Estados para almacenar la información
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]); // Lista de Pokémon cargados
+  const [types, setTypes] = useState<string[]>([]); // Lista de tipos disponibles
+  const [selectedType, setSelectedType] = useState<string>(""); // Tipo seleccionado
+  const [searchTerm, setSearchTerm] = useState<string>(""); // Término de búsqueda
+  const [currentPage, setCurrentPage] = useState<number>(1); // Página actual
+  const [limit, setLimit] = useState<number>(5); // Pokémon por página
+  const [totalPokemons, setTotalPokemons] = useState<number>(0); // Total de Pokémon
+  const [darkMode, setDarkMode] = useState(false); // Modo oscuro
+  const [loading, setLoading] = useState(false); // Estado de carga
+  const [searchActive, setSearchActive] = useState(false); // Indica si se hizo búsqueda individual
 
-  // Transición para renderizado de estado concurrente
+
+
+  // Hooks de transición y referencia para abortar fetch
   const [isPending, startTransition] = useTransition();
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Función para obtener todos los tipos de Pokémon
+
+
+  // Función para obtener tipos de Pokémon
   const fetchTypes = useCallback(async () => {
     try {
       const res = await fetch("https://pokeapi.co/api/v2/type");
@@ -49,28 +54,39 @@ export default function HomePage() {
     }
   }, []);
 
-  // Función para obtener los Pokémon según filtros, página y límite
+
+
+  // Función principal para obtener Pokémon según página, tipo o búsqueda
   const fetchPokemons = useCallback(async () => {
+    if (abortRef.current) abortRef.current.abort(); // Cancela fetch anterior
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+
     try {
       setLoading(true);
+      setPokemons([]); // Limpia para evitar mostrar datos viejos
       const offset = (currentPage - 1) * limit;
 
+
       if (selectedType) {
-        // Filtrar por tipo
-        const res = await fetch(`https://pokeapi.co/api/v2/type/${selectedType}`);
+        const res = await fetch(`https://pokeapi.co/api/v2/type/${selectedType}`, { signal: controller.signal });
         const data: { pokemon: { pokemon: PokemonListResult }[] } = await res.json();
         const subset = data.pokemon.slice(offset, offset + limit);
-        const responses = await Promise.all(subset.map((p) => fetch(p.pokemon.url)));
+        const responses = await Promise.all(subset.map((p) => fetch(p.pokemon.url, { signal: controller.signal })));
         const details: Pokemon[] = await Promise.all(responses.map((r) => r.json()));
         startTransition(() => {
           setPokemons(details);
           setTotalPokemons(data.pokemon.length);
         });
+
+
       } else {
-        // Sin filtro de tipo
-        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
-        const data: { count: number; results: PokemonListResult[] } = await res.json();
-        const responses = await Promise.all(data.results.map((p) => fetch(p.url)));
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`,
+        { signal: controller.signal });
+          const data: { count: number; results: PokemonListResult[] } = await res.json();
+        const responses = await Promise.all(data.results.map((p) => fetch(p.url,
+           { signal: controller.signal })));
         const details: Pokemon[] = await Promise.all(responses.map((r) => r.json()));
         startTransition(() => {
           setPokemons(details);
@@ -79,24 +95,36 @@ export default function HomePage() {
       }
 
       setSearchActive(false);
+
     } catch (err) {
-      console.error(err);
-      startTransition(() => {
-        setPokemons([]);
-        setTotalPokemons(0);
-      });
+      if ((err as Error).name !== "AbortError") {
+        console.error(err);
+        startTransition(() => {
+          setPokemons([]);
+          setTotalPokemons(0);
+        });
+      }
     } finally {
       setLoading(false);
     }
   }, [currentPage, limit, selectedType]);
 
 
-  // Función de búsqueda por nombre
+
+  // Función para búsqueda individual
   const handleSearch = async () => {
     if (!searchTerm) return fetchPokemons();
+
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+
     try {
       setLoading(true);
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase()}`);
+      setPokemons([]); // Limpia datos anteriores
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase()}`,
+       { signal: controller.signal });
       if (!res.ok) throw new Error("Pokemon not found");
       const data: Pokemon = await res.json();
       startTransition(() => {
@@ -104,40 +132,37 @@ export default function HomePage() {
         setTotalPokemons(1);
         setSearchActive(true);
       });
+    }
 
-    } catch (err) {
-      console.error(err);
-      startTransition(() => {
-        setPokemons([]);
-        setTotalPokemons(0);
-        setSearchActive(true);
-      });
-
+     catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        console.error(err);
+        startTransition(() => {
+          setPokemons([]);
+          setTotalPokemons(0);
+          setSearchActive(true);
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Efecto inicial para cargar tipos y Pokémon
-  useEffect(() => {
-    const controller = new AbortController();
 
+  // useEffect para cargar datos iniciales
+  useEffect(() => {
     fetchTypes();
     fetchPokemons();
-    return () => controller.abort();
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
   }, [fetchTypes, fetchPokemons]);
 
 
 
   // Funciones de paginación
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNextPage = () =>
-    setCurrentPage((prev) => (prev * limit < totalPokemons ? prev + 1 : prev));
-
-
-
-
-  // Cambiar límite de elementos por página
+  const handleNextPage = () => setCurrentPage((prev) => (prev * limit < totalPokemons ? prev + 1 : prev));
   const handleLimitChange = (newLimit: number) => {
     const firstIndex = (currentPage - 1) * limit;
     const newPage = Math.floor(firstIndex / newLimit) + 1;
@@ -146,121 +171,88 @@ export default function HomePage() {
   };
 
 
+
   return (
-    <div
-      className={`pokedex_carcasa ${darkMode ? "dark-mode" : ""}`}
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
+    <div className={`pokedex_carcasa ${darkMode ? "dark-mode" : ""}`}
+     style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center" }
+     }>
 
 
-      {/* Controles de búsqueda, filtro, límite y modo oscuro */}
+
+      {/* Controles de búsqueda, filtrado y modo */}
       <div className="controls-container">
-        <input
-          className="input_field"
-          type="text"
-          placeholder="Search Pokémon"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
+        <input className="input_field" type="text" placeholder="Search Pokémon" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         <button className="search" onClick={handleSearch}></button>
+        <button onClick={() => setDarkMode(!darkMode)}>{darkMode ? "Light Mode" : "Dark Mode"}</button>
+        <select value={selectedType} onChange={(e) => 
+        { setSelectedType(e.target.value); setCurrentPage(1); }}>
 
-        <button onClick={() => setDarkMode(!darkMode)}>
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </button>
-
-
-        <select
-          value={selectedType}
-          onChange={(e) => {
-            setSelectedType(e.target.value);
-            setCurrentPage(1);
-          }}
-        >
 
 
           <option value="">All types</option>
-          {types.map((type) => (
-            <option key={type} value={type}>
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </option>
-          ))}
-
+          {types.map((type) =>
+          (<option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>))}
         </select>
-        <select
-          value={limit}
-          onChange={(e) => handleLimitChange(Number(e.target.value))}
+
+        <select value={limit} onChange={(e) =>
+           handleLimitChange(Number(e.target.value))}>
+          {[5, 10, 20, 50, 100].map((num) =>
+            (<option key={num} value={num}>{num} Pokémon</option>))}
+        </select>
+      </div>
+
+
+
+      {/* Grid de Pokémon con loader */}
+ <div id="pokemonGrid" className="pokemonGrid" style={{ position: "relative", minHeight: "300px" }}>
+    {loading || isPending ? (
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1,
+        }}
+    >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          width="200px"
+          height="200px"
+          stroke={darkMode ? "#ffffff" : "#000000"}
         >
-
-          {[5, 10, 20, 50, 100].map((num) => (
-            <option key={num} value={num}>
-              {num} Pokémon
-            </option>
-          ))}
-        </select>
+          <path
+            d="M12 3V6M3 12H6M5.63607 5.63604L7.75739 7.75736M5.63604 18.3639L7.75736 16.2426M21 12.0005H18M18.364 5.63639L16.2427 7.75771M11.9998 21.0002V18.0002M18.3639 18.3642L16.2426 16.2429"
+            stroke={darkMode ? "#ffffff" : "#000000"}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
+) : (
+  pokemons.map((p) => (
+    <Link key={p.id} href={`/pokemon/${p.name}`}>
+      <PokemonCard poke={p} />
+    </Link>
+  ))
+)}
 
-      {/* Grid de Pokémon */}
-      <div id="pokemonGrid" className="pokemonGrid">
-        {loading || isPending ? (
-          // SVG de carga 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              zIndex: 1
-            }}
-          >
+</div>
 
-            <svg
-              fill={darkMode ? "#ffffff" : "#000000"}
-              height="200px"
-              width="200px"
-              viewBox="0 0 330 330"
-            >
-              <g>
-                <path d="M165,232.5c-8.284,0-15,6.716-15,15v60c0,8.284,6.716,15,15,15s15-6.716,15-15v-60C180,239.216,173.284,232.5,165,232.5z"/>
-                <path d="M165,7.5c-8.284,0-15,6.716-15,15v30c0,8.284,6.716,15,15,15s15-6.716,15-15v-30C180,14.216,173.284,7.5,165,7.5z"/>
-                <path d="M90,157.5c0-8.284-6.716-15-15-15H15c-8.284,0-15,6.716-15,15s6.716,15,15,15h60C83.284,172.5,90,165.784,90,157.5z"/>
-                <path d="M315,142.5h-60c-8.284,0-15,6.716-15,15s6.716,15,15,15h60c8.284,0,15-6.716,15-15S323.284,142.5,315,142.5z"/>
-                <path d="M90.752,210.533L48.327,252.96c-5.857,5.858-5.857,15.355,0,21.213c2.929,2.929,6.768,4.393,10.607,4.393s7.678-1.464,10.607-4.393l42.426-42.427c5.857-5.858,5.857-15.355-0.001-21.213C106.108,204.675,96.611,204.675,90.752,210.533z"/>
-                <path d="M228.639,108.86c3.839,0,7.678-1.464,10.606-4.394l42.426-42.427c5.858-5.858,5.858-15.355,0-21.213c-5.857-5.857-15.355-5.858-21.213,0l-42.426,42.427c-5.858,5.858-5.858,15.355,0,21.213C220.961,107.396,224.8,108.86,228.639,108.86z"/>
-                <path d="M239.245,210.533c-5.856-5.857-15.355-5.858-21.213-0.001c-5.858,5.858-5.858,15.355,0,21.213l42.426,42.427c2.929,2.929,6.768,4.393,10.607,4.393c3.838,0,7.678-1.465,10.606-4.393c5.858-5.858,5.858-15.355,0-21.213L239.245,210.533z"/>
-              </g>
-            </svg>
-          </div>
 
-        ) : (
-          // Mostrar la lista de Pokémon en tarjetas
-          pokemons.map((p) => (
-            <Link key={p.id} href={`/pokemon/${p.name}`}>
-              <PokemonCard poke={p} />
-            </Link>
-          ))
-        )}
-      </div>
-      
-
-      {/* Paginación solo si no hay búsqueda activa */}
+      {/* Paginación */}
       {!searchActive && (
         <div id="paginationContainer">
-          <button onClick={handlePrevPage} disabled={currentPage === 1}>
-            Previous
-          </button>
+          <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
           <span>{currentPage}</span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage * limit >= totalPokemons}
-          >
-            Next
-          </button>
+          <button onClick={handleNextPage} disabled={currentPage * limit >= totalPokemons}>Next</button>
         </div>
       )}
     </div>

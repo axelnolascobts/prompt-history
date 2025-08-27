@@ -32,7 +32,7 @@ export default function Controls({
   handlePrevPage,
 }: ControlsProps) {
   return (
-    <div className="flex flex-wrap gap-4 mb-6">
+    <div>
       {/* Input de búsqueda */}
       <input
         type="text"

@@ -33,12 +33,12 @@ export default function PokemonCard({ poke }: PokemonCardProps) {
         />
       ) : (
         <div>
-          No image found
+          No Image
         </div>
       )}
 
       {/* Nombre del Pokémon */}
-      <p className="font-bold">{poke.name}</p>
+      <p className="font-bold mt-2">{poke.name}</p>
 
       {/* Tipos del Pokémon */}
       <p>Types: {types}</p>
