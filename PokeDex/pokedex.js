@@ -711,7 +711,7 @@ BUTTONNEXT.onclick = () => {
     if (offset + limit < totalPokemons) {
 
         if (offset <= totalPokemons) {
-        offset += parseInt(limit);
+            offset += parseInt(limit);
         
         
             if (TYPESELECTOR.value === ""){

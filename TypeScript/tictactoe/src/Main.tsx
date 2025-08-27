@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Header from "./Header";
 import Board from "./Board";
 import { calculateWinner, isDraw } from "./utils/utils";
