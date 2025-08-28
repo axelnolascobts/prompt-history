@@ -36,8 +36,10 @@ html, body {
   border-radius: 10px;
   padding: 0.5rem 1rem;
   width: 200px;
+  height: 30px;
   background-color: yellow;
   border: none;
+  margin-bottom: 10px;
 }
 
 /* Botón de búsqueda */
@@ -48,6 +50,14 @@ button.search {
   background-color: green;
   border: 1px solid black;
   cursor: pointer;
+  margin-left: 10px;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
 /* Botones generales */

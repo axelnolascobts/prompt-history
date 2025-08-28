@@ -1,21 +1,28 @@
-import React from "react";
+'use client';
 
 interface TypeFilterProps {
-  types: string[];
+  types: string[]; 
   selectedType: string;
   setSelectedType: (value: string) => void;
   setCurrentPage: (value: number) => void;
+  className?: string; 
 }
 
-export default function TypeFilter({ types, selectedType, setSelectedType, setCurrentPage }: TypeFilterProps) {
+export default function TypeFilter({
+  types = [], 
+  selectedType,
+  setSelectedType,
+  setCurrentPage,
+  className
+}: TypeFilterProps) {
   return (
     <select
       value={selectedType}
-      onChange={(e) => {
-        setSelectedType(e.target.value);
-        setCurrentPage(1);
+      onChange={(e) => { 
+        setSelectedType(e.target.value); 
+        setCurrentPage(1); 
       }}
-      className="border p-2 rounded"
+      className={className}
     >
       <option value="">All types</option>
       {types.map((type) => (
