@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { use } from "react";
+
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import PokemonInfo from "./PokemonInfo";
 import PokemonSprites from "./PokemonSprites";
@@ -31,18 +31,20 @@ interface Props {
 
 export default function PokemonDetailsPage({ params }: Props) {
   const { name } = use(params);
+
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const router = useRouter();
 
+  //aplana los sprites y los va guardando
   const extractSprites = (sprites: Sprites): SpriteInfo[] => {
     const result: SpriteInfo[] = [];
     const traverse = (obj: Sprites, prefix = "") => {
       Object.entries(obj).forEach(([key, val]) => {
-        const name = prefix ? `${prefix} ${key}` : key;
-        if (typeof val === "string" && val) result.push({ name, url: val });
-        else if (val && typeof val === "object") traverse(val as Sprites, name);
+        const spriteName = prefix ? `${prefix} ${key}` : key;
+        if (typeof val === "string" && val) result.push({ name: spriteName, url: val });
+        else if (val && typeof val === "object") traverse(val as Sprites, spriteName);
       });
     };
     traverse(sprites);
@@ -75,11 +77,13 @@ export default function PokemonDetailsPage({ params }: Props) {
   return (
     <div className={`pokedex_case ${darkMode ? "dark-mode" : ""}`}>
       <div className="controls-container">
-        <button className="back_button" onClick={() => router.back()}>Back</button>
+        <button className="back_button" onClick={() => router.back()}>
+          Back
+        </button>
         <DarkModeToggle darkMode={darkMode} toggle={() => setDarkMode(!darkMode)} />
       </div>
 
-      <PokemonInfo pokemon={pokemon} />
+      <PokemonInfo pokemonData={pokemon} />
       <PokemonSprites spriteList={spriteList} />
     </div>
   );

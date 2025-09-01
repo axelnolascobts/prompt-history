@@ -1,6 +1,7 @@
 import React from "react";
 
 interface Pokemon {
+  id: number
   name: string;
   types: { type: { name: string } }[];
   height: number;
@@ -9,26 +10,29 @@ interface Pokemon {
 }
 
 interface Props {
-  pokemon: Pokemon;
+  pokemonData: Pokemon;
 }
 
-export default function PokemonInfo({ pokemon }: Props) {
+export default function PokemonInfo({ pokemonData }: Props) {
   return (
     <div className="bordes_2">
+      <h2>Number in the Pokedex:</h2>
+      <p>{pokemonData.id}</p>
+
       <h2>Name:</h2>
-      <p>{pokemon.name}</p>
+      <p>{pokemonData.name}</p>
 
       <h2>Type(s):</h2>
-      <p>{pokemon.types.map((t) => t.type.name).join(", ")}</p>
+      <p>{pokemonData.types.map((t) => t.type.name).join(", ")}</p>
 
       <h2>Height:</h2>
-      <p>{pokemon.height}</p>
+      <p>{pokemonData.height}</p>
 
       <h2>Weight:</h2>
-      <p>{pokemon.weight}</p>
+      <p>{pokemonData.weight}</p>
 
       <h2>Ability(s):</h2>
-      <p>{pokemon.abilities.map((a) => a.ability.name).join(", ")}</p>
+      <p>{pokemonData.abilities.map((a) => a.ability.name).join(", ")}</p>
     </div>
   );
 }

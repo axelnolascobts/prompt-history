@@ -18,7 +18,8 @@ interface PokemonGridProps {
 
 export default function PokemonGrid({ pokemons, loading, isPending, darkMode }: PokemonGridProps) {
   return (
-    <div className={`pokemonGrid ${darkMode ? "dark-mode" : ""}`} style={{ position: "relative", minHeight: "300px" }}>
+    <div className={`pokemonGrid ${darkMode ? "dark-mode" : ""}`}
+     style={{ position: "relative", minHeight: "300px" }}>
       {loading || isPending ? (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
           <p>Loading...</p>
