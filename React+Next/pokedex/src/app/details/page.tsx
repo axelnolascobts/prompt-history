@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import "./details.css";
+import { TopBar } from "./components/TopBar";
+import { SpritesSection } from "./components/SpritesSection";
+import { PokemonInfo } from "./components/PokemonInfo";
 
 interface PokemonTypes {
     
@@ -25,7 +26,7 @@ interface PokemonSprite {
     };
 }
 
-interface PokemonDetails {
+export interface PokemonDetails {
     id: number;
     name: string;
     sprites: PokemonSprite; 
@@ -88,39 +89,17 @@ export default function Details() {
         return <p className="loading-message">POKEMON NOT FOUND</p>;
     }
 
-
     return (
         <section id="details-container" className="details-container">
-            <section id="top-bar" className="top-bar">
-                <article id="back-button" className="back-button">
-                    <Link href="/">BACK</Link>
-                </article>
-                <article id="pokemon-title" className="pokemon-title">
-                    <p id="pokemon-big-name" className="pokemon-big-name">{pokemonDetails.name.toUpperCase()}</p>
-                    <p id="pokemon-id" className="pokemon-id">POKEDEX NUMBER: {pokemonDetails.id}</p>
-                </article>
-            </section>
+           
+           <TopBar pokemonDetails={pokemonDetails}/>
 
             <section id="more-info" className="more-info">
-                <section id="sprites-grid" className="sprites-grid">
-                    {Object.values(pokemonDetails.sprites)
-                        .filter((sprite) => typeof sprite === "string")
-                        .map((sprite, index) => (
-                            <Image key={index} className="pokemon-sprite"
-                            src={sprite}
-                            alt={pokemonDetails.name}
-                            width={400}
-                            height={400}/>
-                        ))}
-                </section>
 
-                <section id="more-details" className="more-details">
-                    <p id="pokemon-types">
-                        TYPE(S): {pokemonDetails.types.map((type) => type.type.name).join(", ")}
-                    </p>
-                    <p id="pokemon-height">HEIGHT: {pokemonDetails.height / 10} m</p>
-                    <p id="pokemon-weight">WEIGHT: {pokemonDetails.weight / 10} kg</p>
-                </section>
+                <SpritesSection pokemonDetails={pokemonDetails}/>
+
+                <PokemonInfo pokemonDetails={pokemonDetails}/>
+
             </section>
         </section>
     );
