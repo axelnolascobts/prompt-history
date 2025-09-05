@@ -326,8 +326,132 @@ Tengo un proyecto react en el que uso typescript, en una parte de mi proyecto ut
 Prompt 2:
 Ahora muéstrame un ejemplo usando URLs externas.
 
+02 - Septiembre - 2025
 
+Prompt 1:
+Explicame de manera detallada y completa la historia del agile manifesto.
 
+Prompt 2:
+Ahora explicame a detalle y de manera completa los 4 valores y 12 principios del agile manifesto
+
+Prompt 3:
+Ahora quiero que me expliques en forma de tabla comparativa para poder entenderlo mejor las diferencias clave entre las metodologías tradicionales como (waterfall) y las metodología ágiles.
+
+Prompt 4:
+Entonces de manera clara pero breve explicame que problemas busca resolver "Scrum"
+
+03 - Septiembre - 2025
+
+Prompt 1:
+Profundicemos ahora con Scrum, ¿qué es Scrum?
+
+Prompt 2:
+Ahora profundicemos más en los pilares de Scrum
+
+Prompt 3:
+Ahora me gustaría que profundicemos más en los valores de Scrum
+
+Prompt 4:
+Ahora profundiza y define y explícame qué es y cómo funciona el ciclo iterativo e incremental
+
+Prompt 5:
+Ahora profundicemos en los roles de Scrum
+
+Prompt 6:
+¿Cuáles son los anti-patrones más comunes del Product Owner?
+
+Prompt 7:
+Ahora profundicemos en la colaboración entre roles y el balance de responsabilidades
+
+Prompt 8:
+Vamos ahora a profundizar sobre los artefactos de Scrum
+
+Prompt 9:
+Háblame del refinamiento del product backlog y de las historias de usuario
+
+Prompt 10:
+Háblame de la transparencia en el sprint backlog
+
+Prompt 11:
+En todo este contexto, ¿qué es la definition of done?
+
+Prompt 12:
+Ahora háblame de las buenas prácticas en la redacción de user stories y criterios de aceptación
+
+Prompt 13:
+Ahora cuéntame sobre los eventos de Scrum
+
+Prompt 14:
+¿Qué es timeboxing en el contexto de un sprint de Scrum?
+
+Prompt 15:
+¿Cómo debo planear un sprint y cómo definir un objetivo del sprint?
+
+Prompt 16:
+Ahora cuéntame del formato que debería tener un Daily Scrum y errores comunes
+
+Prompt 17:
+En cuanto al sprint review, ¿cómo se debe presentar el incremento y obtener feedback real?
+
+Prompt 18:
+Dinámicas para hacer efectiva la mejora continua
+
+Prompt 19:
+Ahora profundicemos diferencias entre Done y Ready
+
+Prompt 20:
+Cómo establecer acuerdos de calidad en el equipo
+
+Prompt 21:
+¿Qué es el impacto en la entrega de valor y cómo se mide?
+
+Prompt 22:
+Explícame las técnicas de priorización (MoSCoW, WSJF, valor de negocio vs esfuerzo).
+
+Prompt 23:
+Grooming / Refinamiento del backlog.
+
+Prompt 24:
+Ahora explícame planning poker, story points, T-shirt sizing.
+
+04 - Septiembre - 2025
+
+Prompt 1:
+Ahora hablemos de Scrum en equipos pequeños vs organizaciones grandes
+
+Prompt 2:
+Ahora profundicemos en los marcos de escalado: SAFe, LeSS, Nexus, Scrum\@Scale.
+
+Prompt 3:
+Profundiza, explica y sintetiza los problemas para escalar Scrum y cómo mitigarlos
+
+Prompt 4:
+Ahora háblame de las métricas en Scrum
+
+Prompt 5:
+Ahora cuéntame las métricas de Scrum haciendo enfoque en:
+Velocidad del equipo.
+Burndown chart / Burnup chart.
+Lead time y cycle time.
+Métricas enfocadas en valor entregado vs. productividad.
+
+Prompt 6:
+Hablemos sobre cultura y mentalidad ágil, enfoquémonos en cambio cultural en organizaciones que adoptan Scrum.
+
+Prompt 7:
+Ahondemos en la autogestión y confianza en los equipos.
+
+Prompt 8:
+Háblame de cómo se fomenta la seguridad psicológica (Amy Edmondson).
+
+Prompt 9:
+Cuéntame cómo evitar la burocratización de Scrum.
+
+Prompt 10:
+Explícame la diferencia entre "hacer Scrum" y "ser ágil".
+
+Prompt 11:
+Ahora necesito que me cuentes casos de éxito y fracaso en Scrum en la realidad, busca 2 casos reales para tanto éxito como fracaso y cuéntamelos brevemente
 
 
 
