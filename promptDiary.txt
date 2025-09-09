@@ -453,5 +453,26 @@ Explícame la diferencia entre "hacer Scrum" y "ser ágil".
 Prompt 11:
 Ahora necesito que me cuentes casos de éxito y fracaso en Scrum en la realidad, busca 2 casos reales para tanto éxito como fracaso y cuéntamelos brevemente
 
+09 - Septiembre - 2025
 
+Prompt 1:
+Que es Directus?
+
+Prompt 2:
+Que son webhooks y como usarlos?
+
+Prompt 3:
+Que es PTO – Paid Time Off?
+
+Prompt 4:
+Voy a estar trabajando en un proyecto y quiero usar Directus, para mi proyecto necesito conectar una base de datos PostgreSQL con una app Next.js (supongamos de momento que solo tengo una tabla "nombres" que almacena un nombre y un id) cómo conecto la base de datos a mi app usando Directus?
+
+Prompt 5:
+Tengo una base de datos PostgreSQL y necesito guardar imágenes, ¿puedo hacerlo en esa DB?
+
+Prompt 6:
+Dame una serie de ejemplos para usar el enfoque 1 o el enfoque 2 y por qué
+
+Prompt 7:
+Para una app que quiero desarrollar estoy creando un historial de solicitudes, ¿cuál es la mejor forma de ordenarlos, de la más reciente a la más antigua de manera descendente o al revés?
 
