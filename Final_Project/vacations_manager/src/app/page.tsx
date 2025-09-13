@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Header } from "./components/header/Header";
 import { EmployeeBoard } from "./components/employeeBoard/EmployeeBoard";
 import { AdminBoard } from "./components/adminBoard/AdminBoard"
+import { AgreederBoard } from "./components/agreederBoard/AgreederBoard"
 
 export default function Home() {
 
@@ -15,10 +16,12 @@ export default function Home() {
     }, []);
 
   return (
+    
     <>
       <Header path={path} ></Header>
-      <EmployeeBoard></EmployeeBoard>
+      {/* <EmployeeBoard></EmployeeBoard> */}
       {/* <AdminBoard></AdminBoard> */}
+      <AgreederBoard></AgreederBoard>
 
     </>
     

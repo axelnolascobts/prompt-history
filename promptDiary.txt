@@ -476,3 +476,7 @@ Dame una serie de ejemplos para usar el enfoque 1 o el enfoque 2 y por qué
 Prompt 7:
 Para una app que quiero desarrollar estoy creando un historial de solicitudes, ¿cuál es la mejor forma de ordenarlos, de la más reciente a la más antigua de manera descendente o al revés?
 
+11 - Septimebre - 2025:
+
+Prompt 1:
+Estoy creando una interfaz para un "aceptador de solicitudes de vacaciones". Este panel solo tendrá un header y tres botones: "Historial de solicitudes", "Solicitudes pendientes" y "Reportes de equipo". ¿Debería organizar los botones horizontal o verticalmente, y por qué?

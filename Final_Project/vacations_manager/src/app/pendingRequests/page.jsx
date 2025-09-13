@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Header } from "../components/header/Header"
-import { HistoryBoard } from "../components/historyItem/HistoryBoard";
 
-export default function History() {
+export default function pendingRequests() {
 
     const [path, setPath] = useState("");
 
@@ -16,7 +15,7 @@ export default function History() {
     return (
         <>
             <Header path={path}/>
-            <HistoryBoard></HistoryBoard>
+
         </>
 
     );

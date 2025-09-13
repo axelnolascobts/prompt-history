@@ -7,7 +7,7 @@ export const Header = ({ path }) => {
     const titles = {
         '/history': 'Request History',
         '/newRequest': 'New Request',
-        '/pendingRequest': 'Pending Request',
+        '/pendingRequests': 'Pending Request',
     };
 
     switch (path) {
@@ -24,7 +24,7 @@ export const Header = ({ path }) => {
 
         case '/history':
         case '/newRequest':
-        case '/pendingRequest':
+        case '/pendingRequests':
             content = (
             <>
                 <Link href="/" className="back-home-button">➤</Link>
