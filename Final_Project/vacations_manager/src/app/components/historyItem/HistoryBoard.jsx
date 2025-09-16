@@ -1,4 +1,5 @@
 import { HistoryItem } from "./HistoryItem";
+import { PendingItem } from "../pendingItem/PendingItem";
 
 export const HistoryBoard = () => {
 
@@ -6,6 +7,7 @@ export const HistoryBoard = () => {
         <section className="history-container">
             <HistoryItem></HistoryItem>
             <HistoryItem></HistoryItem>
+            <PendingItem></PendingItem>
         </section>
     );
 }

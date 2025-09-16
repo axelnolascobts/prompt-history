@@ -11,7 +11,7 @@ export const HistoryItem = () => {
             </div>
             <div className="bottom-part">
 
-                <div className="left-side">Motive: Vacations</div>
+                <div className="left-side">Reason: Vacations</div>
                 <div className="right-side">Status: Agree</div>
 
             </div>

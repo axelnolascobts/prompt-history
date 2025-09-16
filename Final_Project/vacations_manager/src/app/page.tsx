@@ -19,9 +19,9 @@ export default function Home() {
     
     <>
       <Header path={path} ></Header>
-      {/* <EmployeeBoard></EmployeeBoard> */}
+      <EmployeeBoard></EmployeeBoard>
       {/* <AdminBoard></AdminBoard> */}
-      <AgreederBoard></AgreederBoard>
+      {/* <AgreederBoard></AgreederBoard> */}
 
     </>
     

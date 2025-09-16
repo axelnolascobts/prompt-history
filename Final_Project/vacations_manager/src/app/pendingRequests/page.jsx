@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { Header } from "../components/header/Header"
+import { Header } from "../components/header/Header";
+import { HistoryBoard } from "../components/historyItem/HistoryBoard";
 
 export default function pendingRequests() {
 
@@ -15,6 +16,7 @@ export default function pendingRequests() {
     return (
         <>
             <Header path={path}/>
+            <HistoryBoard></HistoryBoard>
 
         </>
 

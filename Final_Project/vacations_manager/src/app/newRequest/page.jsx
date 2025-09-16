@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Header } from "../components/header/Header"
+import { RequestForm } from "../components/requestForm/RequestForm";
 
 export default function NewRequest() {
 
@@ -15,6 +16,7 @@ export default function NewRequest() {
     return (
         <>
             <Header path={path}/>
+            <RequestForm></RequestForm>
 
         </>
 

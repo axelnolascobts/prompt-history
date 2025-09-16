@@ -268,4 +268,145 @@ body {
   border-radius: 0 0 8px 8px;
 }
 
+.pending-globe {
 
+  display: flex;
+  width: 60%;
+  height: 240px;
+  background-color: #141a49;
+  border-radius: 8px;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+
+.pending-top-part {
+
+  display: flex;
+  width: 100%;
+  height: 75%;
+  background-color: #2e8542;
+  border-radius: 8px 8px 0 0;
+  flex-direction: column;
+}
+
+.pending-bottom-part{
+
+  display: flex;
+  width: 100%;
+  height: 25%;
+  border-radius: 0 0 8px 8px;
+}
+
+.high-top-part, .mid-top-part,  .low-top.part {
+
+  display: flex;
+  width: 100%;
+  height: 60px;
+}
+
+.mid-left-side {
+
+  display: flex;
+  width: 33.33%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding-left: 20px;
+  color: white;
+  font-size: 1.2rem;
+
+}
+
+.mid-mid-side {
+  display: flex;
+  width: 33.33%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.mid-right-side {
+  display: flex;
+  width: 33.33%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding-right: 20px;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.low-top-part {
+
+  display: flex;
+  width: 100%;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  padding-left: 20px;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.low-side {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding-right: 20px;
+  padding-left: 20px;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.accept-button, .reject-button {
+  display: flex;
+  width: 70%;
+  height: 70%;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+}
+
+.accept-button {
+  background-color: #006300;
+  border: 2px solid #71ff92;
+  color: #71ff92;
+}
+
+.reject-button {
+  background-color: #630000;
+  border: 2px solid #ff7171;
+  color: #ff7171;
+}
+
+.accept-button:hover {
+  background-color: #008d00;
+}
+
+.reject-button:hover {
+  background-color: #9e0000;
+}
+
+
+.request-form{
+
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clinet-confirmation-area {
+
+ display: flex;
+ width: 100%;
+ background-color: #2e8542;
+ height: 50px;
+ justify-content: center;
+}
